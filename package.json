@@ -1,0 +1,24 @@
+{
+  "name": "awesomeui",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Cross-framework component platform with AI-powered generation",
+  "workspaces": [
+    "packages/*",
+    "packages/transpilers/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "clean": "npm run clean --workspaces"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.1",
+    "tsup": "^8.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

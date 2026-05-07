@@ -1,0 +1,247 @@
+{
+  "name": "progress",
+  "version": "1.0.0",
+  "description": "Progress bar component for tracking completion, loading, or step progress",
+  "category": "feedback",
+  "props": {
+    "value": {
+      "type": "number",
+      "default": 0,
+      "description": "Current progress value"
+    },
+    "max": {
+      "type": "number",
+      "default": 100,
+      "description": "Maximum progress value"
+    },
+    "variant": {
+      "type": "enum",
+      "values": ["bar", "circle", "steps"],
+      "default": "bar",
+      "description": "Visual style variant"
+    },
+    "color": {
+      "type": "enum",
+      "values": ["primary", "success", "warning", "error", "info"],
+      "default": "primary",
+      "description": "Color variant"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Size/thickness of the progress bar"
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to show the percentage label"
+    },
+    "animated": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the bar has a smooth animation"
+    },
+    "indeterminate": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the progress is in indeterminate (unknown) state"
+    },
+    "steps": {
+      "type": "number",
+      "default": 3,
+      "description": "Number of steps for the steps variant"
+    },
+    "stepLabels": {
+      "type": "array",
+      "default": [],
+      "description": "Labels for each step in the steps variant"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Custom label content (replaces percentage text)"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.wrapper}}",
+    "children": [
+      {
+        "if": "props.variant === 'bar'",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.base}} {{styles.size[props.size]}}",
+          "attributes": {
+            "role": "progressbar",
+            "aria-valuenow": "{{props.indeterminate ? undefined : props.value}}",
+            "aria-valuemin": "0",
+            "aria-valuemax": "{{props.max}}"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "class": "{{styles.bar}} {{styles.color[props.color]}} {{props.animated ? styles.animated : ''}} {{props.indeterminate ? styles.indeterminate : ''}}",
+              "attributes": {
+                "style": "width: {{props.indeterminate ? '100%' : (props.value / props.max * 100) + '%'}}"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.variant === 'circle'",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.circleWrapper}}",
+          "attributes": {
+            "role": "progressbar",
+            "aria-valuenow": "{{props.value}}",
+            "aria-valuemin": "0",
+            "aria-valuemax": "{{props.max}}"
+          },
+          "children": [
+            {
+              "tag": "svg",
+              "class": "{{styles.circleSvg}} {{styles.size[props.size]}}",
+              "attributes": {
+                "viewBox": "0 0 36 36"
+              },
+              "children": [
+                {
+                  "tag": "path",
+                  "class": "{{styles.circleTrack}}",
+                  "attributes": {
+                    "d": "M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831",
+                    "fill": "none",
+                    "stroke-width": "3"
+                  }
+                },
+                {
+                  "tag": "path",
+                  "class": "{{styles.circleBar}} {{styles.color[props.color]}}",
+                  "attributes": {
+                    "d": "M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831",
+                    "fill": "none",
+                    "stroke-width": "3",
+                    "stroke-dasharray": "{{props.value / props.max * 100}}, 100"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.variant === 'steps'",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.stepsWrapper}}",
+          "children": [
+            {
+              "each": "range(props.steps)",
+              "as": "step",
+              "key": "step",
+              "children": [
+                {
+                  "tag": "div",
+                  "class": "{{styles.step}} {{step < props.value / (props.max / props.steps) ? styles.stepActive : styles.stepInactive}}",
+                  "children": [
+                    {
+                      "tag": "div",
+                      "class": "{{styles.stepIndicator}} {{step < props.value / (props.max / props.steps) ? styles.stepIndicatorActive : ''}}",
+                      "children": [
+                        {
+                          "text": "{{step + 1}}"
+                        }
+                      ]
+                    },
+                    {
+                      "if": "props.stepLabels[step]",
+                      "then": {
+                        "tag": "span",
+                        "class": "{{styles.stepLabel}}",
+                        "children": [
+                          {
+                            "text": "{{props.stepLabels[step]}}"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "if": "step < props.steps - 1",
+                  "then": {
+                    "tag": "div",
+                    "class": "{{styles.stepConnector}} {{step < props.value / (props.max / props.steps) ? styles.stepConnectorActive : ''}}"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.showLabel && props.variant !== 'steps'",
+        "then": {
+          "tag": "span",
+          "class": "{{styles.label}}",
+          "children": [
+            {
+              "slot": "default"
+            },
+            {
+              "if": "!hasSlot('default')",
+              "then": {
+                "text": "{{Math.round(props.value / props.max * 100)}}%"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "wrapper": "flex items-center gap-3",
+    "base": "w-full overflow-hidden rounded-full bg-gray-200",
+    "size": {
+      "sm": "h-1.5",
+      "md": "h-2.5",
+      "lg": "h-4"
+    },
+    "bar": "h-full rounded-full transition-all duration-500",
+    "color": {
+      "primary": "bg-blue-600",
+      "success": "bg-green-600",
+      "warning": "bg-yellow-500",
+      "error": "bg-red-600",
+      "info": "bg-cyan-600"
+    },
+    "animated": "transition-all duration-500 ease-in-out",
+    "indeterminate": "animate-pulse",
+    "label": "text-sm font-medium text-gray-700",
+    "circleWrapper": "inline-flex items-center justify-center",
+    "circleSvg": "",
+    "circleTrack": "stroke-gray-200",
+    "circleBar": "transition-all duration-500",
+    "stepsWrapper": "flex items-center w-full",
+    "step": "flex flex-col items-center",
+    "stepActive": "",
+    "stepInactive": "",
+    "stepIndicator": "flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium border-2",
+    "stepIndicatorActive": "bg-blue-600 text-white border-blue-600",
+    "stepLabel": "mt-1 text-xs text-gray-500",
+    "stepConnector": "flex-1 h-0.5 mx-2 bg-gray-200",
+    "stepConnectorActive": "bg-blue-600"
+  },
+  "accessibility": {
+    "role": "progressbar",
+    "ariaAttributes": {
+      "aria-valuenow": "{{props.value}}",
+      "aria-valuemin": "0",
+      "aria-valuemax": "{{props.max}}",
+      "aria-label": "{{props.label || 'Progress'}}"
+    }
+  }
+}

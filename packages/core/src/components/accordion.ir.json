@@ -1,0 +1,65 @@
+{
+  "name": "accordion",
+  "version": "1.0.0",
+  "description": "Accordion component for expandable/collapsible content sections",
+  "category": "layout",
+  "props": {
+    "type": {
+      "type": "enum",
+      "values": ["single", "multiple"],
+      "default": "single",
+      "description": "Whether one or multiple items can be open at once"
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Value of the initially expanded item (for single mode)"
+    },
+    "collapsible": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether all items can be collapsed (only in single mode)"
+    },
+    "variant": {
+      "type": "enum",
+      "values": ["default", "bordered", "ghost"],
+      "default": "default",
+      "description": "Visual style variant"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Accordion item components"
+    }
+  },
+  "events": {
+    "onValueChange": {
+      "description": "Fired when the expanded item(s) change"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{styles.variant[props.variant]}}",
+    "attributes": {
+      "data-orientation": "vertical"
+    },
+    "children": [
+      {
+        "slot": "default"
+      }
+    ]
+  },
+  "styles": {
+    "base": "w-full divide-y divide-gray-200",
+    "variant": {
+      "default": "rounded-lg border border-gray-200",
+      "bordered": "border border-gray-200",
+      "ghost": "border-0"
+    }
+  },
+  "accessibility": {
+    "role": "region",
+    "ariaAttributes": {
+      "aria-orientation": "vertical"
+    }
+  }
+}

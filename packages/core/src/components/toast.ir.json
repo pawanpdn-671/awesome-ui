@@ -1,0 +1,173 @@
+{
+  "name": "toast",
+  "version": "1.0.0",
+  "description": "Toast notification component for showing brief, temporary messages with variant styles and dismissible support",
+  "category": "feedback",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["default", "success", "error", "warning", "info"],
+      "default": "default",
+      "description": "Visual style variant of the toast"
+    },
+    "position": {
+      "type": "enum",
+      "values": ["top-right", "top-left", "bottom-right", "bottom-left", "top-center", "bottom-center"],
+      "default": "top-right",
+      "description": "Position of the toast on screen"
+    },
+    "duration": {
+      "type": "number",
+      "default": 5000,
+      "description": "Auto-dismiss duration in milliseconds (0 to disable)"
+    },
+    "dismissible": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the toast shows a dismiss button"
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional bold title text"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Toast message content"
+    },
+    "icon": {
+      "description": "Toast icon displayed before the content"
+    },
+    "action": {
+      "description": "Action button displayed after the message (e.g., Undo, Retry)"
+    }
+  },
+  "events": {
+    "onDismiss": {
+      "description": "Fired when the toast is dismissed"
+    },
+    "onAction": {
+      "description": "Fired when the action button is clicked"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{styles.variant[props.variant]}} {{styles.position[props.position]}}",
+    "attributes": {
+      "role": "alert",
+      "aria-live": "assertive",
+      "aria-atomic": "true"
+    },
+    "children": [
+      {
+        "slot": "icon"
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.content}}",
+        "children": [
+          {
+            "if": "props.title",
+            "then": {
+              "tag": "p",
+              "class": "{{styles.title}}",
+              "children": [
+                {
+                  "text": "{{props.title}}"
+                }
+              ]
+            }
+          },
+          {
+            "tag": "div",
+            "class": "{{styles.message}}",
+            "children": [
+              {
+                "slot": "default"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "action"
+      },
+      {
+        "if": "props.dismissible",
+        "then": {
+          "tag": "button",
+          "class": "{{styles.dismiss}}",
+          "attributes": {
+            "type": "button",
+            "aria-label": "Dismiss notification"
+          },
+          "children": [
+            {
+              "tag": "svg",
+              "class": "h-4 w-4",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "stroke": "currentColor",
+                "stroke-width": "2"
+              },
+              "children": [
+                {
+                  "tag": "line",
+                  "attributes": {
+                    "x1": "18",
+                    "y1": "6",
+                    "x2": "6",
+                    "y2": "18"
+                  }
+                },
+                {
+                  "tag": "line",
+                  "attributes": {
+                    "x1": "6",
+                    "y1": "6",
+                    "x2": "18",
+                    "y2": "18"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border p-4 shadow-lg",
+    "variant": {
+      "default": "border-gray-200 bg-white text-gray-900",
+      "success": "border-green-200 bg-green-50 text-green-900",
+      "error": "border-red-200 bg-red-50 text-red-900",
+      "warning": "border-yellow-200 bg-yellow-50 text-yellow-900",
+      "info": "border-blue-200 bg-blue-50 text-blue-900"
+    },
+    "position": {
+      "top-right": "fixed top-4 right-4",
+      "top-left": "fixed top-4 left-4",
+      "bottom-right": "fixed bottom-4 right-4",
+      "bottom-left": "fixed bottom-4 left-4",
+      "top-center": "fixed top-4 left-1/2 -translate-x-1/2",
+      "bottom-center": "fixed bottom-4 left-1/2 -translate-x-1/2"
+    },
+    "content": "flex-1",
+    "title": "text-sm font-semibold",
+    "message": "text-sm opacity-90",
+    "dismiss": "-mx-1 -my-1 ml-auto inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md opacity-60 hover:opacity-100 transition-opacity"
+  },
+  "accessibility": {
+    "role": "alert",
+    "ariaAttributes": {
+      "aria-live": "assertive",
+      "aria-atomic": "true",
+      "aria-relevant": "additions removals"
+    },
+    "keyboardInteractions": [
+      "Escape: Dismiss the toast"
+    ]
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "name": "alert",
+  "version": "1.0.0",
+  "description": "Alert banner for displaying feedback messages with variant styles and dismissible support",
+  "category": "feedback",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["info", "success", "warning", "error"],
+      "default": "info",
+      "description": "Visual style variant of the alert"
+    },
+    "dismissible": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the alert can be dismissed"
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional title text for the alert"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Alert message content"
+    },
+    "icon": {
+      "description": "Alert icon displayed before the content"
+    },
+    "action": {
+      "description": "Action element displayed after the content (e.g., button, link)"
+    }
+  },
+  "events": {
+    "onDismiss": {
+      "description": "Fired when the dismiss button is clicked"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{styles.variant[props.variant]}}",
+    "attributes": {
+      "role": "alert"
+    },
+    "children": [
+      {
+        "slot": "icon"
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.content}}",
+        "children": [
+          {
+            "if": "props.title",
+            "then": {
+              "tag": "h5",
+              "class": "{{styles.title}}",
+              "children": [
+                {
+                  "text": "{{props.title}}"
+                }
+              ]
+            }
+          },
+          {
+            "tag": "div",
+            "class": "{{styles.message}}",
+            "children": [
+              {
+                "slot": "default"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "action"
+      },
+      {
+        "if": "props.dismissible",
+        "then": {
+          "tag": "button",
+          "class": "{{styles.dismissButton}}",
+          "attributes": {
+            "type": "button",
+            "aria-label": "Dismiss"
+          },
+          "children": [
+            {
+              "text": "×"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "relative flex w-full items-start gap-3 rounded-lg border p-4 text-sm",
+    "variant": {
+      "info": "border-blue-200 bg-blue-50 text-blue-800",
+      "success": "border-green-200 bg-green-50 text-green-800",
+      "warning": "border-yellow-200 bg-yellow-50 text-yellow-800",
+      "error": "border-red-200 bg-red-50 text-red-800"
+    },
+    "content": "flex-1",
+    "title": "mb-1 font-medium",
+    "message": "",
+    "dismissButton": "-mx-1 -my-1 ml-auto inline-flex h-6 w-6 items-center justify-center rounded-md text-current opacity-60 hover:opacity-100 transition-opacity"
+  },
+  "accessibility": {
+    "role": "alert",
+    "ariaAttributes": {
+      "aria-live": "polite",
+      "aria-atomic": "true"
+    }
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "name": "select",
+  "version": "1.0.0",
+  "description": "Select dropdown component with label, placeholder, error state, and option groups",
+  "category": "form",
+  "props": {
+    "placeholder": {
+      "type": "string",
+      "default": "Select an option",
+      "description": "Placeholder text shown when no option is selected"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the select is disabled"
+    },
+    "error": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to show the error state"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the select is required"
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text displayed above the select"
+    },
+    "value": {
+      "type": "string",
+      "description": "Current selected value"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for the select element"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Option and optgroup elements"
+    },
+    "prefix": {
+      "description": "Content displayed before the select text"
+    }
+  },
+  "events": {
+    "onChange": {
+      "description": "Fired when the selected value changes"
+    },
+    "onFocus": {
+      "description": "Fired when the select receives focus"
+    },
+    "onBlur": {
+      "description": "Fired when the select loses focus"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.wrapper}}",
+    "children": [
+      {
+        "if": "props.label",
+        "then": {
+          "tag": "label",
+          "class": "{{styles.label}}",
+          "children": [
+            {
+              "text": "{{props.label}}"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.container}}",
+        "children": [
+          {
+            "slot": "prefix"
+          },
+          {
+            "tag": "select",
+            "class": "{{styles.base}} {{props.error ? styles.errorState : styles.defaultState}}",
+            "attributes": {
+              "disabled": "{{props.disabled}}",
+              "required": "{{props.required}}",
+              "name": "{{props.name}}",
+              "value": "{{props.value}}"
+            },
+            "children": [
+              {
+                "if": "props.placeholder",
+                "then": {
+                  "tag": "option",
+                  "attributes": {
+                    "value": "",
+                    "disabled": "",
+                    "selected": "{{!props.value}}"
+                  },
+                  "children": [
+                    {
+                      "text": "{{props.placeholder}}"
+                    }
+                  ]
+                }
+              },
+              {
+                "slot": "default"
+              }
+            ]
+          },
+          {
+            "tag": "svg",
+            "class": "{{styles.chevron}}",
+            "attributes": {
+              "viewBox": "0 0 24 24",
+              "fill": "none",
+              "stroke": "currentColor",
+              "stroke-width": "2",
+              "aria-hidden": "true"
+            },
+            "children": [
+              {
+                "tag": "polyline",
+                "attributes": {
+                  "points": "6 9 12 15 18 9"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "if": "props.error",
+        "then": {
+          "tag": "p",
+          "class": "{{styles.errorText}}",
+          "children": [
+            {
+              "text": "{{props.errorMessage}}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "wrapper": "w-full",
+    "label": "mb-1.5 block text-sm font-medium text-gray-700",
+    "container": "relative flex items-center",
+    "base": "flex h-10 w-full appearance-none rounded-md border bg-white px-3 py-2 pr-8 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+    "defaultState": "border-gray-300 text-gray-900 focus-visible:ring-blue-500",
+    "errorState": "border-red-500 text-gray-900 focus-visible:ring-red-500",
+    "chevron": "pointer-events-none absolute right-3 h-4 w-4 text-gray-500",
+    "errorText": "mt-1.5 text-sm text-red-600"
+  },
+  "accessibility": {
+    "role": "combobox",
+    "ariaAttributes": {
+      "aria-disabled": "{{props.disabled}}",
+      "aria-required": "{{props.required}}",
+      "aria-invalid": "{{props.error}}"
+    },
+    "keyboardInteractions": [
+      "Arrow Up/Down: Navigate options",
+      "Enter: Select option"
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ReactTranspiler > snapshot: button component output 1`] = `
+"import React from 'react';
+
+const styles = {
+  base: 'inline-flex items-center justify-center rounded-md font-medium',
+  variant: {
+    primary: 'bg-blue-600 text-white hover:bg-blue-700',
+    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
+    outline: 'border border-gray-300 bg-transparent hover:bg-gray-50',
+  },
+  size: {
+    sm: 'h-8 px-3 text-sm',
+    md: 'h-10 px-4 text-base',
+    lg: 'h-12 px-6 text-lg',
+  },
+  spinner: 'h-4 w-4 animate-spin',
+} as const;
+
+export interface ButtonProps {
+  /** Visual style */
+  variant?: 'primary' | 'secondary' | 'outline';
+  /** Size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Disabled state */
+  disabled?: boolean;
+  /** Loading state */
+  loading?: boolean;
+  /** Button label */
+  children?: React.ReactNode;
+  /** Icon slot */
+  icon?: React.ReactNode;
+  /** Click handler */
+  onClick?: (...args: unknown[]) => void;
+  /** Additional CSS class names */
+  className?: string;
+  /** Ref forwarding */
+  ref?: React.Ref<HTMLElement>;
+}
+
+export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button(
+  { variant = 'primary', size = 'md', disabled = false, loading = false, children, icon, onClick, className, ref, ...restProps },
+) {
+  return (
+    <button className={\`\${styles.base} \${styles.variant[variant]} \${styles.size[size]}\`.trim()} type="button" disabled={disabled}>
+      {loading && (
+        <span className={styles.spinner} />
+      )}
+      {icon}
+      {children ?? 'Button'}
+    </button>
+  );
+});
+
+Button.displayName = 'Button';
+"
+`;

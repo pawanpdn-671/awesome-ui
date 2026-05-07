@@ -1,0 +1,134 @@
+{
+  "name": "textarea",
+  "version": "1.0.0",
+  "description": "Multi-line text input component with label, error state, and character count",
+  "category": "form",
+  "props": {
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text displayed when textarea is empty"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the textarea is disabled"
+    },
+    "error": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to show the error state"
+    },
+    "value": {
+      "type": "string",
+      "description": "Current value of the textarea"
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text displayed above the textarea"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the textarea is required"
+    },
+    "rows": {
+      "type": "number",
+      "default": 4,
+      "description": "Number of visible rows"
+    },
+    "maxLength": {
+      "type": "number",
+      "description": "Maximum character length"
+    },
+    "resizable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the textarea can be resized by the user"
+    }
+  },
+  "events": {
+    "onInput": {
+      "description": "Fired when the textarea value changes"
+    },
+    "onFocus": {
+      "description": "Fired when the textarea receives focus"
+    },
+    "onBlur": {
+      "description": "Fired when the textarea loses focus"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.wrapper}}",
+    "children": [
+      {
+        "if": "props.label",
+        "then": {
+          "tag": "label",
+          "class": "{{styles.label}}",
+          "children": [
+            {
+              "text": "{{props.label}}"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "textarea",
+        "class": "{{styles.base}} {{props.resizable ? styles.resizable : styles.notResizable}} {{props.error ? styles.errorState : styles.defaultState}}",
+        "attributes": {
+          "placeholder": "{{props.placeholder}}",
+          "disabled": "{{props.disabled}}",
+          "required": "{{props.required}}",
+          "rows": "{{props.rows}}",
+          "maxlength": "{{props.maxLength}}",
+          "value": "{{props.value}}"
+        }
+      },
+      {
+        "if": "props.maxLength",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.charCount}}",
+          "children": [
+            {
+              "text": "{{charCount}} / {{props.maxLength}}"
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.error",
+        "then": {
+          "tag": "p",
+          "class": "{{styles.errorText}}",
+          "children": [
+            {
+              "text": "{{props.errorMessage}}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "wrapper": "w-full",
+    "label": "mb-1.5 block text-sm font-medium text-gray-700",
+    "base": "flex min-h-[60px] w-full rounded-md border bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+    "defaultState": "border-gray-300 text-gray-900 focus-visible:ring-blue-500",
+    "errorState": "border-red-500 text-gray-900 focus-visible:ring-red-500",
+    "resizable": "resize-y",
+    "notResizable": "resize-none",
+    "charCount": "mt-1.5 text-right text-xs text-gray-500",
+    "errorText": "mt-1.5 text-sm text-red-600"
+  },
+  "accessibility": {
+    "role": "textbox",
+    "ariaAttributes": {
+      "aria-invalid": "{{props.error}}",
+      "aria-disabled": "{{props.disabled}}",
+      "aria-required": "{{props.required}}",
+      "aria-multiline": "true"
+    }
+  }
+}

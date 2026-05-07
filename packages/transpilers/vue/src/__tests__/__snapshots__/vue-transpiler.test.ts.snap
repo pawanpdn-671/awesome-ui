@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`VueTranspiler > snapshot: button SFC output 1`] = `
+"<script setup lang="ts">
+
+interface Props {
+  /** Visual style */
+  variant?: 'primary' | 'secondary' | 'outline';
+  /** Size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Disabled state */
+  disabled?: boolean;
+  /** Loading state */
+  loading?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  variant: 'primary',
+  size: 'md',
+  disabled: false,
+  loading: false,
+});
+
+const emit = defineEmits<{
+  (e: 'click', ...args: unknown[]): void;
+}>();
+
+const styles = {
+  base: 'inline-flex items-center justify-center rounded-md font-medium',
+  variant: {
+    primary: 'bg-blue-600 text-white hover:bg-blue-700',
+    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
+    outline: 'border border-gray-300 bg-transparent hover:bg-gray-50',
+  },
+  size: {
+    sm: 'h-8 px-3 text-sm',
+    md: 'h-10 px-4 text-base',
+    lg: 'h-12 px-6 text-lg',
+  },
+  spinner: 'h-4 w-4 animate-spin',
+} as const;
+</script>
+
+<template>
+  <button :class="\`\${styles.base} \${styles.variant[props.variant]} \${styles.size[props.size]}\`.trim()" type="button" :disabled="props.disabled">
+    <span v-if="props.loading" :class="styles.spinner" />
+    <slot name="icon" />
+    <slot>
+      Button
+    </slot>
+  </button>
+</template>
+"
+`;

@@ -1,0 +1,135 @@
+{
+  "name": "switch",
+  "version": "1.0.0",
+  "description": "Toggle switch component with label for binary settings",
+  "category": "form",
+  "props": {
+    "checked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the switch is toggled on"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the switch is disabled"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the switch is required"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for the hidden input"
+    },
+    "value": {
+      "type": "string",
+      "description": "Value attribute for the hidden input"
+    },
+    "label": {
+      "type": "string",
+      "description": "Label displayed next to the switch"
+    },
+    "labelPosition": {
+      "type": "enum",
+      "values": ["left", "right"],
+      "default": "right",
+      "description": "Position of the label relative to the switch"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Custom label content"
+    }
+  },
+  "events": {
+    "onChange": {
+      "description": "Fired when the switch state changes"
+    },
+    "onFocus": {
+      "description": "Fired when the switch receives focus"
+    },
+    "onBlur": {
+      "description": "Fired when the switch loses focus"
+    }
+  },
+  "template": {
+    "tag": "label",
+    "class": "{{styles.base}} {{props.disabled ? styles.disabled : ''}}",
+    "children": [
+      {
+        "if": "props.label && props.labelPosition === 'left'",
+        "then": {
+          "tag": "span",
+          "class": "{{styles.label}}",
+          "children": [
+            {
+              "text": "{{props.label}}"
+            }
+          ]
+        }
+      },
+      {
+        "slot": "default"
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.track}} {{props.checked ? styles.trackChecked : styles.trackUnchecked}}",
+        "children": [
+          {
+            "tag": "input",
+            "class": "sr-only",
+            "attributes": {
+              "type": "checkbox",
+              "role": "switch",
+              "checked": "{{props.checked}}",
+              "disabled": "{{props.disabled}}",
+              "required": "{{props.required}}",
+              "name": "{{props.name}}",
+              "value": "{{props.value}}",
+              "aria-checked": "{{props.checked}}"
+            }
+          },
+          {
+            "tag": "span",
+            "class": "{{styles.thumb}} {{props.checked ? styles.thumbChecked : styles.thumbUnchecked}}"
+          }
+        ]
+      },
+      {
+        "if": "props.label && props.labelPosition === 'right'",
+        "then": {
+          "tag": "span",
+          "class": "{{styles.label}}",
+          "children": [
+            {
+              "text": "{{props.label}}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "inline-flex items-center gap-3 cursor-pointer",
+    "disabled": "opacity-50 cursor-not-allowed",
+    "label": "text-sm font-medium text-gray-700 select-none",
+    "track": "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+    "trackChecked": "bg-blue-600",
+    "trackUnchecked": "bg-gray-200",
+    "thumb": "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+    "thumbChecked": "translate-x-5",
+    "thumbUnchecked": "translate-x-0"
+  },
+  "accessibility": {
+    "role": "switch",
+    "ariaAttributes": {
+      "aria-checked": "{{props.checked}}",
+      "aria-disabled": "{{props.disabled}}"
+    },
+    "keyboardInteractions": [
+      "Space: Toggle switch state"
+    ]
+  }
+}

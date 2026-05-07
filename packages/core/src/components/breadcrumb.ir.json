@@ -1,0 +1,189 @@
+{
+  "name": "breadcrumb",
+  "version": "1.0.0",
+  "description": "Breadcrumb navigation component showing page hierarchy with links and separators",
+  "category": "navigation",
+  "props": {
+    "items": {
+      "type": "array",
+      "default": [],
+      "description": "Array of breadcrumb items with label, href, and optional icon"
+    },
+    "separator": {
+      "type": "enum",
+      "values": ["slash", "chevron", "dot", "arrow"],
+      "default": "chevron",
+      "description": "Separator style between items"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Size of the breadcrumb text"
+    },
+    "maxItems": {
+      "type": "number",
+      "description": "Maximum items before collapsing with ellipsis"
+    },
+    "collapsedLabel": {
+      "type": "string",
+      "default": "...",
+      "description": "Label for the collapsed indicator"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Custom breadcrumb items (replaces items prop)"
+    }
+  },
+  "events": {
+    "onClick": {
+      "description": "Fired when a breadcrumb link is clicked"
+    }
+  },
+  "template": {
+    "tag": "nav",
+    "class": "{{styles.base}}",
+    "attributes": {
+      "aria-label": "Breadcrumb"
+    },
+    "children": [
+      {
+        "tag": "ol",
+        "class": "{{styles.list}} {{styles.size[props.size]}}",
+        "children": [
+          {
+            "slot": "default"
+          },
+          {
+            "each": "props.items",
+            "as": "item",
+            "key": "item.label",
+            "children": [
+              {
+                "if": "item.index > 0",
+                "then": {
+                  "tag": "li",
+                  "class": "{{styles.separatorItem}}",
+                  "attributes": {
+                    "aria-hidden": "true"
+                  },
+                  "children": [
+                    {
+                      "tag": "svg",
+                      "class": "{{styles.separatorIcon}}",
+                      "attributes": {
+                        "viewBox": "{{separator === 'slash' ? '0 0 24 24' : separator === 'dot' ? '0 0 24 24' : '0 0 24 24'}}",
+                        "fill": "none",
+                        "stroke": "currentColor",
+                        "stroke-width": "2",
+                        "aria-hidden": "true"
+                      },
+                      "children": [
+                        {
+                          "if": "props.separator === 'chevron'",
+                          "then": {
+                            "tag": "polyline",
+                            "attributes": {
+                              "points": "9 18 15 12 9 6"
+                            }
+                          }
+                        },
+                        {
+                          "if": "props.separator === 'arrow'",
+                          "then": {
+                            "tag": "polyline",
+                            "attributes": {
+                              "points": "9 18 15 12 9 6"
+                            }
+                          }
+                        },
+                        {
+                          "if": "props.separator === 'slash'",
+                          "then": {
+                            "tag": "line",
+                            "attributes": {
+                              "x1": "14",
+                              "y1": "6",
+                              "x2": "10",
+                              "y2": "18"
+                            }
+                          }
+                        },
+                        {
+                          "if": "props.separator === 'dot'",
+                          "then": {
+                            "tag": "circle",
+                            "attributes": {
+                              "cx": "12",
+                              "cy": "12",
+                              "r": "2"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "li",
+                "class": "{{styles.item}} {{item.index === props.items.length - 1 ? styles.current : ''}}",
+                "attributes": {
+                  "aria-current": "{{item.index === props.items.length - 1 ? 'page' : undefined}}"
+                },
+                "children": [
+                  {
+                    "if": "item.index < props.items.length - 1",
+                    "then": {
+                      "tag": "a",
+                      "class": "{{styles.link}}",
+                      "attributes": {
+                        "href": "{{item.href}}"
+                      },
+                      "children": [
+                        {
+                          "text": "{{item.label}}"
+                        }
+                      ]
+                    },
+                    "else": {
+                      "tag": "span",
+                      "class": "{{styles.currentText}}",
+                      "children": [
+                        {
+                          "text": "{{item.label}}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "base": "",
+    "list": "flex items-center flex-wrap",
+    "size": {
+      "sm": "text-xs",
+      "md": "text-sm",
+      "lg": "text-base"
+    },
+    "item": "inline-flex items-center",
+    "separatorItem": "inline-flex items-center mx-1.5",
+    "separatorIcon": "h-3.5 w-3.5 text-gray-400",
+    "link": "text-gray-600 hover:text-gray-900 underline-offset-2 hover:underline transition-colors",
+    "current": "",
+    "currentText": "text-gray-900 font-medium"
+  },
+  "accessibility": {
+    "role": "navigation",
+    "ariaAttributes": {
+      "aria-label": "Breadcrumb"
+    }
+  }
+}

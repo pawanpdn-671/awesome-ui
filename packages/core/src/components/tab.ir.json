@@ -1,0 +1,99 @@
+{
+  "name": "tab",
+  "version": "1.0.0",
+  "description": "Individual tab trigger and panel pair for the tabs component",
+  "category": "navigation",
+  "props": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Unique value identifying this tab"
+    },
+    "label": {
+      "type": "string",
+      "description": "Display text for the tab trigger"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the tab is disabled"
+    }
+  },
+  "slots": {
+    "trigger": {
+      "description": "Custom trigger content (replaces label)"
+    },
+    "default": {
+      "description": "Tab panel content"
+    }
+  },
+  "events": {},
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}}",
+    "children": [
+      {
+        "tag": "button",
+        "class": "{{styles.trigger}} {{isActive ? styles.active : styles.inactive}} {{props.disabled ? styles.disabled : ''}}",
+        "attributes": {
+          "role": "tab",
+          "type": "button",
+          "aria-selected": "{{isActive}}",
+          "aria-controls": "tabpanel-{{props.value}}",
+          "disabled": "{{props.disabled}}",
+          "tabindex": "{{isActive ? '0' : '-1'}}"
+        },
+        "children": [
+          {
+            "slot": "trigger"
+          },
+          {
+            "if": "!hasSlot('trigger')",
+            "then": {
+              "text": "{{props.label}}"
+            }
+          }
+        ]
+      },
+      {
+        "if": "isActive",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.panel}}",
+          "attributes": {
+            "id": "tabpanel-{{props.value}}",
+            "role": "tabpanel",
+            "aria-labelledby": "tab-{{props.value}}",
+            "tabindex": "0"
+          },
+          "children": [
+            {
+              "slot": "default"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "",
+    "trigger": "inline-flex items-center justify-center whitespace-nowrap px-3 py-2 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+    "active": "text-blue-600 border-b-2 border-blue-600",
+    "inactive": "text-gray-500 hover:text-gray-700 border-b-2 border-transparent",
+    "disabled": "pointer-events-none opacity-50",
+    "panel": "mt-2 rounded-lg p-4 text-sm text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+  },
+  "accessibility": {
+    "role": "tab",
+    "ariaAttributes": {
+      "aria-selected": "{{isActive}}",
+      "aria-controls": "tabpanel-{{props.value}}"
+    },
+    "keyboardInteractions": [
+      "Arrow Left/Right: Navigate between tabs",
+      "Home: Go to first tab",
+      "End: Go to last tab",
+      "Enter/Space: Activate tab"
+    ]
+  }
+}

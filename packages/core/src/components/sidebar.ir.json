@@ -1,0 +1,100 @@
+{
+  "name": "sidebar",
+  "version": "1.0.0",
+  "description": "Collapsible sidebar navigation component with menu items, icons, and nested submenus",
+  "category": "navigation",
+  "props": {
+    "collapsed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the sidebar is collapsed to icon-only mode"
+    },
+    "variant": {
+      "type": "enum",
+      "values": ["default", "floating", "bordered"],
+      "default": "default",
+      "description": "Visual style variant"
+    },
+    "position": {
+      "type": "enum",
+      "values": ["left", "right"],
+      "default": "left",
+      "description": "Which side the sidebar is on"
+    },
+    "width": {
+      "type": "string",
+      "default": "16rem",
+      "description": "Width of the expanded sidebar"
+    },
+    "collapsedWidth": {
+      "type": "string",
+      "default": "4rem",
+      "description": "Width of the collapsed sidebar"
+    }
+  },
+  "slots": {
+    "header": {
+      "description": "Content at the top of the sidebar (e.g., logo, brand)"
+    },
+    "default": {
+      "description": "Navigation menu items"
+    },
+    "footer": {
+      "description": "Content at the bottom of the sidebar (e.g., user menu, settings)"
+    },
+    "toggle": {
+      "description": "Custom toggle button for collapsing/expanding"
+    }
+  },
+  "events": {
+    "onToggle": {
+      "description": "Fired when the sidebar is toggled between collapsed and expanded"
+    }
+  },
+  "template": {
+    "tag": "aside",
+    "class": "{{styles.base}} {{styles.variant[props.variant]}} {{styles.position[props.position]}}",
+    "attributes": {
+      "style": "width: {{props.collapsed ? props.collapsedWidth : props.width}}"
+    },
+    "children": [
+      {
+        "slot": "toggle"
+      },
+      {
+        "slot": "header"
+      },
+      {
+        "tag": "nav",
+        "class": "{{styles.nav}}",
+        "children": [
+          {
+            "slot": "default"
+          }
+        ]
+      },
+      {
+        "slot": "footer"
+      }
+    ]
+  },
+  "styles": {
+    "base": "flex h-full flex-col overflow-y-auto bg-white transition-all duration-300",
+    "variant": {
+      "default": "border-r border-gray-200 shadow-sm",
+      "floating": "m-2 rounded-lg border border-gray-200 shadow-md",
+      "bordered": "border-r border-gray-200"
+    },
+    "position": {
+      "left": "",
+      "right": "border-l border-r-0"
+    },
+    "nav": "flex-1 overflow-y-auto py-2"
+  },
+  "accessibility": {
+    "role": "complementary",
+    "ariaAttributes": {
+      "aria-label": "Sidebar navigation"
+    }
+  }
+}

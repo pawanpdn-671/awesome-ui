@@ -1,0 +1,42 @@
+{
+  "name": "badge",
+  "version": "1.0.0",
+  "description": "Small badge component for labels, counts, and status indicators",
+  "category": "data-display",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["default", "secondary", "destructive", "outline", "success", "warning"],
+      "default": "default",
+      "description": "Visual style variant of the badge"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Badge content"
+    }
+  },
+  "template": {
+    "tag": "span",
+    "class": "{{styles.base}} {{styles.variant[props.variant]}}",
+    "children": [
+      {
+        "slot": "default"
+      }
+    ]
+  },
+  "styles": {
+    "base": "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors",
+    "variant": {
+      "default": "bg-blue-100 text-blue-800",
+      "secondary": "bg-gray-100 text-gray-800",
+      "destructive": "bg-red-100 text-red-800",
+      "outline": "border border-gray-300 text-gray-700",
+      "success": "bg-green-100 text-green-800",
+      "warning": "bg-yellow-100 text-yellow-800"
+    }
+  },
+  "accessibility": {
+    "role": "status"
+  }
+}

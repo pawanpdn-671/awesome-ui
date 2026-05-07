@@ -1,0 +1,259 @@
+{
+  "name": "pagination",
+  "version": "1.0.0",
+  "description": "Pagination component for navigating through pages with page numbers, next/previous, and ellipsis",
+  "category": "navigation",
+  "props": {
+    "currentPage": {
+      "type": "number",
+      "default": 1,
+      "description": "Current active page number"
+    },
+    "totalPages": {
+      "type": "number",
+      "default": 1,
+      "description": "Total number of pages"
+    },
+    "siblingCount": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of sibling pages to show on each side of the current page"
+    },
+    "boundaryCount": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of boundary pages to show at start and end"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Size of pagination buttons"
+    },
+    "variant": {
+      "type": "enum",
+      "values": ["default", "outlined", "ghost"],
+      "default": "default",
+      "description": "Visual style variant"
+    },
+    "showPrevNext": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to show previous/next buttons"
+    },
+    "showFirstLast": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to show first/last page buttons"
+    },
+    "prevLabel": {
+      "type": "string",
+      "default": "Previous",
+      "description": "Label for the previous button"
+    },
+    "nextLabel": {
+      "type": "string",
+      "default": "Next",
+      "description": "Label for the next button"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Custom content between prev/next buttons (replaces page numbers)"
+    }
+  },
+  "events": {
+    "onPageChange": {
+      "description": "Fired when a page is selected"
+    }
+  },
+  "template": {
+    "tag": "nav",
+    "class": "{{styles.base}}",
+    "attributes": {
+      "role": "navigation",
+      "aria-label": "Pagination"
+    },
+    "children": [
+      {
+        "if": "props.showFirstLast",
+        "then": {
+          "tag": "button",
+          "class": "{{styles.button}} {{styles.size[props.size]}} {{styles.variant[props.variant]}}",
+          "attributes": {
+            "type": "button",
+            "disabled": "{{props.currentPage === 1}}",
+            "aria-label": "First page"
+          },
+          "children": [
+            {
+              "tag": "svg",
+              "class": "h-4 w-4",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "stroke": "currentColor",
+                "stroke-width": "2",
+                "aria-hidden": "true"
+              },
+              "children": [
+                {
+                  "tag": "polyline",
+                  "attributes": {
+                    "points": "11 17 6 12 11 7"
+                  }
+                },
+                {
+                  "tag": "polyline",
+                  "attributes": {
+                    "points": "18 17 13 12 18 7"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.showPrevNext",
+        "then": {
+          "tag": "button",
+          "class": "{{styles.button}} {{styles.size[props.size]}} {{styles.variant[props.variant]}}",
+          "attributes": {
+            "type": "button",
+            "disabled": "{{props.currentPage === 1}}",
+            "aria-label": "Go to previous page"
+          },
+          "children": [
+            {
+              "tag": "svg",
+              "class": "h-4 w-4",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "stroke": "currentColor",
+                "stroke-width": "2",
+                "aria-hidden": "true"
+              },
+              "children": [
+                {
+                  "tag": "polyline",
+                  "attributes": {
+                    "points": "15 18 9 12 15 6"
+                  }
+                }
+              ]
+            },
+            {
+              "text": "{{props.prevLabel}}"
+            }
+          ]
+        }
+      },
+      {
+        "slot": "default"
+      },
+      {
+        "if": "props.showPrevNext",
+        "then": {
+          "tag": "button",
+          "class": "{{styles.button}} {{styles.size[props.size]}} {{styles.variant[props.variant]}}",
+          "attributes": {
+            "type": "button",
+            "disabled": "{{props.currentPage === props.totalPages}}",
+            "aria-label": "Go to next page"
+          },
+          "children": [
+            {
+              "text": "{{props.nextLabel}}"
+            },
+            {
+              "tag": "svg",
+              "class": "h-4 w-4",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "stroke": "currentColor",
+                "stroke-width": "2",
+                "aria-hidden": "true"
+              },
+              "children": [
+                {
+                  "tag": "polyline",
+                  "attributes": {
+                    "points": "9 18 15 12 9 6"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.showFirstLast",
+        "then": {
+          "tag": "button",
+          "class": "{{styles.button}} {{styles.size[props.size]}} {{styles.variant[props.variant]}}",
+          "attributes": {
+            "type": "button",
+            "disabled": "{{props.currentPage === props.totalPages}}",
+            "aria-label": "Last page"
+          },
+          "children": [
+            {
+              "tag": "svg",
+              "class": "h-4 w-4",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "stroke": "currentColor",
+                "stroke-width": "2",
+                "aria-hidden": "true"
+              },
+              "children": [
+                {
+                  "tag": "polyline",
+                  "attributes": {
+                    "points": "13 17 18 12 13 7"
+                  }
+                },
+                {
+                  "tag": "polyline",
+                  "attributes": {
+                    "points": "6 17 11 12 6 7"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "flex items-center gap-1",
+    "button": "inline-flex items-center gap-1 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    "size": {
+      "sm": "h-7 px-2 text-xs",
+      "md": "h-9 px-3 text-sm",
+      "lg": "h-11 px-4 text-base"
+    },
+    "variant": {
+      "default": "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300",
+      "outlined": "bg-transparent text-gray-700 hover:bg-gray-50 border border-gray-300",
+      "ghost": "bg-transparent text-gray-700 hover:bg-gray-100 border-0"
+    }
+  },
+  "accessibility": {
+    "role": "navigation",
+    "ariaAttributes": {
+      "aria-label": "Pagination"
+    },
+    "keyboardInteractions": [
+      "Arrow Left: Go to previous page",
+      "Arrow Right: Go to next page",
+      "Home: Go to first page",
+      "End: Go to last page"
+    ]
+  }
+}

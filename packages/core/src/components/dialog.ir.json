@@ -1,0 +1,241 @@
+{
+  "name": "dialog",
+  "version": "1.0.0",
+  "description": "Modal dialog component with backdrop, title, description, and action buttons",
+  "category": "overlay",
+  "props": {
+    "open": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the dialog is open"
+    },
+    "title": {
+      "type": "string",
+      "description": "Dialog title text"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description text below the title"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg", "xl", "fullscreen"],
+      "default": "md",
+      "description": "Size of the dialog"
+    },
+    "closable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the dialog can be closed by clicking backdrop or Escape"
+    },
+    "showCloseButton": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to show the X close button"
+    },
+    "centered": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the dialog is centered on screen"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Dialog body content"
+    },
+    "header": {
+      "description": "Custom header content (replaces title)"
+    },
+    "footer": {
+      "description": "Dialog footer with action buttons"
+    },
+    "trigger": {
+      "description": "Element that opens the dialog on click"
+    }
+  },
+  "events": {
+    "onOpenChange": {
+      "description": "Fired when the dialog open state changes"
+    },
+    "onClose": {
+      "description": "Fired when the dialog is closed"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}}",
+    "children": [
+      {
+        "slot": "trigger"
+      },
+      {
+        "if": "props.open",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.overlay}}",
+          "attributes": {
+            "role": "presentation"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "class": "{{styles.backdrop}}"
+            },
+            {
+              "tag": "div",
+              "class": "{{styles.positioner}} {{props.centered ? styles.centered : ''}}",
+              "children": [
+                {
+                  "tag": "div",
+                  "class": "{{styles.dialog}} {{styles.size[props.size]}}",
+                  "attributes": {
+                    "role": "dialog",
+                    "aria-modal": "true",
+                    "aria-labelledby": "dialog-title",
+                    "aria-describedby": "{{props.description ? 'dialog-description' : undefined}}"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "class": "{{styles.header}}",
+                      "children": [
+                        {
+                          "slot": "header"
+                        },
+                        {
+                          "if": "!hasSlot('header') && props.title",
+                          "then": {
+                            "tag": "h2",
+                            "class": "{{styles.title}}",
+                            "attributes": {
+                              "id": "dialog-title"
+                            },
+                            "children": [
+                              {
+                                "text": "{{props.title}}"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "if": "!hasSlot('header') && props.showCloseButton",
+                          "then": {
+                            "tag": "button",
+                            "class": "{{styles.closeButton}}",
+                            "attributes": {
+                              "type": "button",
+                              "aria-label": "Close dialog"
+                            },
+                            "children": [
+                              {
+                                "tag": "svg",
+                                "class": "h-4 w-4",
+                                "attributes": {
+                                  "viewBox": "0 0 24 24",
+                                  "fill": "none",
+                                  "stroke": "currentColor",
+                                  "stroke-width": "2"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "line",
+                                    "attributes": {
+                                      "x1": "18",
+                                      "y1": "6",
+                                      "x2": "6",
+                                      "y2": "18"
+                                    }
+                                  },
+                                  {
+                                    "tag": "line",
+                                    "attributes": {
+                                      "x1": "6",
+                                      "y1": "6",
+                                      "x2": "18",
+                                      "y2": "18"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "if": "!hasSlot('header') && props.description",
+                      "then": {
+                        "tag": "div",
+                        "class": "{{styles.description}}",
+                        "children": [
+                          {
+                            "text": "{{props.description}}"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "tag": "div",
+                      "class": "{{styles.body}}",
+                      "children": [
+                        {
+                          "slot": "default"
+                        }
+                      ]
+                    },
+                    {
+                      "if": "hasSlot('footer')",
+                      "then": {
+                        "tag": "div",
+                        "class": "{{styles.footer}}",
+                        "children": [
+                          {
+                            "slot": "footer"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "",
+    "overlay": "fixed inset-0 z-50",
+    "backdrop": "absolute inset-0 bg-black/50 backdrop-blur-sm",
+    "positioner": "fixed inset-0 flex items-start justify-center",
+    "centered": "items-center",
+    "dialog": "relative z-10 flex flex-col rounded-lg bg-white shadow-xl max-h-[85vh]",
+    "size": {
+      "sm": "w-full max-w-sm",
+      "md": "w-full max-w-md",
+      "lg": "w-full max-w-lg",
+      "xl": "w-full max-w-xl",
+      "fullscreen": "w-full max-w-full mx-4"
+    },
+    "header": "flex items-center justify-between border-b border-gray-100 px-6 py-4",
+    "title": "text-lg font-semibold text-gray-900",
+    "closeButton": "inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors",
+    "description": "px-6 pt-2 text-sm text-gray-500",
+    "body": "flex-1 overflow-y-auto px-6 py-4 text-sm text-gray-700",
+    "footer": "flex items-center justify-end gap-3 border-t border-gray-100 px-6 py-4"
+  },
+  "accessibility": {
+    "role": "dialog",
+    "ariaAttributes": {
+      "aria-modal": "true",
+      "aria-labelledby": "dialog-title",
+      "aria-describedby": "{{props.description ? 'dialog-description' : undefined}}"
+    },
+    "keyboardInteractions": [
+      "Escape: Close the dialog",
+      "Tab: Move focus through dialog elements",
+      "Shift+Tab: Move focus backward"
+    ]
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "name": "loading",
+  "version": "1.0.0",
+  "description": "Loading state component with spinner, progress bar, and overlay variants for async operations",
+  "category": "feedback",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["spinner", "dots", "pulse", "progress", "ring"],
+      "default": "spinner",
+      "description": "Visual style of the loading indicator"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Size of the loading indicator"
+    },
+    "label": {
+      "type": "string",
+      "description": "Text label displayed below the loading indicator"
+    },
+    "overlay": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to show as a full-area overlay"
+    },
+    "progress": {
+      "type": "number",
+      "description": "Progress value 0-100 (only for progress variant)"
+    },
+    "color": {
+      "type": "enum",
+      "values": ["primary", "secondary", "white"],
+      "default": "primary",
+      "description": "Color variant of the loading indicator"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Custom content inside the loading area (replaces default indicator)"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{props.overlay ? styles.overlay : ''}}",
+    "attributes": {
+      "role": "status",
+      "aria-label": "{{props.label || 'Loading'}}"
+    },
+    "children": [
+      {
+        "if": "props.overlay",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.backdrop}}"
+        }
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.content}}",
+        "children": [
+          {
+            "slot": "default"
+          },
+          {
+            "if": "!hasSlot('default') && props.variant === 'spinner'",
+            "then": {
+              "tag": "svg",
+              "class": "{{styles.spinner}} {{styles.size[props.size]}} {{styles.color[props.color]}}",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "aria-hidden": "true"
+              },
+              "children": [
+                {
+                  "tag": "circle",
+                  "attributes": {
+                    "cx": "12",
+                    "cy": "12",
+                    "r": "10",
+                    "stroke": "currentColor",
+                    "stroke-width": "4",
+                    "opacity": "0.25"
+                  }
+                },
+                {
+                  "tag": "path",
+                  "attributes": {
+                    "d": "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z",
+                    "fill": "currentColor",
+                    "opacity": "0.75"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "if": "!hasSlot('default') && props.variant === 'dots'",
+            "then": {
+              "tag": "div",
+              "class": "{{styles.dots}} {{styles.size[props.size]}}",
+              "children": [
+                {
+                  "tag": "span",
+                  "class": "{{styles.dot}} {{styles.color[props.color]}}"
+                },
+                {
+                  "tag": "span",
+                  "class": "{{styles.dot}} {{styles.color[props.color]}}"
+                },
+                {
+                  "tag": "span",
+                  "class": "{{styles.dot}} {{styles.color[props.color]}}"
+                }
+              ]
+            }
+          },
+          {
+            "if": "!hasSlot('default') && props.variant === 'pulse'",
+            "then": {
+              "tag": "div",
+              "class": "{{styles.pulse}} {{styles.size[props.size]}} {{styles.color[props.color]}}"
+            }
+          },
+          {
+            "if": "!hasSlot('default') && props.variant === 'ring'",
+            "then": {
+              "tag": "svg",
+              "class": "{{styles.ring}} {{styles.size[props.size]}} {{styles.color[props.color]}}",
+              "attributes": {
+                "viewBox": "0 0 24 24",
+                "fill": "none",
+                "aria-hidden": "true"
+              },
+              "children": [
+                {
+                  "tag": "circle",
+                  "attributes": {
+                    "cx": "12",
+                    "cy": "12",
+                    "r": "10",
+                    "stroke": "currentColor",
+                    "stroke-width": "2",
+                    "stroke-dasharray": "31.4 31.4",
+                    "stroke-linecap": "round"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "if": "!hasSlot('default') && props.variant === 'progress'",
+            "then": {
+              "tag": "div",
+              "class": "{{styles.progressTrack}}",
+              "children": [
+                {
+                  "tag": "div",
+                  "class": "{{styles.progressBar}} {{styles.color[props.color]}}",
+                  "attributes": {
+                    "style": "width: {{props.progress || 0}}%"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "if": "props.label",
+            "then": {
+              "tag": "p",
+              "class": "{{styles.label}}",
+              "children": [
+                {
+                  "text": "{{props.label}}"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "base": "flex items-center justify-center",
+    "overlay": "fixed inset-0 z-50",
+    "backdrop": "absolute inset-0 bg-white/80 backdrop-blur-sm",
+    "content": "relative flex flex-col items-center gap-3",
+    "size": {
+      "sm": "h-4 w-4",
+      "md": "h-8 w-8",
+      "lg": "h-12 w-12"
+    },
+    "color": {
+      "primary": "text-blue-600",
+      "secondary": "text-gray-500",
+      "white": "text-white"
+    },
+    "spinner": "animate-spin",
+    "dots": "flex items-center gap-1",
+    "dot": "h-2 w-2 rounded-full animate-bounce [&:nth-child(2)]:delay-100 [&:nth-child(3)]:delay-200",
+    "pulse": "rounded-full animate-pulse",
+    "ring": "animate-spin",
+    "progressTrack": "h-2 w-full min-w-[200px] overflow-hidden rounded-full bg-gray-200",
+    "progressBar": "h-full rounded-full transition-all duration-500",
+    "label": "text-sm text-gray-500"
+  },
+  "accessibility": {
+    "role": "status",
+    "ariaAttributes": {
+      "aria-live": "polite",
+      "aria-busy": "true",
+      "aria-label": "{{props.label || 'Loading'}}"
+    }
+  }
+}

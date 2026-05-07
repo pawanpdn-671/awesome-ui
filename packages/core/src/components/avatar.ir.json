@@ -1,0 +1,124 @@
+{
+  "name": "avatar",
+  "version": "1.0.0",
+  "description": "Avatar component for displaying user profile images with fallback initials and status indicator",
+  "category": "data-display",
+  "props": {
+    "src": {
+      "type": "string",
+      "description": "Image source URL"
+    },
+    "alt": {
+      "type": "string",
+      "default": "",
+      "description": "Alt text for the avatar image"
+    },
+    "fallback": {
+      "type": "string",
+      "description": "Fallback text (initials) shown when no image or image fails to load"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["xs", "sm", "md", "lg", "xl"],
+      "default": "md",
+      "description": "Size of the avatar"
+    },
+    "status": {
+      "type": "enum",
+      "values": ["online", "offline", "away", "busy"],
+      "description": "Optional status indicator dot"
+    },
+    "shape": {
+      "type": "enum",
+      "values": ["circle", "square", "rounded"],
+      "default": "circle",
+      "description": "Shape of the avatar"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{styles.size[props.size]}} {{styles.shape[props.shape]}}",
+    "children": [
+      {
+        "if": "props.src",
+        "then": {
+          "tag": "img",
+          "class": "{{styles.image}} {{styles.shape[props.shape]}}",
+          "attributes": {
+            "src": "{{props.src}}",
+            "alt": "{{props.alt}}",
+            "onerror": "this.style.display='none';this.nextElementSibling.style.display='flex'"
+          }
+        }
+      },
+      {
+        "if": "props.fallback",
+        "then": {
+          "tag": "span",
+          "class": "{{styles.fallback}}",
+          "children": [
+            {
+              "text": "{{props.fallback}}"
+            }
+          ]
+        },
+        "else": {
+          "tag": "span",
+          "class": "{{styles.fallback}}",
+          "children": [
+            {
+              "text": "?"
+            }
+          ]
+        }
+      },
+      {
+        "if": "props.status",
+        "then": {
+          "tag": "span",
+          "class": "{{styles.status}} {{styles.statusDot[props.status]}} {{styles.statusSize[props.size]}}",
+          "attributes": {
+            "aria-label": "{{props.status}}"
+          }
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "relative inline-flex items-center justify-center overflow-hidden bg-gray-100 text-gray-600 font-medium",
+    "size": {
+      "xs": "h-6 w-6 text-xs",
+      "sm": "h-8 w-8 text-sm",
+      "md": "h-10 w-10 text-base",
+      "lg": "h-12 w-12 text-lg",
+      "xl": "h-16 w-16 text-xl"
+    },
+    "shape": {
+      "circle": "rounded-full",
+      "square": "rounded-none",
+      "rounded": "rounded-lg"
+    },
+    "image": "h-full w-full object-cover",
+    "fallback": "flex items-center justify-center",
+    "status": "absolute bottom-0 right-0 block rounded-full border-2 border-white",
+    "statusDot": {
+      "online": "bg-green-500",
+      "offline": "bg-gray-400",
+      "away": "bg-yellow-500",
+      "busy": "bg-red-500"
+    },
+    "statusSize": {
+      "xs": "h-1.5 w-1.5",
+      "sm": "h-2 w-2",
+      "md": "h-2.5 w-2.5",
+      "lg": "h-3 w-3",
+      "xl": "h-3.5 w-3.5"
+    }
+  },
+  "accessibility": {
+    "role": "img",
+    "ariaAttributes": {
+      "aria-label": "{{props.alt}}"
+    }
+  }
+}

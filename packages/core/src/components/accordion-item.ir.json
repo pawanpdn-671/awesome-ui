@@ -1,0 +1,123 @@
+{
+  "name": "accordion-item",
+  "version": "1.0.0",
+  "description": "Individual accordion item with trigger and content sections",
+  "category": "layout",
+  "props": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Unique value identifying this accordion item"
+    },
+    "title": {
+      "type": "string",
+      "description": "Trigger title text"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the accordion item is disabled"
+    }
+  },
+  "slots": {
+    "trigger": {
+      "description": "Custom trigger content (replaces title text)"
+    },
+    "default": {
+      "description": "Collapsible content area"
+    }
+  },
+  "events": {},
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}}",
+    "children": [
+      {
+        "tag": "button",
+        "class": "{{styles.trigger}} {{props.disabled ? styles.disabled : ''}}",
+        "attributes": {
+          "type": "button",
+          "disabled": "{{props.disabled}}",
+          "aria-expanded": "{{isOpen}}",
+          "aria-controls": "accordion-content-{{props.value}}"
+        },
+        "children": [
+          {
+            "slot": "trigger"
+          },
+          {
+            "if": "!hasSlot('trigger')",
+            "then": {
+              "tag": "span",
+              "class": "{{styles.titleText}}",
+              "children": [
+                {
+                  "text": "{{props.title}}"
+                }
+              ]
+            }
+          },
+          {
+            "tag": "svg",
+            "class": "{{styles.chevron}} {{isOpen ? styles.chevronOpen : ''}}",
+            "attributes": {
+              "viewBox": "0 0 24 24",
+              "fill": "none",
+              "stroke": "currentColor",
+              "stroke-width": "2",
+              "aria-hidden": "true"
+            },
+            "children": [
+              {
+                "tag": "polyline",
+                "attributes": {
+                  "points": "6 9 12 15 18 9"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.content}}",
+        "attributes": {
+          "id": "accordion-content-{{props.value}}",
+          "role": "region",
+          "aria-labelledby": "accordion-trigger-{{props.value}}"
+        },
+        "children": [
+          {
+            "tag": "div",
+            "class": "{{styles.contentInner}}",
+            "children": [
+              {
+                "slot": "default"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "base": "",
+    "trigger": "flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-left text-gray-900 hover:bg-gray-50 transition-colors",
+    "disabled": "opacity-50 cursor-not-allowed hover:bg-transparent",
+    "titleText": "flex-1",
+    "chevron": "h-4 w-4 shrink-0 text-gray-500 transition-transform duration-200",
+    "chevronOpen": "rotate-180",
+    "content": "overflow-hidden",
+    "contentInner": "px-4 pb-3 pt-0 text-sm text-gray-600"
+  },
+  "accessibility": {
+    "role": "region",
+    "ariaAttributes": {
+      "aria-labelledby": "accordion-trigger-{{props.value}}"
+    },
+    "keyboardInteractions": [
+      "Enter/Space: Toggle accordion item",
+      "Tab: Move focus between accordion triggers"
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "name": "card",
+  "version": "1.0.0",
+  "description": "Container card component with header, body, and footer sections",
+  "category": "layout",
+  "props": {
+    "padding": {
+      "type": "enum",
+      "values": ["none", "sm", "md", "lg"],
+      "default": "md",
+      "description": "Padding size for the card body"
+    },
+    "variant": {
+      "type": "enum",
+      "values": ["default", "outlined", "elevated", "ghost"],
+      "default": "default",
+      "description": "Visual style variant of the card"
+    }
+  },
+  "slots": {
+    "header": {
+      "description": "Card header content"
+    },
+    "default": {
+      "description": "Card body content"
+    },
+    "footer": {
+      "description": "Card footer content"
+    },
+    "image": {
+      "description": "Card image displayed at the top"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{styles.variant[props.variant]}} {{styles.padding[props.padding]}}",
+    "children": [
+      {
+        "slot": "image"
+      },
+      {
+        "if": "hasSlot('header')",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.header}}",
+          "children": [
+            {
+              "slot": "header"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.body}}",
+        "children": [
+          {
+            "slot": "default"
+          }
+        ]
+      },
+      {
+        "if": "hasSlot('footer')",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.footer}}",
+          "children": [
+            {
+              "slot": "footer"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styles": {
+    "base": "rounded-lg bg-white text-gray-900",
+    "variant": {
+      "default": "border border-gray-200 shadow-sm",
+      "outlined": "border-2 border-gray-200",
+      "elevated": "border-0 shadow-md hover:shadow-lg transition-shadow",
+      "ghost": "border-0"
+    },
+    "padding": {
+      "none": "",
+      "sm": "p-3",
+      "md": "p-6",
+      "lg": "p-8"
+    },
+    "header": "border-b border-gray-100 pb-4 mb-4",
+    "body": "",
+    "footer": "border-t border-gray-100 pt-4 mt-4"
+  },
+  "accessibility": {
+    "role": "article"
+  }
+}

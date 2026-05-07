@@ -1,0 +1,122 @@
+{
+  "name": "button",
+  "version": "1.0.0",
+  "description": "Versatile button component with variants, sizes, loading state, and icon support",
+  "category": "primitive",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["primary", "secondary", "outline", "ghost", "destructive"],
+      "default": "primary",
+      "description": "Visual style variant of the button"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Size of the button"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the button is disabled"
+    },
+    "loading": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the button is in a loading state"
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the button should take up the full width of its container"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Button label content"
+    },
+    "icon": {
+      "description": "Optional icon to display before the label"
+    },
+    "trailingIcon": {
+      "description": "Optional icon to display after the label"
+    }
+  },
+  "events": {
+    "onClick": {
+      "description": "Fired when the button is clicked (not fired when disabled or loading)"
+    },
+    "onFocus": {
+      "description": "Fired when the button receives focus"
+    },
+    "onBlur": {
+      "description": "Fired when the button loses focus"
+    }
+  },
+  "template": {
+    "tag": "button",
+    "attributes": {
+      "type": "button",
+      "disabled": "{{props.disabled || props.loading}}"
+    },
+    "class": "{{styles.base}} {{styles.variant[props.variant]}} {{styles.size[props.size]}} {{props.fullWidth ? styles.fullWidth : ''}}",
+    "children": [
+      {
+        "if": "props.loading",
+        "then": {
+          "tag": "span",
+          "class": "{{styles.spinner}}",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      },
+      {
+        "slot": "icon"
+      },
+      {
+        "tag": "span",
+        "class": "{{styles.label}}",
+        "children": [
+          {
+            "slot": "default",
+            "fallback": "Button"
+          }
+        ]
+      },
+      {
+        "slot": "trailingIcon"
+      }
+    ]
+  },
+  "styles": {
+    "base": "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    "variant": {
+      "primary": "bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-500",
+      "secondary": "bg-gray-100 text-gray-900 shadow-sm hover:bg-gray-200 focus-visible:ring-gray-400",
+      "outline": "border border-gray-300 bg-transparent text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:ring-gray-400",
+      "ghost": "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+      "destructive": "bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-500"
+    },
+    "size": {
+      "sm": "h-8 px-3 text-sm",
+      "md": "h-10 px-4 text-sm",
+      "lg": "h-12 px-6 text-base"
+    },
+    "fullWidth": "w-full",
+    "spinner": "h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent",
+    "label": "truncate"
+  },
+  "accessibility": {
+    "role": "button",
+    "ariaAttributes": {
+      "aria-disabled": "{{props.disabled}}",
+      "aria-busy": "{{props.loading}}"
+    },
+    "keyboardInteractions": [
+      "Enter: Activate the button",
+      "Space: Activate the button"
+    ]
+  }
+}

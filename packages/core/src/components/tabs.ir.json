@@ -1,0 +1,79 @@
+{
+  "name": "tabs",
+  "version": "1.0.0",
+  "description": "Tabbed interface component with horizontal and vertical orientations",
+  "category": "navigation",
+  "props": {
+    "defaultValue": {
+      "type": "string",
+      "description": "Value of the initially selected tab"
+    },
+    "orientation": {
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "Orientation of the tabs"
+    },
+    "variant": {
+      "type": "enum",
+      "values": ["underline", "pills", "enclosed", "ghost"],
+      "default": "underline",
+      "description": "Visual style variant"
+    },
+    "activationMode": {
+      "type": "enum",
+      "values": ["auto", "manual"],
+      "default": "auto",
+      "description": "Whether tab activates on focus or on click"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Tab list and tab panel components"
+    },
+    "extra": {
+      "description": "Extra content displayed alongside the tab list (e.g., actions button)"
+    }
+  },
+  "events": {
+    "onValueChange": {
+      "description": "Fired when the selected tab changes"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}} {{styles.orientation[props.orientation]}}",
+    "children": [
+      {
+        "tag": "div",
+        "class": "{{styles.tabList}}",
+        "attributes": {
+          "role": "tablist",
+          "aria-orientation": "{{props.orientation}}"
+        },
+        "children": [
+          {
+            "slot": "default"
+          }
+        ]
+      },
+      {
+        "slot": "extra"
+      }
+    ]
+  },
+  "styles": {
+    "base": "w-full",
+    "orientation": {
+      "horizontal": "",
+      "vertical": "flex gap-4"
+    },
+    "tabList": "flex"
+  },
+  "accessibility": {
+    "role": "region",
+    "ariaAttributes": {
+      "aria-label": "Tabs"
+    }
+  }
+}

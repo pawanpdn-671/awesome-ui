@@ -1,0 +1,126 @@
+{
+  "name": "tooltip",
+  "version": "1.0.0",
+  "description": "Tooltip component that shows contextual information on hover, focus, or click",
+  "category": "overlay",
+  "props": {
+    "content": {
+      "type": "string",
+      "description": "Tooltip text content"
+    },
+    "side": {
+      "type": "enum",
+      "values": ["top", "bottom", "left", "right"],
+      "default": "top",
+      "description": "Which side the tooltip appears on"
+    },
+    "align": {
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "center",
+      "description": "Alignment of the tooltip relative to the trigger"
+    },
+    "delay": {
+      "type": "number",
+      "default": 300,
+      "description": "Delay in ms before showing the tooltip"
+    },
+    "closeDelay": {
+      "type": "number",
+      "default": 100,
+      "description": "Delay in ms before hiding the tooltip"
+    },
+    "maxWidth": {
+      "type": "string",
+      "default": "14rem",
+      "description": "Maximum width of the tooltip"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Trigger element that the tooltip wraps around"
+    },
+    "content": {
+      "description": "Custom content inside the tooltip (replaces content prop)"
+    }
+  },
+  "events": {
+    "onOpenChange": {
+      "description": "Fired when the tooltip visibility changes"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.base}}",
+    "attributes": {
+      "data-side": "{{props.side}}",
+      "data-align": "{{props.align}}"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "class": "{{styles.triggerWrapper}}",
+        "attributes": {
+          "aria-describedby": "tooltip-content",
+          "tabindex": "0"
+        },
+        "children": [
+          {
+            "slot": "default"
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.tooltip}} {{styles.side[props.side]}} {{styles.align[props.align]}}",
+        "attributes": {
+          "id": "tooltip-content",
+          "role": "tooltip",
+          "style": "max-width: {{props.maxWidth}}"
+        },
+        "children": [
+          {
+            "slot": "content"
+          },
+          {
+            "if": "!hasSlot('content')",
+            "then": {
+              "text": "{{props.content}}"
+            }
+          },
+          {
+            "tag": "div",
+            "class": "{{styles.arrow}}"
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "base": "relative inline-flex",
+    "triggerWrapper": "inline-flex",
+    "tooltip": "absolute z-50 rounded-md bg-gray-900 px-2.5 py-1.5 text-xs text-white shadow-sm",
+    "side": {
+      "top": "bottom-full left-1/2 mb-2",
+      "bottom": "top-full left-1/2 mt-2",
+      "left": "right-full top-1/2 mr-2",
+      "right": "left-full top-1/2 ml-2"
+    },
+    "align": {
+      "start": "",
+      "center": "-translate-x-1/2",
+      "end": ""
+    },
+    "arrow": "absolute w-2 h-2 bg-gray-900 rotate-45"
+  },
+  "accessibility": {
+    "role": "tooltip",
+    "ariaAttributes": {
+      "aria-describedby": "tooltip-content"
+    },
+    "keyboardInteractions": [
+      "Tab: Focus trigger element to show tooltip",
+      "Escape: Hide tooltip"
+    ]
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "name": "table",
+  "version": "1.0.0",
+  "description": "Data table component with sortable columns, loading state, and empty state",
+  "category": "data-display",
+  "props": {
+    "columns": {
+      "type": "array",
+      "default": [],
+      "description": "Column definitions with key, label, and optional sortable flag"
+    },
+    "rows": {
+      "type": "array",
+      "default": [],
+      "description": "Row data array"
+    },
+    "sortable": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether columns are sortable"
+    },
+    "striped": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to show alternating row colors"
+    },
+    "hoverable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether rows highlight on hover"
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to use compact padding"
+    },
+    "loading": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the table is in a loading state"
+    },
+    "emptyText": {
+      "type": "string",
+      "default": "No data available",
+      "description": "Text shown when there are no rows"
+    }
+  },
+  "slots": {
+    "header": {
+      "description": "Custom content above the table (e.g., search, filter controls)"
+    },
+    "empty": {
+      "description": "Custom content shown when there are no rows"
+    },
+    "loading": {
+      "description": "Custom loading indicator"
+    },
+    "footer": {
+      "description": "Custom content below the table (e.g., pagination)"
+    }
+  },
+  "events": {
+    "onSort": {
+      "description": "Fired when a sortable column header is clicked, with column key and direction"
+    },
+    "onRowClick": {
+      "description": "Fired when a row is clicked"
+    }
+  },
+  "template": {
+    "tag": "div",
+    "class": "{{styles.wrapper}}",
+    "children": [
+      {
+        "slot": "header"
+      },
+      {
+        "if": "props.loading",
+        "then": {
+          "tag": "div",
+          "class": "{{styles.loadingOverlay}}",
+          "children": [
+            {
+              "slot": "loading"
+            },
+            {
+              "tag": "div",
+              "class": "{{styles.spinner}}"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.tableWrapper}}",
+        "children": [
+          {
+            "tag": "table",
+            "class": "{{styles.table}}",
+            "children": [
+              {
+                "tag": "thead",
+                "class": "{{styles.thead}}",
+                "children": [
+                  {
+                    "tag": "tr",
+                    "children": [
+                      {
+                        "each": "props.columns",
+                        "as": "col",
+                        "key": "col.key",
+                        "children": [
+                          {
+                            "tag": "th",
+                            "class": "{{styles.th}} {{props.sortable && col.sortable ? styles.sortable : ''}}",
+                            "attributes": {
+                              "scope": "col",
+                              "aria-sort": "{{col.sortDirection}}"
+                            },
+                            "children": [
+                              {
+                                "text": "{{col.label}}"
+                              },
+                              {
+                                "if": "props.sortable && col.sortable",
+                                "then": {
+                                  "tag": "span",
+                                  "class": "{{styles.sortIcon}}",
+                                  "children": [
+                                    {
+                                      "text": "{{col.sortDirection === 'asc' ? ' \\u25B2' : col.sortDirection === 'desc' ? ' \\u25BC' : ' \\u25B4\\u25BE'}}"
+                                    }
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "tbody",
+                "class": "{{styles.tbody}}",
+                "children": [
+                  {
+                    "if": "props.rows.length === 0",
+                    "then": {
+                      "tag": "tr",
+                      "children": [
+                        {
+                          "tag": "td",
+                          "class": "{{styles.emptyCell}}",
+                          "attributes": {
+                            "colspan": "{{props.columns.length}}"
+                          },
+                          "children": [
+                            {
+                              "slot": "empty"
+                            },
+                            {
+                              "text": "{{props.emptyText}}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "else": {
+                      "tag": null,
+                      "children": []
+                    }
+                  },
+                  {
+                    "each": "props.rows",
+                    "as": "row",
+                    "key": "row.id",
+                    "children": [
+                      {
+                        "tag": "tr",
+                        "class": "{{styles.row}} {{props.striped ? styles.striped : ''}} {{props.hoverable ? styles.hoverable : ''}}",
+                        "children": [
+                          {
+                            "each": "props.columns",
+                            "as": "col",
+                            "key": "col.key",
+                            "children": [
+                              {
+                                "tag": "td",
+                                "class": "{{styles.td}} {{props.compact ? styles.compact : ''}}",
+                                "children": [
+                                  {
+                                    "text": "{{row[col.key]}}"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "footer"
+      }
+    ]
+  },
+  "styles": {
+    "wrapper": "w-full",
+    "loadingOverlay": "relative",
+    "spinner": "absolute inset-0 flex items-center justify-center bg-white/60",
+    "tableWrapper": "overflow-x-auto rounded-lg border border-gray-200",
+    "table": "min-w-full divide-y divide-gray-200",
+    "thead": "bg-gray-50",
+    "th": "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600",
+    "sortable": "cursor-pointer select-none hover:text-gray-900",
+    "sortIcon": "ml-1 text-gray-400",
+    "tbody": "divide-y divide-gray-100 bg-white",
+    "row": "",
+    "striped": "even:bg-gray-50",
+    "hoverable": "hover:bg-gray-50 cursor-pointer transition-colors",
+    "th": "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600",
+    "td": "whitespace-nowrap px-4 py-3 text-sm text-gray-700",
+    "compact": "px-3 py-2",
+    "emptyCell": "px-4 py-12 text-center text-sm text-gray-500"
+  },
+  "accessibility": {
+    "role": "table",
+    "ariaAttributes": {
+      "aria-busy": "{{props.loading}}",
+      "aria-rowcount": "{{props.rows.length}}",
+      "aria-colcount": "{{props.columns.length}}"
+    },
+    "keyboardInteractions": [
+      "Enter/Space: Sort column (when sortable)",
+      "Enter: Select/click row"
+    ]
+  }
+}

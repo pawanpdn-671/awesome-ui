@@ -1,0 +1,134 @@
+{
+  "name": "menubar",
+  "version": "1.0.0",
+  "description": "Horizontal menu bar component with dropdown items, icons, and keyboard navigation",
+  "category": "navigation",
+  "props": {
+    "items": {
+      "type": "array",
+      "default": [],
+      "description": "Array of menu items with label, icon, children for submenus, and optional divider"
+    },
+    "orientation": {
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "Orientation of the menu bar"
+    }
+  },
+  "slots": {
+    "default": {
+      "description": "Custom menu items (replaces items prop)"
+    },
+    "start": {
+      "description": "Content at the start of the menu bar (e.g., logo)"
+    },
+    "end": {
+      "description": "Content at the end of the menu bar (e.g., actions, profile)"
+    }
+  },
+  "events": {
+    "onSelect": {
+      "description": "Fired when a menu item is selected"
+    }
+  },
+  "template": {
+    "tag": "nav",
+    "class": "{{styles.base}} {{styles.orientation[props.orientation]}}",
+    "attributes": {
+      "role": "menubar",
+      "aria-label": "Menu bar"
+    },
+    "children": [
+      {
+        "slot": "start"
+      },
+      {
+        "tag": "div",
+        "class": "{{styles.menuList}}",
+        "children": [
+          {
+            "slot": "default"
+          },
+          {
+            "each": "props.items",
+            "as": "item",
+            "key": "item.label",
+            "children": [
+              {
+                "tag": "div",
+                "class": "{{styles.menuItem}}",
+                "children": [
+                  {
+                    "tag": "button",
+                    "class": "{{styles.trigger}}",
+                    "attributes": {
+                      "role": "menuitem",
+                      "type": "button",
+                      "aria-haspopup": "{{item.children ? 'true' : 'false'}}",
+                      "aria-expanded": "{{item.open}}"
+                    },
+                    "children": [
+                      {
+                        "text": "{{item.label}}"
+                      },
+                      {
+                        "if": "item.children",
+                        "then": {
+                          "tag": "svg",
+                          "class": "{{styles.chevron}}",
+                          "attributes": {
+                            "viewBox": "0 0 24 24",
+                            "fill": "none",
+                            "stroke": "currentColor",
+                            "stroke-width": "2",
+                            "aria-hidden": "true"
+                          },
+                          "children": [
+                            {
+                              "tag": "polyline",
+                              "attributes": {
+                                "points": "6 9 12 15 18 9"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "end"
+      }
+    ]
+  },
+  "styles": {
+    "base": "flex items-center bg-white",
+    "orientation": {
+      "horizontal": "flex-row border-b border-gray-200 px-2 py-1",
+      "vertical": "flex-col border-r border-gray-200 px-1 py-2"
+    },
+    "menuList": "flex items-center gap-1",
+    "menuItem": "relative",
+    "trigger": "inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors",
+    "chevron": "h-3 w-3 text-gray-500"
+  },
+  "accessibility": {
+    "role": "menubar",
+    "ariaAttributes": {
+      "aria-label": "Menu bar",
+      "aria-orientation": "{{props.orientation}}"
+    },
+    "keyboardInteractions": [
+      "Arrow Left/Right: Navigate between menu items",
+      "Arrow Up/Down: Open submenu or navigate submenu items",
+      "Enter/Space: Activate menu item",
+      "Escape: Close submenu"
+    ]
+  }
+}
