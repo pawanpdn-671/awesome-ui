@@ -29,10 +29,6 @@ interface IRNode {
   props?: Record<string, string>;
 }
 
-const HTML_TO_SOLID: Record<string, string> = {
-  svg: 'svg',
-};
-
 export class SolidTranspiler extends BaseTranspiler {
   readonly framework = 'solid';
   readonly fileExtension = '.tsx';
@@ -260,7 +256,6 @@ export class SolidTranspiler extends BaseTranspiler {
   private generateLoop(node: IRNode, styles: IStyleMap, depth: number): string {
     const collection = this.convertExprToSolid(node.each!);
     const itemVar = node.as ?? 'item';
-    const keyExpr = node.key ? this.convertExprToSolid(node.key) : `${itemVar}`;
 
     const children = node.children ?? [];
     const childrenJSX = children

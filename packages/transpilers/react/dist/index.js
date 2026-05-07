@@ -93,7 +93,7 @@ function formatDefault(value) {
   }
   return JSON.stringify(value);
 }
-function generateJSX(node, styles, depth) {
+function generateJSX(node, styles, depth, isRoot = false) {
   if (node.if !== void 0) {
     return generateConditional(node, styles, depth);
   }
@@ -110,18 +110,18 @@ function generateJSX(node, styles, depth) {
     return generateComponentRef(node, depth);
   }
   if (node.tag !== void 0) {
-    return generateElement(node, styles, depth);
+    return generateElement(node, styles, depth, isRoot);
   }
   return "";
 }
-function generateElement(node, styles, depth) {
+function generateElement(node, styles, depth, isRoot) {
   const tag = node.tag;
-  const attrs = buildAttributes(node);
+  const attrs = buildAttributes(node, styles, isRoot);
   const children = node.children;
   if (!children || children.length === 0) {
     return indent(`<${tag}${attrs} />`, depth);
   }
-  const childrenJSX = children.map((child) => generateJSX(child, styles, depth + 1)).filter((s) => s.length > 0).join("\n");
+  const childrenJSX = children.map((child) => generateJSX(child, styles, depth + 1, false)).filter((s) => s.length > 0).join("\n");
   return [
     indent(`<${tag}${attrs}>`, depth),
     childrenJSX,
@@ -152,11 +152,11 @@ function generateSlot(node, depth) {
   }
   return indent(`{${propName}}`, depth);
 }
-function generateConditional(node, styles, depth) {
+function generateConditional(node, styles, depth, _isRoot) {
   const condition = convertExprToReact(node.if);
-  const thenJSX = node.then ? generateJSX(node.then, styles, 0) : "";
+  const thenJSX = node.then ? generateJSX(node.then, styles, 0, false) : "";
   if (node.else) {
-    const elseJSX = generateJSX(node.else, styles, 0);
+    const elseJSX = generateJSX(node.else, styles, 0, false);
     return indent(`{${condition} ? (
 ${indent(thenJSX, 1)}
 ) : (
@@ -167,12 +167,12 @@ ${indent(elseJSX, 1)}
 ${indent(thenJSX, 1)}
 )}`, depth);
 }
-function generateLoop(node, styles, depth) {
+function generateLoop(node, styles, depth, _isRoot) {
   const collection = convertExprToReact(node.each);
   const itemVar = node.as ?? "item";
   const keyExpr = node.key ? convertExprToReact(node.key) : `index`;
   const needsIndex = !node.key;
-  const childrenJSX = (node.children ?? []).map((child) => generateJSX(child, styles, depth + 2)).join("\n");
+  const childrenJSX = (node.children ?? []).map((child) => generateJSX(child, styles, depth + 2, false)).join("\n");
   const params = needsIndex ? `(${itemVar}, index)` : `(${itemVar})`;
   return indent(
     `{${collection}.map(${params} => (
@@ -197,10 +197,10 @@ function generateComponentRef(node, depth) {
   }).join(" ");
   return indent(`<${name} ${propsStr} />`, depth);
 }
-function buildAttributes(node, _styles) {
+function buildAttributes(node, _styles, isRoot) {
   const parts = [];
   if (node.class) {
-    const classExpr = buildClassExpression(node.class);
+    const classExpr = buildClassExpression(node.class, isRoot);
     parts.push(`className={${classExpr}}`);
   }
   if (node.attributes) {
@@ -227,21 +227,58 @@ function buildAttributes(node, _styles) {
   if (parts.length === 0) return "";
   return " " + parts.join(" ");
 }
-function buildClassExpression(classStr) {
+function buildClassExpression(classStr, includeClassName) {
   const segments = parseExpression(classStr);
   if (segments.length === 1 && segments[0]?.type === "static") {
-    return `'${segments[0].value.trim()}'`;
+    const staticVal = segments[0].value.trim();
+    if (includeClassName && staticVal) {
+      return `cn('${staticVal}', className)`;
+    }
+    if (includeClassName) {
+      return "className";
+    }
+    return `'${staticVal}'`;
   }
   if (segments.length === 1 && segments[0]?.type === "expression") {
-    return convertExprToReact(segments[0].value);
-  }
-  const parts = segments.map((seg) => {
-    if (seg.type === "expression") {
-      return `\${${convertExprToReact(seg.value)}}`;
+    const expr = convertExprToReact(segments[0].value);
+    if (includeClassName) {
+      return `cn(${expr}, className)`;
     }
-    return seg.value;
-  });
-  return `\`${parts.join("")}\`.trim()`;
+    return expr;
+  }
+  const args = [];
+  let staticBuf = "";
+  for (const seg of segments) {
+    if (seg.type === "static") {
+      staticBuf += seg.value;
+    } else {
+      if (staticBuf.trim()) {
+        args.push(`'${staticBuf.trim()}'`);
+      }
+      staticBuf = "";
+      args.push(toCnArg(convertExprToReact(seg.value)));
+    }
+  }
+  if (staticBuf.trim()) {
+    args.push(`'${staticBuf.trim()}'`);
+  }
+  if (includeClassName) {
+    args.push("className");
+  }
+  if (args.length === 0) {
+    return includeClassName ? "className" : "''";
+  }
+  if (args.length === 1) {
+    return args[0];
+  }
+  return `cn(${args.join(", ")})`;
+}
+function toCnArg(expr) {
+  const ternaryMatch = expr.match(/^(.+?)\s*\?\s*(styles\.[^\s]+)\s*:\s*''$/);
+  if (ternaryMatch) {
+    return `${ternaryMatch[1]} && ${ternaryMatch[2]}`;
+  }
+  return expr;
 }
 function convertExprToReact(expr) {
   let result = expr.replace(/props\.(\w+)/g, "$1");
@@ -286,6 +323,7 @@ var ReactTranspiler = class extends BaseTranspiler {
   generateImports() {
     const lines = [];
     lines.push(`import React from 'react';`);
+    lines.push(`import { cn } from '@/lib/utils';`);
     return lines.join("\n");
   }
   /**
@@ -318,7 +356,7 @@ var ReactTranspiler = class extends BaseTranspiler {
    */
   generateComponent(ir, componentName) {
     const propsDestructure = generatePropsDestructure(ir.props, ir.slots, ir.events);
-    const jsxBody = generateJSX(ir.template, ir.styles, 2);
+    const jsxBody = generateJSX(ir.template, ir.styles, 2, true);
     const lines = [];
     lines.push(
       `export const ${componentName} = React.forwardRef<HTMLElement, ${componentName}Props>(function ${componentName}(`

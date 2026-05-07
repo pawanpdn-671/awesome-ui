@@ -13,6 +13,7 @@
 
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { execSync } from 'node:child_process';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -115,6 +116,38 @@ export function createAddCommand(): Command {
 
         spinner.succeed(chalk.green(`✓ ${output.filename}`));
         console.log(chalk.gray(`  → ${filePath}`));
+
+        // Install npm dependencies if any
+        const npmDeps = ir.npmDependencies;
+        if (npmDeps && npmDeps.length > 0) {
+          const depsToInstall = npmDeps
+            .filter((d) => !d.dev)
+            .map((d) => (d.version ? `${d.name}@${d.version}` : d.name));
+          const devDepsToInstall = npmDeps
+            .filter((d) => d.dev)
+            .map((d) => (d.version ? `${d.name}@${d.version}` : d.name));
+
+          if (depsToInstall.length > 0) {
+            spinner.start('Installing npm dependencies...');
+            try {
+              execSync(`npm install ${depsToInstall.join(' ')}`, { cwd, stdio: 'ignore' });
+              spinner.succeed(chalk.green('Installed npm dependencies'));
+            } catch {
+              spinner.warn(chalk.yellow(`Could not auto-install deps. Run: npm install ${depsToInstall.join(' ')}`));
+            }
+          }
+
+          if (devDepsToInstall.length > 0) {
+            spinner.start('Installing npm dev dependencies...');
+            try {
+              execSync(`npm install --save-dev ${devDepsToInstall.join(' ')}`, { cwd, stdio: 'ignore' });
+              spinner.succeed(chalk.green('Installed npm dev dependencies'));
+            } catch {
+              spinner.warn(chalk.yellow(`Could not auto-install devDeps. Run: npm install --save-dev ${devDepsToInstall.join(' ')}`));
+            }
+          }
+        }
+
         console.log();
       } catch (error) {
         spinner.fail(chalk.red('Failed to add component'));

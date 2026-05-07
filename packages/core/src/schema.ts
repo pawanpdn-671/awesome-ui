@@ -466,6 +466,23 @@ export const ComponentDependencySchema = z.object({
   version: SemVerSchema.optional(),
 });
 
+/**
+ * An npm package dependency for a component.
+ *
+ * @example
+ * ```json
+ * { "name": "@radix-ui/react-dialog", "version": "^1.0.0" }
+ * ```
+ */
+export const NpmDependencySchema = z.object({
+  /** npm package name */
+  name: z.string(),
+  /** Semver version range */
+  version: z.string().optional(),
+  /** Whether this is a devDependency */
+  dev: z.boolean().optional(),
+});
+
 // ─── Component Categories ───────────────────────────────────────────────────────
 
 /** Standard component categories for organization */
@@ -536,6 +553,9 @@ export const ComponentIRSchema = z.object({
 
   /** Other AwesomeUI components this component depends on */
   dependencies: z.array(ComponentDependencySchema).optional(),
+
+  /** npm packages this component depends on (e.g., "@radix-ui/react-dialog") */
+  npmDependencies: z.array(NpmDependencySchema).optional(),
 
   /** Accessibility metadata */
   accessibility: AccessibilitySchema.optional(),

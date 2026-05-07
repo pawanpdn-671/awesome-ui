@@ -165,6 +165,14 @@ var ComponentDependencySchema = zod.z.object({
   name: zod.z.string(),
   version: SemVerSchema.optional()
 });
+var NpmDependencySchema = zod.z.object({
+  /** npm package name */
+  name: zod.z.string(),
+  /** Semver version range */
+  version: zod.z.string().optional(),
+  /** Whether this is a devDependency */
+  dev: zod.z.boolean().optional()
+});
 var COMPONENT_CATEGORIES = [
   "primitive",
   "form",
@@ -199,6 +207,8 @@ var ComponentIRSchema = zod.z.object({
   tokens: DesignTokensSchema.optional(),
   /** Other AwesomeUI components this component depends on */
   dependencies: zod.z.array(ComponentDependencySchema).optional(),
+  /** npm packages this component depends on (e.g., "@radix-ui/react-dialog") */
+  npmDependencies: zod.z.array(NpmDependencySchema).optional(),
   /** Accessibility metadata */
   accessibility: AccessibilitySchema.optional()
 });
@@ -290,6 +300,7 @@ exports.EventDefinitionSchema = EventDefinitionSchema;
 exports.EventsMapSchema = EventsMapSchema;
 exports.ExpressionStringSchema = ExpressionStringSchema;
 exports.LoopNodeSchema = LoopNodeSchema;
+exports.NpmDependencySchema = NpmDependencySchema;
 exports.PROP_TYPES = PROP_TYPES;
 exports.PropDefinitionSchema = PropDefinitionSchema;
 exports.PropTypeSchema = PropTypeSchema;

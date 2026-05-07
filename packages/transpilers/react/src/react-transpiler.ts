@@ -83,6 +83,7 @@ export class ReactTranspiler extends BaseTranspiler {
   private generateImports(): string {
     const lines: string[] = [];
     lines.push(`import React from 'react';`);
+    lines.push(`import { cn } from '@/lib/utils';`);
     return lines.join('\n');
   }
 
@@ -119,7 +120,7 @@ export class ReactTranspiler extends BaseTranspiler {
    */
   private generateComponent(ir: IComponentIR, componentName: string): string {
     const propsDestructure = generatePropsDestructure(ir.props, ir.slots, ir.events);
-    const jsxBody = generateJSX(ir.template as Record<string, unknown>, ir.styles, 2);
+    const jsxBody = generateJSX(ir.template as Record<string, unknown>, ir.styles, 2, true);
 
     const lines: string[] = [];
     lines.push(

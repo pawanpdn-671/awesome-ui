@@ -1,16 +1,3 @@
-/**
- * @module generate-template
- * @description Converts IR template AST nodes to React JSX strings.
- * Handles all 6 node types: element, text, slot, conditional, loop, component ref.
- *
- * @example
- * ```typescript
- * import { generateJSX } from './generate-template.js';
- *
- * const jsx = generateJSX(ir.template, ir.styles, 1);
- * ```
- */
-
 import type { IStyleMap } from '@awesomeui/core';
 import {
   parseExpression,
@@ -20,57 +7,36 @@ import {
   toPascalCase,
 } from '@awesomeui/transpiler-shared';
 
-/** Shape of a generic template node from the IR (loosely typed for recursive walking) */
 interface IRNode {
-  // Element
   tag?: string;
   attributes?: Record<string, string>;
   class?: string;
   style?: Record<string, string>;
   children?: IRNode[];
-  // Text
   text?: string;
-  // Slot
   slot?: string;
   fallback?: string;
-  // Conditional
   if?: string;
   then?: IRNode;
   else?: IRNode;
-  // Loop
   each?: string;
   as?: string;
   key?: string;
-  // Component ref
   component?: string;
   props?: Record<string, string>;
 }
 
-/**
- * Converts an IR template node (and its children) to a React JSX string.
- *
- * @param node - The IR template node to convert
- * @param styles - The component's style map
- * @param depth - Current indentation depth
- * @returns The generated JSX string
- *
- * @example
- * ```typescript
- * const jsx = generateJSX({ tag: 'div', children: [{ text: 'Hello' }] }, {}, 1);
- * // '  <div>\n    Hello\n  </div>'
- * ```
- */
 export function generateJSX(
   node: IRNode,
   styles: IStyleMap,
-  depth: number
+  depth: number,
+  isRoot = false
 ): string {
-  // Determine node type by checking discriminant keys
   if (node.if !== undefined) {
-    return generateConditional(node, styles, depth);
+    return generateConditional(node, styles, depth, isRoot);
   }
   if (node.each !== undefined) {
-    return generateLoop(node, styles, depth);
+    return generateLoop(node, styles, depth, isRoot);
   }
   if (node.slot !== undefined) {
     return generateSlot(node, depth);
@@ -82,22 +48,20 @@ export function generateJSX(
     return generateComponentRef(node, depth);
   }
   if (node.tag !== undefined) {
-    return generateElement(node, styles, depth);
+    return generateElement(node, styles, depth, isRoot);
   }
 
   return '';
 }
 
-/**
- * Generates JSX for an element node.
- */
 function generateElement(
   node: IRNode,
   styles: IStyleMap,
-  depth: number
+  depth: number,
+  isRoot: boolean
 ): string {
   const tag = node.tag!;
-  const attrs = buildAttributes(node, styles);
+  const attrs = buildAttributes(node, styles, isRoot);
   const children = node.children;
 
   if (!children || children.length === 0) {
@@ -105,7 +69,7 @@ function generateElement(
   }
 
   const childrenJSX = children
-    .map((child) => generateJSX(child, styles, depth + 1))
+    .map((child) => generateJSX(child, styles, depth + 1, false))
     .filter((s) => s.length > 0)
     .join('\n');
 
@@ -116,9 +80,6 @@ function generateElement(
   ].join('\n');
 }
 
-/**
- * Generates JSX for a text node with expression interpolation.
- */
 function generateText(text: string, depth: number): string {
   const segments = parseExpression(text);
 
@@ -130,7 +91,6 @@ function generateText(text: string, depth: number): string {
     return indent(`{${convertExprToReact(segments[0].value)}}`, depth);
   }
 
-  // Mixed: use template literal
   const parts = segments.map((seg) => {
     if (seg.type === 'expression') {
       return `\${${convertExprToReact(seg.value)}}`;
@@ -141,10 +101,6 @@ function generateText(text: string, depth: number): string {
   return indent(`{\`${parts.join('')}\`}`, depth);
 }
 
-/**
- * Generates JSX for a slot reference.
- * "default" slot → {children}, named slot → {slotName}
- */
 function generateSlot(node: IRNode, depth: number): string {
   const slotName = node.slot!;
   const propName = slotName === 'default' ? 'children' : slotName;
@@ -156,34 +112,28 @@ function generateSlot(node: IRNode, depth: number): string {
   return indent(`{${propName}}`, depth);
 }
 
-/**
- * Generates JSX for a conditional node.
- * if/then → {condition && (<Then />)}
- * if/then/else → {condition ? (<Then />) : (<Else />)}
- */
 function generateConditional(
   node: IRNode,
   styles: IStyleMap,
-  depth: number
+  depth: number,
+  _isRoot: boolean
 ): string {
   const condition = convertExprToReact(node.if!);
-  const thenJSX = node.then ? generateJSX(node.then, styles, 0) : '';
+  const thenJSX = node.then ? generateJSX(node.then, styles, 0, false) : '';
 
   if (node.else) {
-    const elseJSX = generateJSX(node.else, styles, 0);
+    const elseJSX = generateJSX(node.else, styles, 0, false);
     return indent(`{${condition} ? (\n${indent(thenJSX, 1)}\n) : (\n${indent(elseJSX, 1)}\n)}`, depth);
   }
 
   return indent(`{${condition} && (\n${indent(thenJSX, 1)}\n)}`, depth);
 }
 
-/**
- * Generates JSX for a loop node.
- */
 function generateLoop(
   node: IRNode,
   styles: IStyleMap,
-  depth: number
+  depth: number,
+  _isRoot: boolean
 ): string {
   const collection = convertExprToReact(node.each!);
   const itemVar = node.as ?? 'item';
@@ -191,7 +141,7 @@ function generateLoop(
   const needsIndex = !node.key;
 
   const childrenJSX = (node.children ?? [])
-    .map((child) => generateJSX(child, styles, depth + 2))
+    .map((child) => generateJSX(child, styles, depth + 2, false))
     .join('\n');
 
   const params = needsIndex ? `(${itemVar}, index)` : `(${itemVar})`;
@@ -202,9 +152,6 @@ function generateLoop(
   );
 }
 
-/**
- * Generates JSX for a component reference node.
- */
 function generateComponentRef(node: IRNode, depth: number): string {
   const name = toPascalCase(node.component!);
   const props = node.props;
@@ -225,22 +172,16 @@ function generateComponentRef(node: IRNode, depth: number): string {
   return indent(`<${name} ${propsStr} />`, depth);
 }
 
-/**
- * Builds the JSX attribute string for an element node.
- */
-function buildAttributes(node: IRNode, _styles: IStyleMap): string {
+function buildAttributes(node: IRNode, _styles: IStyleMap, isRoot: boolean): string {
   const parts: string[] = [];
 
-  // Class binding
   if (node.class) {
-    const classExpr = buildClassExpression(node.class);
+    const classExpr = buildClassExpression(node.class, isRoot);
     parts.push(`className={${classExpr}}`);
   }
 
-  // Static/dynamic attributes
   if (node.attributes) {
     for (const [key, value] of Object.entries(node.attributes)) {
-      // Skip 'class' since we handle it above
       if (key === 'class') continue;
 
       const reactKey = convertAttrName(key);
@@ -253,7 +194,6 @@ function buildAttributes(node: IRNode, _styles: IStyleMap): string {
     }
   }
 
-  // Inline style
   if (node.style) {
     const styleEntries = Object.entries(node.style)
       .map(([prop, val]) => {
@@ -271,51 +211,77 @@ function buildAttributes(node: IRNode, _styles: IStyleMap): string {
   return ' ' + parts.join(' ');
 }
 
-/**
- * Builds a className expression from IR class binding.
- * Handles {{expr}} interpolation and static strings.
- */
-function buildClassExpression(classStr: string): string {
+function buildClassExpression(classStr: string, includeClassName: boolean): string {
   const segments = parseExpression(classStr);
 
   if (segments.length === 1 && segments[0]?.type === 'static') {
-    return `'${segments[0].value.trim()}'`;
+    const staticVal = segments[0].value.trim();
+    if (includeClassName && staticVal) {
+      return `cn('${staticVal}', className)`;
+    }
+    if (includeClassName) {
+      return 'className';
+    }
+    return `'${staticVal}'`;
   }
 
   if (segments.length === 1 && segments[0]?.type === 'expression') {
-    return convertExprToReact(segments[0].value);
+    const expr = convertExprToReact(segments[0].value);
+    if (includeClassName) {
+      return `cn(${expr}, className)`;
+    }
+    return expr;
   }
 
-  // Build template literal for mixed content
-  const parts = segments.map((seg) => {
-    if (seg.type === 'expression') {
-      return `\${${convertExprToReact(seg.value)}}`;
-    }
-    return seg.value;
-  });
+  const args: string[] = [];
+  let staticBuf = '';
 
-  return `\`${parts.join('')}\`.trim()`;
+  for (const seg of segments) {
+    if (seg.type === 'static') {
+      staticBuf += seg.value;
+    } else {
+      if (staticBuf.trim()) {
+        args.push(`'${staticBuf.trim()}'`);
+      }
+      staticBuf = '';
+      args.push(toCnArg(convertExprToReact(seg.value)));
+    }
+  }
+
+  if (staticBuf.trim()) {
+    args.push(`'${staticBuf.trim()}'`);
+  }
+
+  if (includeClassName) {
+    args.push('className');
+  }
+
+  if (args.length === 0) {
+    return includeClassName ? 'className' : "''";
+  }
+
+  if (args.length === 1) {
+    return args[0]!;
+  }
+
+  return `cn(${args.join(', ')})`;
 }
 
-/**
- * Converts an IR expression to React-compatible JavaScript.
- * Strips `props.` prefix since React uses destructured props.
- * Converts `styles.x` to the styles object reference.
- */
+function toCnArg(expr: string): string {
+  const ternaryMatch = expr.match(/^(.+?)\s*\?\s*(styles\.[^\s]+)\s*:\s*''$/);
+  if (ternaryMatch) {
+    return `${ternaryMatch[1]} && ${ternaryMatch[2]}`;
+  }
+
+  return expr;
+}
+
 function convertExprToReact(expr: string): string {
-  // Replace props.X with just X (destructured)
   let result = expr.replace(/props\.(\w+)/g, '$1');
-
-  // styles references stay as-is (they reference the styles object)
-  // But we need to handle styles.variant[props.variant] → styles.variant[variant]
   result = result.replace(/props\.(\w+)/g, '$1');
-
   return result;
 }
 
-/**
- * Converts HTML attribute names to React JSX attribute names.
- */
 function convertAttrName(name: string): string {
   const attrMap: Record<string, string> = {
     class: 'className',

@@ -44,6 +44,7 @@ import type {
   StyleAdapterTypeSchema,
   StyleAdapterConfigSchema,
   ComponentDependencySchema,
+  NpmDependencySchema,
   ComponentCategorySchema,
   ComponentIRSchema,
 } from './schema.js';
@@ -149,6 +150,9 @@ export type IStyleAdapterConfig = z.infer<typeof StyleAdapterConfigSchema>;
 
 /** A dependency on another AwesomeUI component */
 export type IComponentDependency = z.infer<typeof ComponentDependencySchema>;
+
+/** An npm package dependency for a component */
+export type INpmDependency = z.infer<typeof NpmDependencySchema>;
 
 /** Component category for registry organization */
 export type ComponentCategory = z.infer<typeof ComponentCategorySchema>;

@@ -63,10 +63,11 @@ describe('ReactTranspiler', () => {
     }
   });
 
-  it('generates valid React import', () => {
+  it('generates valid React import and cn import', () => {
     const result = transpiler.transpile(buttonIR);
     if (isOk(result)) {
       expect(result.data.code).toContain("import React from 'react'");
+      expect(result.data.code).toContain("import { cn } from '@/lib/utils'");
     }
   });
 
@@ -100,6 +101,14 @@ describe('ReactTranspiler', () => {
     const result = transpiler.transpile(buttonIR);
     if (isOk(result)) {
       expect(result.data.code).toContain('React.forwardRef');
+    }
+  });
+
+  it('generates cn() in root className with className prop', () => {
+    const result = transpiler.transpile(buttonIR);
+    if (isOk(result)) {
+      expect(result.data.code).toContain('cn(');
+      expect(result.data.code).toContain(', className)');
     }
   });
 

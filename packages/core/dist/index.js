@@ -163,6 +163,14 @@ var ComponentDependencySchema = z.object({
   name: z.string(),
   version: SemVerSchema.optional()
 });
+var NpmDependencySchema = z.object({
+  /** npm package name */
+  name: z.string(),
+  /** Semver version range */
+  version: z.string().optional(),
+  /** Whether this is a devDependency */
+  dev: z.boolean().optional()
+});
 var COMPONENT_CATEGORIES = [
   "primitive",
   "form",
@@ -197,6 +205,8 @@ var ComponentIRSchema = z.object({
   tokens: DesignTokensSchema.optional(),
   /** Other AwesomeUI components this component depends on */
   dependencies: z.array(ComponentDependencySchema).optional(),
+  /** npm packages this component depends on (e.g., "@radix-ui/react-dialog") */
+  npmDependencies: z.array(NpmDependencySchema).optional(),
   /** Accessibility metadata */
   accessibility: AccessibilitySchema.optional()
 });
@@ -273,6 +283,6 @@ function validateStyleAdapterConfig(input) {
   return err(zodErrorToValidationError(parsed.error, "Style adapter config validation failed"));
 }
 
-export { AccessibilitySchema, BreakpointTokenSchema, COMPONENT_CATEGORIES, ColorTokenSchema, ComponentCategorySchema, ComponentDependencySchema, ComponentIRSchema, ComponentRefNodeSchema, ConditionalNodeSchema, DesignTokensSchema, ElementNodeSchema, EventDefinitionSchema, EventsMapSchema, ExpressionStringSchema, LoopNodeSchema, PROP_TYPES, PropDefinitionSchema, PropTypeSchema, PropsMapSchema, RadiusTokenSchema, STYLE_ADAPTER_TYPES, SemVerSchema, SlotDefinitionSchema, SlotNodeSchema, SlotsMapSchema, SpacingTokenSchema, StyleAdapterConfigSchema, StyleAdapterTypeSchema, StyleMapSchema, StyleValueSchema, TemplateNodeSchema, TextNodeSchema, TypographyTokenSchema, ValidationError, err, isErr, isOk, ok, validateComponentIR, validateDesignTokens, validateStyleAdapterConfig, validateTemplateNode };
+export { AccessibilitySchema, BreakpointTokenSchema, COMPONENT_CATEGORIES, ColorTokenSchema, ComponentCategorySchema, ComponentDependencySchema, ComponentIRSchema, ComponentRefNodeSchema, ConditionalNodeSchema, DesignTokensSchema, ElementNodeSchema, EventDefinitionSchema, EventsMapSchema, ExpressionStringSchema, LoopNodeSchema, NpmDependencySchema, PROP_TYPES, PropDefinitionSchema, PropTypeSchema, PropsMapSchema, RadiusTokenSchema, STYLE_ADAPTER_TYPES, SemVerSchema, SlotDefinitionSchema, SlotNodeSchema, SlotsMapSchema, SpacingTokenSchema, StyleAdapterConfigSchema, StyleAdapterTypeSchema, StyleMapSchema, StyleValueSchema, TemplateNodeSchema, TextNodeSchema, TypographyTokenSchema, ValidationError, err, isErr, isOk, ok, validateComponentIR, validateDesignTokens, validateStyleAdapterConfig, validateTemplateNode };
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map

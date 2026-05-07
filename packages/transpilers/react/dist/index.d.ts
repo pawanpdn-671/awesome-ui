@@ -116,20 +116,6 @@ declare function generatePropsInterface(componentName: string, props: IPropsMap,
  */
 declare function generatePropsDestructure(props: IPropsMap, slots?: ISlotsMap, events?: IEventsMap): string;
 
-/**
- * @module generate-template
- * @description Converts IR template AST nodes to React JSX strings.
- * Handles all 6 node types: element, text, slot, conditional, loop, component ref.
- *
- * @example
- * ```typescript
- * import { generateJSX } from './generate-template.js';
- *
- * const jsx = generateJSX(ir.template, ir.styles, 1);
- * ```
- */
-
-/** Shape of a generic template node from the IR (loosely typed for recursive walking) */
 interface IRNode {
     tag?: string;
     attributes?: Record<string, string>;
@@ -148,20 +134,6 @@ interface IRNode {
     component?: string;
     props?: Record<string, string>;
 }
-/**
- * Converts an IR template node (and its children) to a React JSX string.
- *
- * @param node - The IR template node to convert
- * @param styles - The component's style map
- * @param depth - Current indentation depth
- * @returns The generated JSX string
- *
- * @example
- * ```typescript
- * const jsx = generateJSX({ tag: 'div', children: [{ text: 'Hello' }] }, {}, 1);
- * // '  <div>\n    Hello\n  </div>'
- * ```
- */
-declare function generateJSX(node: IRNode, styles: IStyleMap, depth: number): string;
+declare function generateJSX(node: IRNode, styles: IStyleMap, depth: number, isRoot?: boolean): string;
 
 export { ReactTranspiler, generateJSX, generatePropsDestructure, generatePropsInterface };

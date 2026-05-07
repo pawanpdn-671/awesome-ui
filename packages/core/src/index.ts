@@ -56,6 +56,7 @@ export {
   StyleAdapterConfigSchema,
   // Dependencies & Categories
   ComponentDependencySchema,
+  NpmDependencySchema,
   COMPONENT_CATEGORIES,
   ComponentCategorySchema,
   // Component IR
@@ -92,6 +93,7 @@ export type {
   StyleAdapterType,
   IStyleAdapterConfig,
   IComponentDependency,
+  INpmDependency,
   ComponentCategory,
   IComponentIR,
 } from './types.js';

@@ -12,4 +12,10 @@ export default defineConfig({
   target: 'es2022',
   outDir: 'dist',
   banner: { js: '#!/usr/bin/env node' },
+  external: [
+    '@awesomeui/transpiler-svelte',
+    '@awesomeui/transpiler-solid',
+    '@awesomeui/transpiler-angularjs',
+    '@awesomeui/transpiler-react-native',
+  ],
 });

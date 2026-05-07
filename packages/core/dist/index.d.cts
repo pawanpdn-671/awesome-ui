@@ -637,6 +637,30 @@ declare const ComponentDependencySchema: z.ZodObject<{
     name: string;
     version?: string | undefined;
 }>;
+/**
+ * An npm package dependency for a component.
+ *
+ * @example
+ * ```json
+ * { "name": "@radix-ui/react-dialog", "version": "^1.0.0" }
+ * ```
+ */
+declare const NpmDependencySchema: z.ZodObject<{
+    /** npm package name */
+    name: z.ZodString;
+    /** Semver version range */
+    version: z.ZodOptional<z.ZodString>;
+    /** Whether this is a devDependency */
+    dev: z.ZodOptional<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    version?: string | undefined;
+    dev?: boolean | undefined;
+}, {
+    name: string;
+    version?: string | undefined;
+    dev?: boolean | undefined;
+}>;
 /** Standard component categories for organization */
 declare const COMPONENT_CATEGORIES: readonly ["primitive", "form", "layout", "navigation", "feedback", "data-display", "overlay", "utility"];
 declare const ComponentCategorySchema: z.ZodEnum<["primitive", "form", "layout", "navigation", "feedback", "data-display", "overlay", "utility"]>;
@@ -856,6 +880,23 @@ declare const ComponentIRSchema: z.ZodObject<{
         name: string;
         version?: string | undefined;
     }>, "many">>;
+    /** npm packages this component depends on (e.g., "@radix-ui/react-dialog") */
+    npmDependencies: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        /** npm package name */
+        name: z.ZodString;
+        /** Semver version range */
+        version: z.ZodOptional<z.ZodString>;
+        /** Whether this is a devDependency */
+        dev: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        version?: string | undefined;
+        dev?: boolean | undefined;
+    }, {
+        name: string;
+        version?: string | undefined;
+        dev?: boolean | undefined;
+    }>, "many">>;
     /** Accessibility metadata */
     accessibility: z.ZodOptional<z.ZodObject<{
         /** WAI-ARIA role (e.g., "button", "dialog", "tablist") */
@@ -921,6 +962,11 @@ declare const ComponentIRSchema: z.ZodObject<{
         name: string;
         version?: string | undefined;
     }[] | undefined;
+    npmDependencies?: {
+        name: string;
+        version?: string | undefined;
+        dev?: boolean | undefined;
+    }[] | undefined;
     accessibility?: {
         role?: string | undefined;
         ariaAttributes?: Record<string, string> | undefined;
@@ -973,6 +1019,11 @@ declare const ComponentIRSchema: z.ZodObject<{
     dependencies?: {
         name: string;
         version?: string | undefined;
+    }[] | undefined;
+    npmDependencies?: {
+        name: string;
+        version?: string | undefined;
+        dev?: boolean | undefined;
     }[] | undefined;
     accessibility?: {
         role?: string | undefined;
@@ -1053,6 +1104,8 @@ type StyleAdapterType = z.infer<typeof StyleAdapterTypeSchema>;
 type IStyleAdapterConfig = z.infer<typeof StyleAdapterConfigSchema>;
 /** A dependency on another AwesomeUI component */
 type IComponentDependency = z.infer<typeof ComponentDependencySchema>;
+/** An npm package dependency for a component */
+type INpmDependency = z.infer<typeof NpmDependencySchema>;
 /** Component category for registry organization */
 type ComponentCategory = z.infer<typeof ComponentCategorySchema>;
 /** The complete Component Intermediate Representation */
@@ -1257,4 +1310,4 @@ declare function validateTemplateNode(input: unknown): Result<ITemplateNode, Val
  */
 declare function validateStyleAdapterConfig(input: unknown): Result<IStyleAdapterConfig, ValidationError>;
 
-export { AccessibilitySchema, BreakpointTokenSchema, COMPONENT_CATEGORIES, ColorTokenSchema, type ComponentCategory, ComponentCategorySchema, ComponentDependencySchema, ComponentIRSchema, ComponentRefNodeSchema, ConditionalNodeSchema, DesignTokensSchema, ElementNodeSchema, EventDefinitionSchema, EventsMapSchema, type ExpressionString, ExpressionStringSchema, type IAccessibility, type IBreakpointToken, type IColorToken, type IComponentDependency, type IComponentIR, type IComponentRefNode, type IConditionalNode, type IDesignTokens, type IElementNode, type IEventDefinition, type IEventsMap, type IFieldError, type ILoopNode, type IPropDefinition, type IPropsMap, type IRadiusToken, type ISlotDefinition, type ISlotNode, type ISlotsMap, type ISpacingToken, type IStyleAdapterConfig, type IStyleMap, type ITemplateNode, type ITextNode, type ITypographyToken, LoopNodeSchema, PROP_TYPES, PropDefinitionSchema, type PropType, PropTypeSchema, PropsMapSchema, RadiusTokenSchema, type Result, STYLE_ADAPTER_TYPES, type SemVer, SemVerSchema, SlotDefinitionSchema, SlotNodeSchema, SlotsMapSchema, SpacingTokenSchema, StyleAdapterConfigSchema, type StyleAdapterType, StyleAdapterTypeSchema, StyleMapSchema, type StyleValue, StyleValueSchema, TemplateNodeSchema, TextNodeSchema, TypographyTokenSchema, ValidationError, err, isErr, isOk, ok, validateComponentIR, validateDesignTokens, validateStyleAdapterConfig, validateTemplateNode };
+export { AccessibilitySchema, BreakpointTokenSchema, COMPONENT_CATEGORIES, ColorTokenSchema, type ComponentCategory, ComponentCategorySchema, ComponentDependencySchema, ComponentIRSchema, ComponentRefNodeSchema, ConditionalNodeSchema, DesignTokensSchema, ElementNodeSchema, EventDefinitionSchema, EventsMapSchema, type ExpressionString, ExpressionStringSchema, type IAccessibility, type IBreakpointToken, type IColorToken, type IComponentDependency, type IComponentIR, type IComponentRefNode, type IConditionalNode, type IDesignTokens, type IElementNode, type IEventDefinition, type IEventsMap, type IFieldError, type ILoopNode, type INpmDependency, type IPropDefinition, type IPropsMap, type IRadiusToken, type ISlotDefinition, type ISlotNode, type ISlotsMap, type ISpacingToken, type IStyleAdapterConfig, type IStyleMap, type ITemplateNode, type ITextNode, type ITypographyToken, LoopNodeSchema, NpmDependencySchema, PROP_TYPES, PropDefinitionSchema, type PropType, PropTypeSchema, PropsMapSchema, RadiusTokenSchema, type Result, STYLE_ADAPTER_TYPES, type SemVer, SemVerSchema, SlotDefinitionSchema, SlotNodeSchema, SlotsMapSchema, SpacingTokenSchema, StyleAdapterConfigSchema, type StyleAdapterType, StyleAdapterTypeSchema, StyleMapSchema, type StyleValue, StyleValueSchema, TemplateNodeSchema, TextNodeSchema, TypographyTokenSchema, ValidationError, err, isErr, isOk, ok, validateComponentIR, validateDesignTokens, validateStyleAdapterConfig, validateTemplateNode };

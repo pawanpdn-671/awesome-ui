@@ -1,4 +1,4 @@
-import type { IComponentIR, IPropsMap, IEventsMap, IStyleMap } from '@awesomeui/core';
+import type { IComponentIR, IStyleMap } from '@awesomeui/core';
 import {
   BaseTranspiler,
   type ITranspileOptions,
@@ -7,7 +7,6 @@ import {
   extractExpression,
   toPascalCase,
   indent,
-  irTypeToTSBase,
 } from '@awesomeui/transpiler-shared';
 
 interface IRNode {

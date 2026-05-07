@@ -87,7 +87,8 @@ function parseExpression(input) {
   return segments;
 }
 function isExpression(input) {
-  return EXPRESSION_PATTERN.test(input);
+  const regex = new RegExp(EXPRESSION_PATTERN.source, EXPRESSION_PATTERN.flags);
+  return regex.test(input);
 }
 function isPureExpression(input) {
   const segments = parseExpression(input);

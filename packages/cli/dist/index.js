@@ -2,813 +2,21 @@
 import { Command } from 'commander';
 import { mkdir, writeFile, readFile } from 'fs/promises';
 import { resolve, join } from 'path';
-import chalk from 'chalk';
+import { execSync } from 'child_process';
+import chalk3 from 'chalk';
 import ora from 'ora';
 import { isOk, ok, err, ValidationError, validateComponentIR } from '@awesomeui/core';
 import { ReactTranspiler } from '@awesomeui/transpiler-react';
 import { VueTranspiler } from '@awesomeui/transpiler-vue';
-import { BaseTranspiler, irTypeToTSBase, indent, parseExpression, toPascalCase, isPureExpression, extractExpression, toCamelCase } from '@awesomeui/transpiler-shared';
+import { AngularJSTranspiler } from '@awesomeui/transpiler-angularjs';
+import { ReactNativeTranspiler } from '@awesomeui/transpiler-react-native';
+import { SvelteTranspiler } from '@awesomeui/transpiler-svelte';
+import { SolidTranspiler } from '@awesomeui/transpiler-solid';
 
 var __defProp = Object.defineProperty;
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
-};
-var AngularJSTranspiler = class extends BaseTranspiler {
-  framework = "angularjs";
-  fileExtension = ".js";
-  language = "javascript";
-  generate(ir, _options) {
-    const componentName = toPascalCase(ir.name);
-    const bindings = this.generateBindings(ir.props, ir.events);
-    const template = this.generateTemplateString(ir);
-    const controller = this.generateController(ir, componentName);
-    return [
-      `'use strict';`,
-      ``,
-      `angular.module('awesomeui').component('${toCamelCase(ir.name)}', {`,
-      `  bindings: {`,
-      ...bindings,
-      `  },`,
-      `  template: ${template},`,
-      `  controller: [${controller}`,
-      `});`,
-      ``
-    ].join("\n");
-  }
-  generateBindings(props, events) {
-    const lines = [];
-    for (const [name, def] of Object.entries(props)) {
-      const bindingType = this.getBindingType(def.type);
-      const description = def.description ? `  // ${def.description}` : "";
-      if (description) lines.push(description);
-      lines.push(`    ${toCamelCase(name)}: '${bindingType}',`);
-    }
-    if (events) {
-      for (const eventName of Object.keys(events)) {
-        const handlerName = toCamelCase(eventName.replace(/^on/, ""));
-        lines.push(`    on${toPascalCase(handlerName)}: '&',`);
-      }
-    }
-    return lines;
-  }
-  getBindingType(propType) {
-    switch (propType) {
-      case "string":
-        return "@";
-      case "number":
-        return "@";
-      case "boolean":
-        return "<";
-      case "enum":
-        return "@";
-      case "object":
-        return "<";
-      case "array":
-        return "<";
-      default:
-        return "@";
-    }
-  }
-  generateTemplateString(ir) {
-    const node = ir.template;
-    const html = this.generateNode(node, ir.styles, 0);
-    const escaped = html.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$").replace(/'/g, "\\'");
-    return `'${escaped}'`;
-  }
-  generateNode(node, styles, depth) {
-    if (node.if !== void 0) return this.generateConditional(node, styles, depth);
-    if (node.each !== void 0) return this.generateLoop(node, styles, depth);
-    if (node.slot !== void 0) return this.generateSlot(node, depth);
-    if (node.text !== void 0) return this.generateText(node.text, depth);
-    if (node.component !== void 0) return this.generateComponentRef(node, depth);
-    if (node.tag !== void 0) return this.generateElement(node, styles, depth);
-    return "";
-  }
-  generateElement(node, styles, depth) {
-    const tag = node.tag;
-    const attrs = this.buildAngularAttributes(node);
-    const children = node.children;
-    if (!children || children.length === 0) {
-      return indent(`<${tag}${attrs} />`, depth);
-    }
-    const childrenHTML = children.map((child) => this.generateNode(child, styles, depth + 1)).filter((s) => s.length > 0).join("\n");
-    return [
-      indent(`<${tag}${attrs}>`, depth),
-      childrenHTML,
-      indent(`</${tag}>`, depth)
-    ].join("\n");
-  }
-  generateText(text, depth) {
-    const segments = parseExpression(text);
-    if (segments.length === 1 && segments[0]?.type === "static") {
-      return indent(segments[0].value, depth);
-    }
-    const parts = segments.map((seg) => {
-      if (seg.type === "expression") {
-        return `{{ ${this.convertExpr(seg.value)} }}`;
-      }
-      return seg.value;
-    });
-    return indent(parts.join(""), depth);
-  }
-  generateSlot(node, depth) {
-    const slotName = node.slot;
-    if (slotName === "default") {
-      return indent(`<ng-transclude></ng-transclude>`, depth);
-    }
-    return indent(`<ng-transclude ng-if="$ctrl.${toCamelCase(slotName)}" ng-transclude-slot="${slotName}"></ng-transclude>`, depth);
-  }
-  generateConditional(node, styles, depth) {
-    const condition = this.convertExpr(node.if);
-    const thenHTML = node.then ? this.generateNode(node.then, styles, depth + 1) : "";
-    let result = [
-      indent(`<!-- ngIf: ${condition} -->`, depth),
-      indent(`<span ng-if="${condition}">`, depth),
-      thenHTML,
-      indent(`</span>`, depth)
-    ].join("\n");
-    if (node.else) {
-      const elseHTML = this.generateNode(node.else, styles, depth + 1);
-      result += "\n" + [
-        indent(`<span ng-if="!(${condition})">`, depth),
-        elseHTML,
-        indent(`</span>`, depth)
-      ].join("\n");
-    }
-    return result;
-  }
-  generateLoop(node, styles, depth) {
-    const collection = this.convertExpr(node.each);
-    const itemVar = node.as ?? "item";
-    const children = node.children ?? [];
-    const childrenHTML = children.map((child) => this.generateNode(child, styles, depth + 1)).join("\n");
-    return [
-      indent(`<span ng-repeat="${itemVar} in ${collection}">`, depth),
-      childrenHTML,
-      indent(`</span>`, depth)
-    ].join("\n");
-  }
-  generateComponentRef(node, depth) {
-    const name = toCamelCase(node.component);
-    const props = node.props;
-    if (!props || Object.keys(props).length === 0) {
-      return indent(`<${name}></${name}>`, depth);
-    }
-    const propsStr = Object.entries(props).map(([key, value]) => {
-      if (isPureExpression(value)) {
-        return `${toCamelCase(key)}="$ctrl.${this.convertExpr(extractExpression(value))}"`;
-      }
-      return `${toCamelCase(key)}="${value}"`;
-    }).join(" ");
-    return indent(`<${name} ${propsStr}></${name}>`, depth);
-  }
-  buildAngularAttributes(node) {
-    const parts = [];
-    if (node.class) {
-      const classBinding = this.buildAngularClassBinding(node.class);
-      parts.push(classBinding);
-    }
-    if (node.attributes) {
-      for (const [key, value] of Object.entries(node.attributes)) {
-        if (key === "class") continue;
-        if (key === "style") continue;
-        if (isPureExpression(value)) {
-          const expr = this.convertExpr(extractExpression(value));
-          parts.push(`ng-attr-${key}="{{ ${expr} }}"`);
-        } else {
-          parts.push(`${key}="${value}"`);
-        }
-      }
-    }
-    if (node.style) {
-      const styleEntries = Object.entries(node.style).map(([prop, val]) => {
-        if (isPureExpression(val)) {
-          return `${prop}: ${this.convertExpr(extractExpression(val))}`;
-        }
-        return `${prop}: ${val}`;
-      }).join("; ");
-      parts.push(`style="${styleEntries}"`);
-    }
-    if (parts.length === 0) return "";
-    return " " + parts.join(" ");
-  }
-  buildAngularClassBinding(classStr) {
-    const segments = parseExpression(classStr);
-    if (segments.length === 1 && segments[0]?.type === "static") {
-      return `class="${segments[0].value.trim()}"`;
-    }
-    if (segments.length === 1 && segments[0]?.type === "expression") {
-      return `ng-class="${this.convertExpr(segments[0].value)}"`;
-    }
-    const dynamicParts = [];
-    const staticParts = [];
-    for (const seg of segments) {
-      if (seg.type === "expression") {
-        dynamicParts.push(this.convertExpr(seg.value));
-      } else {
-        staticParts.push(seg.value.trim());
-      }
-    }
-    const classAttr = staticParts.filter(Boolean).join(" ");
-    const result = [];
-    if (classAttr) {
-      result.push(`class="${classAttr}"`);
-    }
-    if (dynamicParts.length > 0) {
-      const ngClassExpr = `[${dynamicParts.map((p) => `'${p}'`).join(", ")}].join(' ')`;
-      result.push(`ng-class="{{ ${ngClassExpr} }}"`);
-    }
-    return result.join(" ");
-  }
-  generateController(_ir, _componentName) {
-    const lines = [];
-    lines.push(`function $ctrl() {`);
-    lines.push(`}`);
-    const protoLines = [];
-    protoLines.push(`');
-  return $ctrl;
-}]`);
-    return lines.join("\n") + protoLines.join("\n");
-  }
-  convertExpr(expr) {
-    return expr.replace(/props\.(\w+)/g, "$ctrl.$1").replace(/styles\.(\w+)/g, "$ctrl.styles.$1");
-  }
-};
-var HTML_TO_RN = {
-  div: "View",
-  span: "Text",
-  button: "TouchableOpacity",
-  p: "Text",
-  h1: "Text",
-  h2: "Text",
-  h3: "Text",
-  h4: "Text",
-  h5: "Text",
-  h6: "Text",
-  img: "Image",
-  input: "TextInput",
-  textarea: "TextInput",
-  select: "Picker",
-  ul: "View",
-  ol: "View",
-  li: "Text",
-  a: "Text",
-  nav: "View",
-  header: "View",
-  footer: "View",
-  section: "View",
-  main: "View",
-  aside: "View",
-  label: "Text",
-  table: "View",
-  thead: "View",
-  tbody: "View",
-  tr: "View",
-  th: "Text",
-  td: "Text",
-  svg: "View"
-};
-var ReactNativeTranspiler = class extends BaseTranspiler {
-  framework = "react-native";
-  fileExtension = ".tsx";
-  language = "typescript";
-  generate(ir, _options) {
-    const componentName = this.getComponentName(ir.name);
-    const sections = [];
-    sections.push(this.generateImports());
-    sections.push(this.generateStyleSheet(ir));
-    sections.push(this.generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
-    sections.push(this.generateComponent(ir, componentName));
-    sections.push(`${componentName}.displayName = '${componentName}';`);
-    return sections.join("\n\n") + "\n";
-  }
-  generateImports() {
-    return [
-      "import React from 'react';",
-      "import {",
-      "  View,",
-      "  Text,",
-      "  TouchableOpacity,",
-      "  TextInput,",
-      "  Image,",
-      "  StyleSheet,",
-      "  type ViewStyle,",
-      "  type TextStyle,",
-      "} from 'react-native';"
-    ].join("\n");
-  }
-  generateStyleSheet(ir) {
-    const flattenStyles = this.flattenStyles(ir.styles);
-    const lines = [];
-    lines.push("const styles = StyleSheet.create({");
-    for (const [key, value] of Object.entries(flattenStyles)) {
-      const css = this.tailwindToRN(key, value);
-      if (css) {
-        lines.push(`  ${key}: ${JSON.stringify(css)},`);
-      }
-    }
-    lines.push("} as const);");
-    return lines.join("\n");
-  }
-  flattenStyles(styleMap) {
-    const result = {};
-    for (const [key, value] of Object.entries(styleMap)) {
-      if (typeof value === "string") {
-        result[key] = value;
-      } else if (typeof value === "object" && value !== null) {
-        for (const [subKey, subValue] of Object.entries(value)) {
-          if (typeof subValue === "string") {
-            result[`${key}_${subKey}`] = subValue;
-          }
-        }
-      }
-    }
-    return result;
-  }
-  tailwindToRN(_key, _classes) {
-    const rnStyles = {};
-    const classes = _classes.split(/\s+/).filter(Boolean);
-    for (const cls of classes) {
-      if (cls.startsWith("flex")) {
-        if (cls === "flex") rnStyles.display = "flex";
-        else if (cls === "flex-1") rnStyles.flex = 1;
-        else if (cls === "flex-row") rnStyles.flexDirection = "row";
-        else if (cls === "flex-col") rnStyles.flexDirection = "column";
-        else if (cls === "flex-wrap") rnStyles.flexWrap = "wrap";
-        else if (cls.startsWith("flex-")) rnStyles.flex = parseInt(cls.replace("flex-", ""), 10);
-      } else if (cls.startsWith("items-")) {
-        const val = cls.replace("items-", "");
-        rnStyles.alignItems = val === "start" ? "flex-start" : val === "end" ? "flex-end" : val;
-      } else if (cls.startsWith("justify-")) {
-        const val = cls.replace("justify-", "");
-        rnStyles.justifyContent = val === "center" ? "center" : val === "between" ? "space-between" : val === "around" ? "space-around" : val === "evenly" ? "space-evenly" : val;
-      } else if (cls.startsWith("self-")) {
-        const val = cls.replace("self-", "");
-        rnStyles.alignSelf = val === "start" ? "flex-start" : val === "end" ? "flex-end" : val;
-      } else if (cls.startsWith("gap-")) {
-        const val = cls.replace("gap-", "");
-        rnStyles.gap = this.parseSpacing(val);
-      } else if (cls.startsWith("p") && cls.includes("-")) {
-        const parts = cls.match(/^p([trblxy]?)-(\d+)/);
-        const dir = parts?.[1] ?? "";
-        const size = parts?.[2] ?? "0";
-        const spacing = this.parseSpacing(size);
-        if (dir === "t") rnStyles.paddingTop = spacing;
-        else if (dir === "b") rnStyles.paddingBottom = spacing;
-        else if (dir === "l") rnStyles.paddingLeft = spacing;
-        else if (dir === "r") rnStyles.paddingRight = spacing;
-        else if (dir === "x") {
-          rnStyles.paddingLeft = spacing;
-          rnStyles.paddingRight = spacing;
-        } else if (dir === "y") {
-          rnStyles.paddingTop = spacing;
-          rnStyles.paddingBottom = spacing;
-        } else rnStyles.padding = spacing;
-      } else if (cls.startsWith("m") && cls.includes("-")) {
-        const parts = cls.match(/^m([trblxy]?)-(\d+)/);
-        const dir = parts?.[1] ?? "";
-        const size = parts?.[2] ?? "0";
-        const spacing = this.parseSpacing(size);
-        if (dir === "t") rnStyles.marginTop = spacing;
-        else if (dir === "b") rnStyles.marginBottom = spacing;
-        else if (dir === "l") rnStyles.marginLeft = spacing;
-        else if (dir === "r") rnStyles.marginRight = spacing;
-        else if (dir === "x") {
-          rnStyles.marginLeft = spacing;
-          rnStyles.marginRight = spacing;
-        } else if (dir === "y") {
-          rnStyles.marginTop = spacing;
-          rnStyles.marginBottom = spacing;
-        } else rnStyles.margin = spacing;
-      } else if (cls.startsWith("w-") && !cls.startsWith("w-(")) {
-        const size = cls.replace("w-", "");
-        if (size === "full") rnStyles.width = "100%";
-        else rnStyles.width = this.parseSpacing(size);
-      } else if (cls.startsWith("h-") && !cls.startsWith("h-(")) {
-        const size = cls.replace("h-", "");
-        if (size === "full") rnStyles.height = "100%";
-        else rnStyles.height = this.parseSpacing(size);
-      } else if (cls.startsWith("min-w-")) {
-        rnStyles.minWidth = this.parseSpacing(cls.replace("min-w-", ""));
-      } else if (cls.startsWith("min-h-")) {
-        rnStyles.minHeight = this.parseSpacing(cls.replace("min-h-", ""));
-      } else if (cls.startsWith("max-w-")) {
-        rnStyles.maxWidth = this.parseSpacing(cls.replace("max-w-", ""));
-      } else if (cls.startsWith("max-h-")) {
-        rnStyles.maxHeight = this.parseSpacing(cls.replace("max-h-", ""));
-      } else if (cls.startsWith("rounded")) {
-        if (cls === "rounded-full") rnStyles.borderRadius = 9999;
-        else if (cls === "rounded") rnStyles.borderRadius = 4;
-        else if (cls.startsWith("rounded-")) {
-          const val = cls.replace("rounded-", "");
-          if (val === "none") rnStyles.borderRadius = 0;
-          else if (val === "sm") rnStyles.borderRadius = 2;
-          else if (val === "md") rnStyles.borderRadius = 6;
-          else if (val === "lg") rnStyles.borderRadius = 8;
-          else if (val === "xl") rnStyles.borderRadius = 12;
-          else if (val === "2xl") rnStyles.borderRadius = 16;
-          else if (val === "3xl") rnStyles.borderRadius = 24;
-        }
-      } else if (cls.startsWith("border")) {
-        if (cls === "border") rnStyles.borderWidth = 1;
-        else if (cls === "border-0") rnStyles.borderWidth = 0;
-        else if (cls === "border-2") rnStyles.borderWidth = 2;
-        else if (cls === "border-4") rnStyles.borderWidth = 4;
-        else if (cls.startsWith("border-t-")) rnStyles.borderTopWidth = parseInt(cls.replace("border-t-", ""), 10);
-        else if (cls.startsWith("border-b-")) rnStyles.borderBottomWidth = parseInt(cls.replace("border-b-", ""), 10);
-        else if (cls.startsWith("border-l-")) rnStyles.borderLeftWidth = parseInt(cls.replace("border-l-", ""), 10);
-        else if (cls.startsWith("border-r-")) rnStyles.borderRightWidth = parseInt(cls.replace("border-r-", ""), 10);
-      } else if (cls.startsWith("text-")) {
-        const val = cls.replace("text-", "");
-        if (["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl"].includes(val)) {
-          rnStyles.fontSize = this.fontSizeMap(val);
-        } else if (val === "left" || val === "center" || val === "right") {
-          rnStyles.textAlign = val;
-        }
-      } else if (cls === "font-medium") rnStyles.fontWeight = "500";
-      else if (cls === "font-semibold") rnStyles.fontWeight = "600";
-      else if (cls === "font-bold") rnStyles.fontWeight = "bold";
-      else if (cls === "truncate") rnStyles.numberOfLines = 1;
-      else if (cls.startsWith("opacity-")) rnStyles.opacity = parseInt(cls.replace("opacity-", ""), 10) / 100;
-      else if (cls.startsWith("shadow")) {
-        if (cls === "shadow-sm") {
-          rnStyles.shadowColor = "#000";
-          rnStyles.shadowOffset = { width: 0, height: 1 };
-          rnStyles.shadowOpacity = 0.05;
-          rnStyles.shadowRadius = 2;
-          rnStyles.elevation = 1;
-        } else if (cls === "shadow") {
-          rnStyles.shadowColor = "#000";
-          rnStyles.shadowOffset = { width: 0, height: 1 };
-          rnStyles.shadowOpacity = 0.1;
-          rnStyles.shadowRadius = 3;
-          rnStyles.elevation = 2;
-        } else if (cls === "shadow-md") {
-          rnStyles.shadowColor = "#000";
-          rnStyles.shadowOffset = { width: 0, height: 4 };
-          rnStyles.shadowOpacity = 0.1;
-          rnStyles.shadowRadius = 6;
-          rnStyles.elevation = 4;
-        } else if (cls === "shadow-lg") {
-          rnStyles.shadowColor = "#000";
-          rnStyles.shadowOffset = { width: 0, height: 10 };
-          rnStyles.shadowOpacity = 0.1;
-          rnStyles.shadowRadius = 15;
-          rnStyles.elevation = 10;
-        }
-      } else if (cls.startsWith("bg-") || cls.startsWith("text-") || cls.startsWith("border-")) {
-        const color = this.parseColor(cls);
-        if (color) {
-          if (cls.startsWith("bg-")) rnStyles.backgroundColor = color;
-          else if (cls.startsWith("text-")) rnStyles.color = color;
-          else if (cls.startsWith("border-")) rnStyles.borderColor = color;
-        }
-      }
-    }
-    return Object.keys(rnStyles).length > 0 ? rnStyles : null;
-  }
-  fontSizeMap(size) {
-    const map = { xs: 12, sm: 14, base: 16, lg: 18, xl: 20, "2xl": 24, "3xl": 30, "4xl": 36, "5xl": 48, "6xl": 60 };
-    return map[size] ?? 16;
-  }
-  parseSpacing(size) {
-    const num = parseInt(size, 10);
-    if (isNaN(num)) return 0;
-    return num * 4;
-  }
-  parseColor(cls) {
-    const colorMap = {
-      "gray-50": "#F9FAFB",
-      "gray-100": "#F3F4F6",
-      "gray-200": "#E5E7EB",
-      "gray-300": "#D1D5DB",
-      "gray-400": "#9CA3AF",
-      "gray-500": "#6B7280",
-      "gray-600": "#4B5563",
-      "gray-700": "#374151",
-      "gray-800": "#1F2937",
-      "gray-900": "#111827",
-      "red-50": "#FEF2F2",
-      "red-100": "#FEE2E2",
-      "red-200": "#FECACA",
-      "red-500": "#EF4444",
-      "red-600": "#DC2626",
-      "red-700": "#B91C1C",
-      "red-800": "#991B1B",
-      "blue-50": "#EFF6FF",
-      "blue-100": "#DBEAFE",
-      "blue-200": "#BFDBFE",
-      "blue-500": "#3B82F6",
-      "blue-600": "#2563EB",
-      "blue-700": "#1D4ED8",
-      "blue-800": "#1E40AF",
-      "green-50": "#F0FDF4",
-      "green-100": "#DCFCE7",
-      "green-200": "#BBF7D0",
-      "green-500": "#22C55E",
-      "green-600": "#16A34A",
-      "green-700": "#15803D",
-      "green-800": "#166534",
-      "yellow-50": "#FEFCE8",
-      "yellow-100": "#FEF9C3",
-      "yellow-200": "#FEF08A",
-      "yellow-500": "#EAB308",
-      "yellow-600": "#CA8A04",
-      "yellow-800": "#854D0E",
-      "white": "#FFFFFF",
-      "black": "#000000",
-      "transparent": "transparent",
-      "current": "currentColor"
-    };
-    const parts = cls.split("-");
-    if (parts.length >= 2) {
-      const candidate = parts.slice(1).join("-");
-      if (colorMap[candidate]) return colorMap[candidate];
-    }
-    return null;
-  }
-  generatePropsInterface(name, props, slots, events) {
-    const lines = [];
-    lines.push(`export interface ${name}Props {`);
-    for (const [propName, def] of Object.entries(props)) {
-      const description = def.description;
-      if (description) lines.push(`  /** ${description} */`);
-      const tsType = this.propToRNType(def.type, def.values);
-      const optional = def.required ? "" : "?";
-      lines.push(`  ${propName}${optional}: ${tsType};`);
-    }
-    if (slots) {
-      for (const [slotName] of Object.entries(slots)) {
-        const prop = slotName === "default" ? "children" : slotName;
-        lines.push(`  ${prop}?: React.ReactNode;`);
-      }
-    }
-    if (events) {
-      for (const eventName of Object.keys(events)) {
-        const handler = this.eventToRN(eventName);
-        lines.push(`  ${handler}?: (${this.eventPayload(eventName)}) => void;`);
-      }
-    }
-    lines.push("  style?: ViewStyle | TextStyle;");
-    lines.push("}");
-    return lines.join("\n");
-  }
-  eventToRN(eventName) {
-    const map = {
-      onClick: "onPress",
-      onChange: "onChangeText",
-      onInput: "onChangeText",
-      onFocus: "onFocus",
-      onBlur: "onBlur",
-      onDismiss: "onDismiss",
-      onPress: "onPress",
-      onLongPress: "onLongPress"
-    };
-    return map[eventName] ?? eventName;
-  }
-  eventPayload(_eventName) {
-    return "...args: unknown[]";
-  }
-  propToRNType(type, values) {
-    if (type === "enum" && values) {
-      return values.map((v) => `'${v}'`).join(" | ");
-    }
-    return irTypeToTSBase(type);
-  }
-  generateComponent(ir, componentName) {
-    const propsDestructure = this.generatePropsDestructure(ir.props, ir.slots, ir.events);
-    const jsxBody = this.generateJSX(ir.template, ir.styles, 2);
-    const lines = [];
-    lines.push(
-      `export const ${componentName}: React.FC<${componentName}Props> = (${propsDestructure}) => {`
-    );
-    lines.push(`  return (`);
-    lines.push(jsxBody);
-    lines.push(`  );`);
-    lines.push(`};`);
-    return lines.join("\n");
-  }
-  isTextOnlyComponent(node) {
-    if (node.tag === "span" || node.tag === "p" || node.tag === "text") return true;
-    if (node.text !== void 0) return true;
-    if (node.children) {
-      return node.children.every((c) => this.isTextOnlyComponent(c));
-    }
-    return false;
-  }
-  generatePropsDestructure(props, slots, events) {
-    const parts = [];
-    for (const [name, def] of Object.entries(props)) {
-      if (def.default !== void 0) {
-        const defaultValue = typeof def.default === "string" ? `'${def.default}'` : String(def.default);
-        parts.push(`${name} = ${defaultValue}`);
-      } else {
-        parts.push(name);
-      }
-    }
-    if (slots) {
-      for (const slotName of Object.keys(slots)) {
-        parts.push(slotName === "default" ? "children" : slotName);
-      }
-    }
-    if (events) {
-      for (const eventName of Object.keys(events)) {
-        const handler = this.eventToRN(eventName);
-        if (handler !== eventName) {
-          parts.push(`${handler}: ${eventName}`);
-        } else {
-          parts.push(eventName);
-        }
-      }
-    }
-    parts.push("style");
-    return `{ ${parts.join(", ")} }`;
-  }
-  generateJSX(node, styles, depth) {
-    if (node.if !== void 0) return this.generateConditional(node, styles, depth);
-    if (node.each !== void 0) return this.generateLoop(node, styles, depth);
-    if (node.slot !== void 0) return this.generateSlot(node, depth);
-    if (node.text !== void 0) return this.generateText(node.text, depth);
-    if (node.component !== void 0) return this.generateComponentRef(node, depth);
-    if (node.tag !== void 0) return this.generateElement(node, styles, depth);
-    return "";
-  }
-  generateElement(node, styles, depth) {
-    const rnTag = HTML_TO_RN[node.tag] ?? node.tag;
-    const isText = rnTag === "Text";
-    const attrs = this.buildRNAttributes(node, styles);
-    const children = node.children;
-    if (!children || children.length === 0) {
-      return indent(`<${rnTag}${attrs} />`, depth);
-    }
-    const childrenJSX = children.map((child) => this.generateJSX(child, styles, depth + 1)).filter((s) => s.length > 0).join("\n");
-    const shouldWrapInText = !isText && this.childrenContainText(children);
-    if (shouldWrapInText) {
-      return [
-        indent(`<${rnTag}${attrs}>`, depth),
-        indent(`<Text>${childrenJSX}</Text>`, depth + 1),
-        indent(`</${rnTag}>`, depth)
-      ].join("\n");
-    }
-    return [
-      indent(`<${rnTag}${attrs}>`, depth),
-      childrenJSX,
-      indent(`</${rnTag}>`, depth)
-    ].join("\n");
-  }
-  childrenContainText(children) {
-    return children.some((c) => c.text !== void 0 || c.slot !== void 0);
-  }
-  generateText(text, depth) {
-    const segments = parseExpression(text);
-    if (segments.length === 1 && segments[0]?.type === "static") {
-      return indent(segments[0].value, depth);
-    }
-    if (segments.length === 1 && segments[0]?.type === "expression") {
-      return indent(`{${this.convertExprToRN(segments[0].value)}}`, depth);
-    }
-    const parts = segments.map((seg) => {
-      if (seg.type === "expression") {
-        return `\${${this.convertExprToRN(seg.value)}}`;
-      }
-      return seg.value;
-    });
-    return indent(`{\`${parts.join("")}\`}`, depth);
-  }
-  generateSlot(node, depth) {
-    const slotName = node.slot;
-    const propName = slotName === "default" ? "children" : slotName;
-    if (node.fallback) {
-      return indent(`{${propName} ?? '${node.fallback}'}`, depth);
-    }
-    return indent(`{${propName}}`, depth);
-  }
-  generateConditional(node, styles, depth) {
-    const condition = this.convertExprToRN(node.if);
-    const thenJSX = node.then ? this.generateJSX(node.then, styles, 0) : "";
-    if (node.else) {
-      const elseJSX = this.generateJSX(node.else, styles, 0);
-      return indent(`{${condition} ? (
-${indent(thenJSX, 1)}
-) : (
-${indent(elseJSX, 1)}
-)}`, depth);
-    }
-    return indent(`{${condition} && (
-${indent(thenJSX, 1)}
-)}`, depth);
-  }
-  generateLoop(node, styles, depth) {
-    const collection = this.convertExprToRN(node.each);
-    const itemVar = node.as ?? "item";
-    const keyExpr = node.key ? this.convertExprToRN(node.key) : "index";
-    const childrenJSX = (node.children ?? []).map((child) => this.generateJSX(child, styles, depth + 2)).join("\n");
-    return indent(
-      `{${collection}.map((${itemVar}, index) => (
-${indent(`<React.Fragment key={${keyExpr}}>`, depth + 1)}
-${childrenJSX}
-${indent("</React.Fragment>", depth + 1)}
-${indent(")", depth)}))}`,
-      depth
-    );
-  }
-  generateComponentRef(node, depth) {
-    const name = toPascalCase(node.component);
-    const props = node.props;
-    if (!props || Object.keys(props).length === 0) {
-      return indent(`<${name} />`, depth);
-    }
-    const propsStr = Object.entries(props).map(([key, value]) => {
-      if (isPureExpression(value)) {
-        return `${key}={${this.convertExprToRN(extractExpression(value))}}`;
-      }
-      return `${key}="${value}"`;
-    }).join(" ");
-    return indent(`<${name} ${propsStr} />`, depth);
-  }
-  buildRNAttributes(node, styles) {
-    const parts = [];
-    const styleKeys = this.resolveStyleKeys(node, styles);
-    if (styleKeys.length > 0) {
-      parts.push(`style={[${styleKeys.join(", ")}]}`);
-    }
-    if (node.attributes) {
-      for (const [key, value] of Object.entries(node.attributes)) {
-        const rnKey = this.attrToRN(key, node.tag);
-        if (!rnKey) continue;
-        if (isPureExpression(value)) {
-          parts.push(`${rnKey}={${this.convertExprToRN(extractExpression(value))}}`);
-        } else if (value === "true" || value === "false") {
-          parts.push(`${rnKey}={${value}}`);
-        } else {
-          parts.push(`${rnKey}="${value}"`);
-        }
-      }
-    }
-    if (node.style) {
-      const inlineStyle = Object.entries(node.style).map(([prop, val]) => {
-        const camelProp = toCamelCase(prop);
-        if (isPureExpression(val)) {
-          return `${camelProp}: ${this.convertExprToRN(extractExpression(val))}`;
-        }
-        return `${camelProp}: '${val}'`;
-      }).join(", ");
-      parts.push(`style={{ ${inlineStyle} }}`);
-    }
-    if (parts.length === 0) return "";
-    return " " + parts.join(" ");
-  }
-  resolveStyleKeys(node, _styles) {
-    const keys = [];
-    if (node.class) {
-      const segments = parseExpression(node.class);
-      for (const seg of segments) {
-        if (seg.type === "static") {
-          const parts = seg.value.trim().split(/\s+/).filter(Boolean);
-          for (const part of parts) {
-            const styleKey = this.classToStyleKey(part);
-            if (styleKey) keys.push(`styles.${styleKey}`);
-          }
-        } else if (seg.type === "expression") {
-          keys.push(this.convertExprToRN(seg.value));
-        }
-      }
-    }
-    if (keys.length === 0) return [];
-    return keys;
-  }
-  classToStyleKey(cls) {
-    const parts = cls.split(/(?=[A-Z])/);
-    if (parts.length > 1) {
-      const joined = parts.map((p) => p.toLowerCase()).join("_");
-      return joined;
-    }
-    return cls;
-  }
-  attrToRN(attr, _tag) {
-    const map = {
-      disabled: "disabled",
-      placeholder: "placeholder",
-      value: "value",
-      type: "keyboardType",
-      name: "name",
-      rows: "numberOfLines",
-      maxlength: "maxLength",
-      readonly: "readOnly",
-      required: "required",
-      checked: "value",
-      href: "href",
-      src: "source",
-      alt: "accessibilityLabel",
-      role: "accessibilityRole",
-      colspan: "colspan"
-    };
-    return map[attr] ?? null;
-  }
-  convertExprToRN(expr) {
-    return expr.replace(/props\.(\w+)/g, "$1").replace(/styles\.(\w+)(\[(\w+)\])?/g, "styles.$1$2");
-  }
 };
 var COMPONENT_REGISTRY = {
   button: {
@@ -6220,38 +5428,38 @@ function createAddCommand() {
       const framework = options["framework"] || config?.framework || "";
       if (!framework) {
         console.error(
-          chalk.red("\u2717 No framework specified. Use --framework or run `awesomeui init` first.")
+          chalk3.red("\u2717 No framework specified. Use --framework or run `awesomeui init` first.")
         );
         process.exit(1);
       }
       const outputDir = options["output"] || config?.outputDir || "./src/components/ui";
       const resolvedOutput = resolve(cwd, outputDir);
-      spinner.start(`Loading component ${chalk.cyan(componentName)}...`);
+      spinner.start(`Loading component ${chalk3.cyan(componentName)}...`);
       const componentResult = getComponent(componentName);
       if (!isOk(componentResult)) {
-        spinner.fail(chalk.red(`Component "${componentName}" not found`));
-        console.error(chalk.gray(componentResult.error.formatErrors()));
+        spinner.fail(chalk3.red(`Component "${componentName}" not found`));
+        console.error(chalk3.gray(componentResult.error.formatErrors()));
         process.exit(1);
       }
       const ir = componentResult.data;
-      spinner.succeed(`Loaded ${chalk.cyan(ir.name)} v${ir.version}`);
-      spinner.start(`Transpiling to ${chalk.yellow(framework)}...`);
+      spinner.succeed(`Loaded ${chalk3.cyan(ir.name)} v${ir.version}`);
+      spinner.start(`Transpiling to ${chalk3.yellow(framework)}...`);
       const transpiler = createTranspiler(framework);
       if (!transpiler) {
-        spinner.fail(chalk.red(`Unsupported framework: ${framework}`));
-        console.error(chalk.gray(`Supported: react, vue, angularjs, react-native`));
+        spinner.fail(chalk3.red(`Unsupported framework: ${framework}`));
+        console.error(chalk3.gray(`Supported: react, vue, angularjs, react-native, svelte, solid`));
         process.exit(1);
       }
       const transpileResult = transpiler.transpile(ir, {
         styleAdapter: options["style"] ?? "tailwind"
       });
       if (!isOk(transpileResult)) {
-        spinner.fail(chalk.red("Transpilation failed"));
-        console.error(chalk.gray(transpileResult.error.formatErrors()));
+        spinner.fail(chalk3.red("Transpilation failed"));
+        console.error(chalk3.gray(transpileResult.error.formatErrors()));
         process.exit(1);
       }
       const output = transpileResult.data;
-      spinner.succeed(`Transpiled to ${chalk.yellow(output.framework)}`);
+      spinner.succeed(`Transpiled to ${chalk3.yellow(output.framework)}`);
       spinner.start("Writing component file...");
       await mkdir(resolvedOutput, { recursive: true });
       const filePath = join(resolvedOutput, output.filename);
@@ -6262,13 +5470,36 @@ function createAddCommand() {
           await writeConfig(cwd, config);
         }
       }
-      spinner.succeed(chalk.green(`\u2713 ${output.filename}`));
-      console.log(chalk.gray(`  \u2192 ${filePath}`));
+      spinner.succeed(chalk3.green(`\u2713 ${output.filename}`));
+      console.log(chalk3.gray(`  \u2192 ${filePath}`));
+      const npmDeps = ir.npmDependencies;
+      if (npmDeps && npmDeps.length > 0) {
+        const depsToInstall = npmDeps.filter((d) => !d.dev).map((d) => d.version ? `${d.name}@${d.version}` : d.name);
+        const devDepsToInstall = npmDeps.filter((d) => d.dev).map((d) => d.version ? `${d.name}@${d.version}` : d.name);
+        if (depsToInstall.length > 0) {
+          spinner.start("Installing npm dependencies...");
+          try {
+            execSync(`npm install ${depsToInstall.join(" ")}`, { cwd, stdio: "ignore" });
+            spinner.succeed(chalk3.green("Installed npm dependencies"));
+          } catch {
+            spinner.warn(chalk3.yellow(`Could not auto-install deps. Run: npm install ${depsToInstall.join(" ")}`));
+          }
+        }
+        if (devDepsToInstall.length > 0) {
+          spinner.start("Installing npm dev dependencies...");
+          try {
+            execSync(`npm install --save-dev ${devDepsToInstall.join(" ")}`, { cwd, stdio: "ignore" });
+            spinner.succeed(chalk3.green("Installed npm dev dependencies"));
+          } catch {
+            spinner.warn(chalk3.yellow(`Could not auto-install devDeps. Run: npm install --save-dev ${devDepsToInstall.join(" ")}`));
+          }
+        }
+      }
       console.log();
     } catch (error) {
-      spinner.fail(chalk.red("Failed to add component"));
+      spinner.fail(chalk3.red("Failed to add component"));
       if (error instanceof Error) {
-        console.error(chalk.gray(error.message));
+        console.error(chalk3.gray(error.message));
       }
       process.exit(1);
     }
@@ -6285,6 +5516,10 @@ function createTranspiler(framework) {
       return new AngularJSTranspiler();
     case "react-native":
       return new ReactNativeTranspiler();
+    case "svelte":
+      return new SvelteTranspiler();
+    case "solid":
+      return new SolidTranspiler();
     default:
       return null;
   }
@@ -6293,31 +5528,45 @@ function createListCommand() {
   return new Command("list").description("List all available components").action(() => {
     const components = listComponents();
     console.log();
-    console.log(chalk.bold("  Available Components"));
-    console.log(chalk.gray("  \u2500".repeat(30)));
+    console.log(chalk3.bold("  Available Components"));
+    console.log(chalk3.gray("  \u2500".repeat(30)));
     console.log();
     const nameWidth = 18;
     const versionWidth = 10;
     const categoryWidth = 14;
     console.log(
-      chalk.gray(
+      chalk3.gray(
         `  ${"Name".padEnd(nameWidth)}${"Version".padEnd(versionWidth)}${"Category".padEnd(categoryWidth)}Description`
       )
     );
-    console.log(chalk.gray("  " + "\u2500".repeat(80)));
+    console.log(chalk3.gray("  " + "\u2500".repeat(80)));
     for (const component of components) {
-      const name = chalk.cyan(component.name.padEnd(nameWidth));
-      const version = chalk.gray(component.version.padEnd(versionWidth));
-      const category = chalk.yellow(component.category.padEnd(categoryWidth));
+      const name = chalk3.cyan(component.name.padEnd(nameWidth));
+      const version = chalk3.gray(component.version.padEnd(versionWidth));
+      const category = chalk3.yellow(component.category.padEnd(categoryWidth));
       const desc = component.description;
       console.log(`  ${name}${version}${category}${desc}`);
     }
     console.log();
-    console.log(chalk.gray(`  ${components.length} component(s) available`));
-    console.log(chalk.gray(`  Run ${chalk.white("awesomeui add <name> --framework <react|vue>")} to add a component`));
+    console.log(chalk3.gray(`  ${components.length} component(s) available`));
+    console.log(chalk3.gray(`  Run ${chalk3.white("awesomeui add <name> --framework <react|vue>")} to add a component`));
     console.log();
   });
 }
+var UTILS_TS = `import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+`;
+var UTILS_JS = `import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+`;
 function createInitCommand() {
   return new Command("init").description("Initialize AwesomeUI configuration in your project").option("-f, --framework <framework>", "Target framework (react, vue)", "react").option("-s, --style <style>", "Style adapter (tailwind, css, css-in-js, panda)", "tailwind").option("-o, --output <dir>", "Output directory for components", "./src/components/ui").option("--no-typescript", "Generate JavaScript instead of TypeScript").action(async (options) => {
     const cwd = process.cwd();
@@ -6330,22 +5579,38 @@ function createInitCommand() {
     };
     try {
       await writeConfig(cwd, config);
+      const isTs = config.typescript;
+      const utilsDir = resolve(cwd, "src", "lib");
+      const utilsFile = join(utilsDir, isTs ? "utils.ts" : "utils.js");
+      await mkdir(utilsDir, { recursive: true });
+      await writeFile(utilsFile, isTs ? UTILS_TS : UTILS_JS, "utf-8");
       console.log();
-      console.log(chalk.green("  \u2713 Created awesomeui.config.json"));
+      console.log(chalk3.green("  \u2713 Created awesomeui.config.json"));
+      console.log(chalk3.green(`  \u2713 Created ${isTs ? "src/lib/utils.ts" : "src/lib/utils.js"}`));
       console.log();
-      console.log(chalk.gray("  Configuration:"));
-      console.log(`    Framework:  ${chalk.cyan(config.framework)}`);
-      console.log(`    Style:      ${chalk.yellow(config.style)}`);
-      console.log(`    Output:     ${chalk.white(config.outputDir)}`);
-      console.log(`    TypeScript: ${config.typescript ? chalk.green("yes") : chalk.red("no")}`);
+      console.log(chalk3.gray("  Configuration:"));
+      console.log(`    Framework:  ${chalk3.cyan(config.framework)}`);
+      console.log(`    Style:      ${chalk3.yellow(config.style)}`);
+      console.log(`    Output:     ${chalk3.white(config.outputDir)}`);
+      console.log(`    TypeScript: ${config.typescript ? chalk3.green("yes") : chalk3.red("no")}`);
       console.log();
-      console.log(chalk.gray(`  Next steps:`));
-      console.log(chalk.gray(`    Run ${chalk.white("awesomeui add button")} to add your first component`));
+      const spinner = ora("Installing clsx and tailwind-merge...").start();
+      try {
+        execSync("npm install clsx tailwind-merge", { cwd, stdio: "ignore" });
+        spinner.succeed(chalk3.green("Installed clsx and tailwind-merge"));
+      } catch {
+        spinner.warn(chalk3.yellow("Could not auto-install dependencies. Run: npm install clsx tailwind-merge"));
+      }
+      console.log();
+      console.log(chalk3.gray("  Next steps:"));
+      console.log(chalk3.gray(`    1. Make sure your project has a path alias from ${chalk3.white("@")} to ${chalk3.white("./src")}`));
+      console.log(chalk3.gray(`       (e.g., in tsconfig.json: ${chalk3.white('"paths": { "@/*": ["./src/*"] }')})`));
+      console.log(chalk3.gray(`    2. Run ${chalk3.white("awesomeui add button")} to add your first component`));
       console.log();
     } catch (error) {
-      console.error(chalk.red("  \u2717 Failed to create config file"));
+      console.error(chalk3.red("  \u2717 Failed to initialize"));
       if (error instanceof Error) {
-        console.error(chalk.gray(`    ${error.message}`));
+        console.error(chalk3.gray(`    ${error.message}`));
       }
       process.exit(1);
     }

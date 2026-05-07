@@ -7,6 +7,9 @@
     "awesomeui": "./dist/index.js"
   },
   "main": "./dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": ["dist"],
   "scripts": {
     "build": "tsup",

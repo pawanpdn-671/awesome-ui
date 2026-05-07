@@ -2,6 +2,7 @@
   "name": "@awesomeui/transpiler-solid",
   "version": "0.1.0",
   "description": "SolidJS transpiler for AwesomeUI IR",
+  "publishConfig": { "access": "public" },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

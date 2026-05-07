@@ -2,6 +2,7 @@
 
 exports[`ReactTranspiler > snapshot: button component output 1`] = `
 "import React from 'react';
+import { cn } from '@/lib/utils';
 
 const styles = {
   base: 'inline-flex items-center justify-center rounded-md font-medium',
@@ -43,7 +44,7 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button
   { variant = 'primary', size = 'md', disabled = false, loading = false, children, icon, onClick, className, ref, ...restProps },
 ) {
   return (
-    <button className={\`\${styles.base} \${styles.variant[variant]} \${styles.size[size]}\`.trim()} type="button" disabled={disabled}>
+    <button className={cn(styles.base, styles.variant[variant], styles.size[size], className)} type="button" disabled={disabled}>
       {loading && (
         <span className={styles.spinner} />
       )}
