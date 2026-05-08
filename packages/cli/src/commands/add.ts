@@ -89,6 +89,7 @@ export function createAddCommand(): Command {
 
         const transpileResult = transpiler.transpile(ir, {
           styleAdapter: (options['style'] as 'tailwind' | 'css') ?? 'tailwind',
+          typescript: config?.typescript ?? true,
         });
 
         if (!isOk(transpileResult)) {

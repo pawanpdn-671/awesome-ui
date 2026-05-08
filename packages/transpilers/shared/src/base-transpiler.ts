@@ -104,7 +104,6 @@ export abstract class BaseTranspiler {
       ...DEFAULT_OPTIONS,
       ...options,
     };
-
     try {
       const code = this.generate(ir, mergedOptions);
       const componentName = this.getComponentName(ir.name);

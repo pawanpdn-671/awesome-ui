@@ -1,14 +1,19 @@
 {
-  "name": "awesomeui",
+  "name": "awesomeui-monorepo",
   "private": true,
-  "version": "0.0.1",
-  "description": "Cross-framework component platform with AI-powered generation",
+  "version": "0.1.0",
+  "description": "AwesomeUI — Universal UI platform for every framework",
   "workspaces": [
+    "apps/*",
     "packages/*",
-    "packages/transpilers/*"
+    "packages/transpilers/*",
+    "tooling/*"
   ],
   "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "dev:web": "npm run dev --workspace=apps/web",
     "build": "npm run build --workspaces",
+    "build:web": "npm run build --workspace=apps/web",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "clean": "npm run clean --workspaces"

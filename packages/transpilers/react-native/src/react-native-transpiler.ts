@@ -1,7 +1,7 @@
-import type { IComponentIR, IPropsMap, ISlotsMap, IEventsMap, IStyleMap } from '@awesomeui/core';
+import { isOk, ValidationError } from '@awesomeui/core';
+import type { IComponentIR, IPropsMap, ISlotsMap, IEventsMap, IStyleMap, Result } from '@awesomeui/core';
 import {
   BaseTranspiler,
-  type ITranspileOptions,
   parseExpression,
   isPureExpression,
   extractExpression,
@@ -10,6 +10,7 @@ import {
   indent,
   irTypeToTSBase,
 } from '@awesomeui/transpiler-shared';
+import type { ITranspileOptions, ITranspileOutput } from '@awesomeui/transpiler-shared';
 
 interface IRNode {
   tag?: string;
@@ -70,20 +71,62 @@ export class ReactNativeTranspiler extends BaseTranspiler {
   readonly fileExtension = '.tsx';
   readonly language = 'typescript';
 
-  protected generate(ir: IComponentIR, _options: Required<ITranspileOptions>): string {
+  /**
+   * Override to support dynamic file extension and language for JS output.
+   */
+  transpile(
+    input: IComponentIR | unknown,
+    options?: ITranspileOptions
+  ): Result<ITranspileOutput, ValidationError> {
+    const res = super.transpile(input, options);
+    if (!isOk(res)) return res;
+
+    const mergedOptions: Required<ITranspileOptions> = {
+      styleAdapter: 'tailwind',
+      indentSize: 2,
+      typescript: true,
+      ...options,
+    };
+
+    if (!mergedOptions.typescript) {
+      res.data.filename = res.data.filename.replace(/\.tsx$/, '.jsx');
+      res.data.language = 'javascript';
+    }
+    return res;
+  }
+
+  protected generate(ir: IComponentIR, options: Required<ITranspileOptions>): string {
     const componentName = this.getComponentName(ir.name);
     const sections: string[] = [];
+    const isTs = options.typescript;
 
-    sections.push(this.generateImports());
-    sections.push(this.generateStyleSheet(ir));
-    sections.push(this.generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
-    sections.push(this.generateComponent(ir, componentName));
+    sections.push(this.generateImports(isTs));
+    sections.push(this.generateStyleSheet(ir, isTs));
+    if (isTs) {
+      sections.push(this.generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
+    }
+    sections.push(this.generateComponent(ir, componentName, isTs));
     sections.push(`${componentName}.displayName = '${componentName}';`);
 
     return sections.join('\n\n') + '\n';
   }
 
-  private generateImports(): string {
+  private generateImports(isTs: boolean): string {
+    if (isTs) {
+      return [
+        "import React from 'react';",
+        "import {",
+        "  View,",
+        "  Text,",
+        "  TouchableOpacity,",
+        "  TextInput,",
+        "  Image,",
+        "  StyleSheet,",
+        "  type ViewStyle,",
+        "  type TextStyle,",
+        "} from 'react-native';",
+      ].join('\n');
+    }
     return [
       "import React from 'react';",
       "import {",
@@ -93,13 +136,11 @@ export class ReactNativeTranspiler extends BaseTranspiler {
       "  TextInput,",
       "  Image,",
       "  StyleSheet,",
-      "  type ViewStyle,",
-      "  type TextStyle,",
       "} from 'react-native';",
     ].join('\n');
   }
 
-  private generateStyleSheet(ir: IComponentIR): string {
+  private generateStyleSheet(ir: IComponentIR, isTs: boolean): string {
     const flattenStyles = this.flattenStyles(ir.styles);
     const lines: string[] = [];
     lines.push('const styles = StyleSheet.create({');
@@ -111,7 +152,7 @@ export class ReactNativeTranspiler extends BaseTranspiler {
       }
     }
 
-    lines.push('} as const);');
+    lines.push(`}${isTs ? ' as const' : ''});`);
     return lines.join('\n');
   }
 
@@ -343,13 +384,14 @@ export class ReactNativeTranspiler extends BaseTranspiler {
     return irTypeToTSBase(type);
   }
 
-  private generateComponent(ir: IComponentIR, componentName: string): string {
+  private generateComponent(ir: IComponentIR, componentName: string, isTs: boolean): string {
     const propsDestructure = this.generatePropsDestructure(ir.props, ir.slots, ir.events);
     const jsxBody = this.generateJSX(ir.template as IRNode, ir.styles, 2);
 
+    const typeAnnotation = isTs ? `: React.FC<${componentName}Props>` : '';
     const lines: string[] = [];
     lines.push(
-      `export const ${componentName}: React.FC<${componentName}Props> = (${propsDestructure}) => {`
+      `export const ${componentName}${typeAnnotation} = (${propsDestructure}) => {`
     );
     lines.push(`  return (`);
     lines.push(jsxBody);

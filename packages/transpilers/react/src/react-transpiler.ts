@@ -17,10 +17,11 @@
  * ```
  */
 
-import type { IComponentIR } from '@awesomeui/core';
+import { isOk, type IComponentIR, type Result, ValidationError } from '@awesomeui/core';
 import {
   BaseTranspiler,
   type ITranspileOptions,
+  type ITranspileOutput,
 } from '@awesomeui/transpiler-shared';
 import { generatePropsInterface, generatePropsDestructure } from './generate-props.js';
 import { generateJSX } from './generate-template.js';
@@ -53,23 +54,50 @@ export class ReactTranspiler extends BaseTranspiler {
   readonly language = 'typescript';
 
   /**
+   * Override to support dynamic file extension and language for JS output.
+   */
+  transpile(
+    input: IComponentIR | unknown,
+    options?: ITranspileOptions
+  ): Result<ITranspileOutput, ValidationError> {
+    const res = super.transpile(input, options);
+    if (!isOk(res)) return res;
+
+    const mergedOptions: Required<ITranspileOptions> = {
+      styleAdapter: 'tailwind',
+      indentSize: 2,
+      typescript: true,
+      ...options,
+    };
+
+    if (!mergedOptions.typescript) {
+      res.data.filename = res.data.filename.replace(/\.tsx$/, '.jsx');
+      res.data.language = 'javascript';
+    }
+    return res;
+  }
+
+  /**
    * Generates the complete React component code from validated IR.
    */
-  protected generate(ir: IComponentIR, _options: Required<ITranspileOptions>): string {
+  protected generate(ir: IComponentIR, options: Required<ITranspileOptions>): string {
     const componentName = this.getComponentName(ir.name);
     const sections: string[] = [];
+    const isTs = options.typescript;
 
     // 1. Imports
     sections.push(this.generateImports());
 
     // 2. Styles object (for variant lookups in JSX)
-    sections.push(this.generateStylesObject(ir));
+    sections.push(this.generateStylesObject(ir, isTs));
 
-    // 3. Props interface
-    sections.push(generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
+    // 3. Props interface (TypeScript only)
+    if (isTs) {
+      sections.push(generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
+    }
 
     // 4. Component
-    sections.push(this.generateComponent(ir, componentName));
+    sections.push(this.generateComponent(ir, componentName, isTs));
 
     // 5. Display name
     sections.push(`${componentName}.displayName = '${componentName}';`);
@@ -91,7 +119,7 @@ export class ReactTranspiler extends BaseTranspiler {
    * Generates the styles constant object from IR styles.
    * This allows runtime access to variant-based class names.
    */
-  private generateStylesObject(ir: IComponentIR): string {
+  private generateStylesObject(ir: IComponentIR, isTs: boolean): string {
     const lines: string[] = [];
     lines.push('const styles = {');
 
@@ -111,20 +139,21 @@ export class ReactTranspiler extends BaseTranspiler {
       }
     }
 
-    lines.push('} as const;');
+    lines.push(`}${isTs ? ' as const' : ''};`);
     return lines.join('\n');
   }
 
   /**
    * Generates the React functional component with forwardRef.
    */
-  private generateComponent(ir: IComponentIR, componentName: string): string {
+  private generateComponent(ir: IComponentIR, componentName: string, isTs: boolean): string {
     const propsDestructure = generatePropsDestructure(ir.props, ir.slots, ir.events);
     const jsxBody = generateJSX(ir.template as Record<string, unknown>, ir.styles, 2, true);
 
+    const typeParams = isTs ? `<HTMLElement, ${componentName}Props>` : '';
     const lines: string[] = [];
     lines.push(
-      `export const ${componentName} = React.forwardRef<HTMLElement, ${componentName}Props>(function ${componentName}(`
+      `export const ${componentName} = React.forwardRef${typeParams}(function ${componentName}(`
     );
     lines.push(`  ${propsDestructure},`);
     lines.push(`) {`);

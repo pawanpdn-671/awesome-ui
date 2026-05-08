@@ -13,17 +13,27 @@ describe('SvelteTranspiler', () => {
     expect(transpiler.language).toBe('svelte');
   });
 
-  it('transpiles button IR successfully', () => {
+  it('transpiles button IR with TypeScript by default', () => {
     const result = transpiler.transpile(buttonIR);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.framework).toBe('svelte');
       expect(result.data.filename).toBe('Button.svelte');
       expect(result.data.code).toContain('$props()');
-      expect(result.data.code).toContain('<script>');
+      expect(result.data.code).toContain('<script lang="ts">');
       expect(result.data.code).toContain('{#if');
       expect(result.data.code).toContain('{@render children?.()');
       expect(result.data.code).toContain('</template>');
+    }
+  });
+
+  it('transpiles button IR with JavaScript when typescript is false', () => {
+    const result = transpiler.transpile(buttonIR, { typescript: false });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.code).toContain('<script>');
+      expect(result.data.code).not.toContain('<script lang="ts">');
+      expect(result.data.code).toContain('$props()');
     }
   });
 

@@ -1,7 +1,7 @@
-import type { IComponentIR, IPropsMap, ISlotsMap, IEventsMap, IStyleMap } from '@awesomeui/core';
+import { isOk, ValidationError } from '@awesomeui/core';
+import type { IComponentIR, IPropsMap, ISlotsMap, IEventsMap, IStyleMap, Result } from '@awesomeui/core';
 import {
   BaseTranspiler,
-  type ITranspileOptions,
   parseExpression,
   isPureExpression,
   extractExpression,
@@ -9,6 +9,7 @@ import {
   indent,
   irTypeToTSBase,
 } from '@awesomeui/transpiler-shared';
+import type { ITranspileOptions, ITranspileOutput } from '@awesomeui/transpiler-shared';
 
 interface IRNode {
   tag?: string;
@@ -34,25 +35,53 @@ export class SolidTranspiler extends BaseTranspiler {
   readonly fileExtension = '.tsx';
   readonly language = 'typescript';
 
-  protected generate(ir: IComponentIR, _options: Required<ITranspileOptions>): string {
+  /**
+   * Override to support dynamic file extension and language for JS output.
+   */
+  transpile(
+    input: IComponentIR | unknown,
+    options?: ITranspileOptions
+  ): Result<ITranspileOutput, ValidationError> {
+    const res = super.transpile(input, options);
+    if (!isOk(res)) return res;
+
+    const mergedOptions: Required<ITranspileOptions> = {
+      styleAdapter: 'tailwind',
+      indentSize: 2,
+      typescript: true,
+      ...options,
+    };
+
+    if (!mergedOptions.typescript) {
+      res.data.filename = res.data.filename.replace(/\.tsx$/, '.jsx');
+      res.data.language = 'javascript';
+    }
+    return res;
+  }
+
+  protected generate(ir: IComponentIR, options: Required<ITranspileOptions>): string {
     const componentName = this.getComponentName(ir.name);
     const sections: string[] = [];
+    const isTs = options.typescript;
 
-    sections.push(this.generateImports());
-    sections.push(this.generateStylesObject(ir));
-    sections.push(this.generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
-    sections.push(this.generateComponent(ir, componentName));
+    sections.push(this.generateImports(isTs));
+    sections.push(this.generateStylesObject(ir, isTs));
+    if (isTs) {
+      sections.push(this.generatePropsInterface(componentName, ir.props, ir.slots, ir.events));
+    }
+    sections.push(this.generateComponent(ir, componentName, isTs));
 
     return sections.join('\n\n') + '\n';
   }
 
-  private generateImports(): string {
-    return [
-      "import { createSignal, createEffect, Show, For, Switch, Match, type Component } from 'solid-js';",
-    ].join('\n');
+  private generateImports(isTs: boolean): string {
+    const componentImport = isTs
+      ? "import { createSignal, createEffect, Show, For, Switch, Match, type Component } from 'solid-js';"
+      : "import { createSignal, createEffect, Show, For, Switch, Match } from 'solid-js';";
+    return componentImport;
   }
 
-  private generateStylesObject(ir: IComponentIR): string {
+  private generateStylesObject(ir: IComponentIR, isTs: boolean): string {
     const lines: string[] = [];
     lines.push('const styles = {');
 
@@ -72,7 +101,7 @@ export class SolidTranspiler extends BaseTranspiler {
       }
     }
 
-    lines.push('} as const;');
+    lines.push(`}${isTs ? ' as const' : ''};`);
     return lines.join('\n');
   }
 
@@ -121,13 +150,14 @@ export class SolidTranspiler extends BaseTranspiler {
     return irTypeToTSBase(type);
   }
 
-  private generateComponent(ir: IComponentIR, componentName: string): string {
+  private generateComponent(ir: IComponentIR, componentName: string, isTs: boolean): string {
     const propsStr = this.generatePropsDestructure(ir.props, ir.slots, ir.events);
     const jsxBody = this.generateJSX(ir.template as IRNode, ir.styles, 2);
 
+    const typeAnnotation = isTs ? `: Component<${componentName}Props>` : '';
     const lines: string[] = [];
     lines.push(
-      `const ${componentName}: Component<${componentName}Props> = (${propsStr}) => {`
+      `const ${componentName}${typeAnnotation} = (${propsStr}) => {`
     );
     lines.push(`  return (`);
     lines.push(jsxBody);

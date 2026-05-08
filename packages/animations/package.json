@@ -1,0 +1,26 @@
+{
+  "name": "@awesomeui/animations",
+  "version": "0.1.0",
+  "description": "Animation primitives for AwesomeUI",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@awesomeui/typescript-config": "*",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3"
+  }
+}

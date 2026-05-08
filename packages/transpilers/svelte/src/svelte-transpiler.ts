@@ -33,16 +33,17 @@ export class SvelteTranspiler extends BaseTranspiler {
   readonly fileExtension = '.svelte';
   readonly language = 'svelte';
 
-  protected generate(ir: IComponentIR, _options: Required<ITranspileOptions>): string {
+  protected generate(ir: IComponentIR, options: Required<ITranspileOptions>): string {
     const sections: string[] = [];
-    sections.push(this.generateScript(ir));
+    const isTs = options.typescript;
+    sections.push(this.generateScript(ir, isTs));
     sections.push(this.generateTemplate(ir));
     return sections.join('\n\n') + '\n';
   }
 
-  private generateScript(ir: IComponentIR): string {
+  private generateScript(ir: IComponentIR, isTs: boolean): string {
     const lines: string[] = [];
-    lines.push('<script>');
+    lines.push(isTs ? '<script lang="ts">' : '<script>');
 
     const propNames = Object.keys(ir.props);
     const eventNames = ir.events ? Object.keys(ir.events) : [];
@@ -73,7 +74,7 @@ export class SvelteTranspiler extends BaseTranspiler {
     }
 
     lines.push('');
-    lines.push(this.generateStylesObject(ir.styles));
+    lines.push(this.generateStylesObject(ir.styles, isTs));
     lines.push('</script>');
 
     return lines.join('\n');
@@ -93,7 +94,7 @@ export class SvelteTranspiler extends BaseTranspiler {
     return map[eventName] ?? eventName;
   }
 
-  private generateStylesObject(stylesMap: IStyleMap): string {
+  private generateStylesObject(stylesMap: IStyleMap, isTs: boolean): string {
     const lines: string[] = [];
     lines.push('  const styles = {');
 
@@ -113,7 +114,7 @@ export class SvelteTranspiler extends BaseTranspiler {
       }
     }
 
-    lines.push('  } as const;');
+    lines.push(`  }${isTs ? ' as const' : ''};`);
     return lines.join('\n');
   }
 

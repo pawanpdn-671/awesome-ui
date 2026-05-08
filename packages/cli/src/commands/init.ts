@@ -1,4 +1,5 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { execSync } from 'node:child_process';
 import { Command } from 'commander';
@@ -21,6 +22,56 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 `;
+
+/**
+ * Detects and patches vite.config with @ path alias if missing.
+ */
+async function setupViteAlias(cwd: string): Promise<boolean> {
+  const viteFiles = ['vite.config.ts', 'vite.config.js', 'vite.config.mjs'];
+  let viteFile: string | null = null;
+
+  for (const file of viteFiles) {
+    if (existsSync(join(cwd, file))) {
+      viteFile = file;
+      break;
+    }
+  }
+
+  if (!viteFile) return false;
+
+  const configPath = join(cwd, viteFile);
+  let content = await readFile(configPath, 'utf-8');
+
+  // Already has @ alias in resolve — skip
+  if (content.includes("'@'") || content.includes('"@"')) {
+    if (content.includes('resolve')) return false;
+  }
+
+  // Already has a resolve block — can't safely merge, skip
+  if (content.includes('resolve:')) return false;
+
+  // Add path import if missing
+  if (!content.includes("from 'path'") && !content.includes('from "path"')) {
+    content = content.replace(
+      /^(import .+)$/m,
+      "import path from 'path';\n$1"
+    );
+  }
+
+  // Insert resolve.alias before closing of defineConfig(...)
+  const aliasBlock = `,
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },`;
+
+  // Match end of defineConfig: `});` or `})` or `})` with possible trailing content
+  content = content.replace(/(\n\}\);?)$/, `${aliasBlock}\n});`);
+
+  await writeFile(configPath, content, 'utf-8');
+  return true;
+}
 
 export function createInitCommand(): Command {
   return new Command('init')
@@ -50,9 +101,43 @@ export function createInitCommand(): Command {
         await mkdir(utilsDir, { recursive: true });
         await writeFile(utilsFile, isTs ? UTILS_TS : UTILS_JS, 'utf-8');
 
+        // Auto-configure path alias for @/* in build config
+        const viteAlias = await setupViteAlias(cwd);
+
+        // Auto-configure path alias for @/*
+        const aliasConfigFile = isTs ? 'tsconfig.json' : 'jsconfig.json';
+        const aliasConfigPath = join(cwd, aliasConfigFile);
+        let aliasConfigured = false;
+
+        try {
+          const existing = await readFile(aliasConfigPath, 'utf-8');
+          const parsed = JSON.parse(existing);
+          if (parsed?.compilerOptions?.paths?.['@/*']) {
+            aliasConfigured = true;
+          }
+        } catch {
+          // Config file doesn't exist — create it for JS projects
+          if (!isTs) {
+            const jsConfig = {
+              compilerOptions: {
+                baseUrl: '.',
+                paths: { '@/*': ['./src/*'] },
+              },
+            };
+            await writeFile(aliasConfigPath, JSON.stringify(jsConfig, null, 2) + '\n', 'utf-8');
+            aliasConfigured = true;
+          }
+        }
+
         console.log();
         console.log(chalk.green('  ✓ Created awesomeui.config.json'));
         console.log(chalk.green(`  ✓ Created ${isTs ? 'src/lib/utils.ts' : 'src/lib/utils.js'}`));
+        if (aliasConfigured && !isTs) {
+          console.log(chalk.green(`  ✓ Created ${aliasConfigFile} with @ path alias`));
+        }
+        if (viteAlias) {
+          console.log(chalk.green('  ✓ Updated vite config with @ path alias'));
+        }
 
         console.log();
         console.log(chalk.gray('  Configuration:'));
@@ -61,6 +146,12 @@ export function createInitCommand(): Command {
         console.log(`    Output:     ${chalk.white(config.outputDir)}`);
         console.log(`    TypeScript: ${config.typescript ? chalk.green('yes') : chalk.red('no')}`);
         console.log();
+
+        if (!aliasConfigured && !viteAlias) {
+          console.log(chalk.yellow(`  ⚠ Path alias '@/*' not found in project config`));
+          console.log(chalk.gray(`    See https://vite.dev/config/shared-options.html#resolve-alias`));
+          console.log();
+        }
 
         const spinner = ora('Installing clsx and tailwind-merge...').start();
         try {
@@ -71,10 +162,8 @@ export function createInitCommand(): Command {
         }
 
         console.log();
-        console.log(chalk.gray('  Next steps:'));
-        console.log(chalk.gray(`    1. Make sure your project has a path alias from ${chalk.white('@')} to ${chalk.white('./src')}`));
-        console.log(chalk.gray(`       (e.g., in tsconfig.json: ${chalk.white('"paths": { "@/*": ["./src/*"] }')})`));
-        console.log(chalk.gray(`    2. Run ${chalk.white('awesomeui add button')} to add your first component`));
+        console.log(chalk.gray('  Next step:'));
+        console.log(chalk.gray(`    Run ${chalk.white('awesomeui add button')} to add your first component`));
         console.log();
       } catch (error) {
         console.error(chalk.red('  ✗ Failed to initialize'));

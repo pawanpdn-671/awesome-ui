@@ -71,11 +71,12 @@ export class VueTranspiler extends BaseTranspiler {
   /**
    * Generates the complete Vue SFC code from validated IR.
    */
-  protected generate(ir: IComponentIR, _options: Required<ITranspileOptions>): string {
+  protected generate(ir: IComponentIR, options: Required<ITranspileOptions>): string {
     const sections: string[] = [];
+    const isTs = options.typescript;
 
-    // <script setup lang="ts">
-    sections.push(this.generateScript(ir));
+    // <script setup lang="ts"> or <script setup>
+    sections.push(this.generateScript(ir, isTs));
 
     // <template>
     sections.push(this.generateTemplate(ir));
@@ -84,29 +85,35 @@ export class VueTranspiler extends BaseTranspiler {
   }
 
   /**
-   * Generates the `<script setup lang="ts">` block.
+   * Generates the `<script setup>` block.
    */
-  private generateScript(ir: IComponentIR): string {
+  private generateScript(ir: IComponentIR, isTs: boolean): string {
     const lines: string[] = [];
-    lines.push('<script setup lang="ts">');
+    lines.push(isTs ? '<script setup lang="ts">' : '<script setup>');
 
-    // Props interface
-    lines.push('');
-    lines.push(this.generatePropsInterface(ir.props));
+    if (isTs) {
+      // Props interface (TypeScript only)
+      lines.push('');
+      lines.push(this.generatePropsInterface(ir.props));
 
-    // defineProps + withDefaults
-    lines.push('');
-    lines.push(this.generateDefineProps(ir.props));
+      // defineProps + withDefaults
+      lines.push('');
+      lines.push(this.generateDefinePropsTS(ir.props));
+    } else {
+      // Runtime defineProps (JavaScript)
+      lines.push('');
+      lines.push(this.generateDefinePropsJS(ir.props));
+    }
 
     // defineEmits
     if (ir.events && Object.keys(ir.events).length > 0) {
       lines.push('');
-      lines.push(this.generateDefineEmits(ir.events));
+      lines.push(this.generateDefineEmits(ir.events, isTs));
     }
 
     // Styles object
     lines.push('');
-    lines.push(this.generateStylesObject(ir.styles));
+    lines.push(this.generateStylesObject(ir.styles, isTs));
 
     lines.push('</script>');
     return lines.join('\n');
@@ -135,9 +142,9 @@ export class VueTranspiler extends BaseTranspiler {
   }
 
   /**
-   * Generates defineProps with withDefaults.
+   * Generates defineProps with withDefaults (TypeScript).
    */
-  private generateDefineProps(props: IPropsMap): string {
+  private generateDefinePropsTS(props: IPropsMap): string {
     const defaults: string[] = [];
 
     for (const [name, def] of Object.entries(props)) {
@@ -161,26 +168,73 @@ export class VueTranspiler extends BaseTranspiler {
   }
 
   /**
+   * Generates defineProps with runtime syntax (JavaScript).
+   */
+  private generateDefinePropsJS(props: IPropsMap): string {
+    const entries: string[] = [];
+
+    for (const [name, def] of Object.entries(props)) {
+      const vueType = this.propToVueRuntimeType(def.type);
+      if (def.default !== undefined) {
+        const value = typeof def.default === 'string'
+          ? `'${def.default}'`
+          : String(def.default);
+        entries.push(`  ${name}: { type: ${vueType}, default: ${value} }`);
+      } else {
+        entries.push(`  ${name}: ${vueType}`);
+      }
+    }
+
+    if (entries.length === 0) {
+      return 'const props = defineProps({});';
+    }
+
+    return `const props = defineProps({\n${entries.join(',\n')}\n});`;
+  }
+
+  /**
+   * Maps IR prop type to Vue runtime constructor.
+   */
+  private propToVueRuntimeType(type: string): string {
+    switch (type) {
+      case 'string': return 'String';
+      case 'boolean': return 'Boolean';
+      case 'number': return 'Number';
+      case 'enum': return 'String';
+      case 'object': return 'Object';
+      case 'array': return 'Array';
+      default: return 'String';
+    }
+  }
+
+  /**
    * Generates defineEmits.
    */
-  private generateDefineEmits(events: IEventsMap): string {
+  private generateDefineEmits(events: IEventsMap, isTs: boolean): string {
+    if (isTs) {
+      const eventNames = Object.keys(events).map((name) => {
+        const vueName = name.replace(/^on/, '').toLowerCase();
+        return `  (e: '${vueName}', ...args: unknown[]): void;`;
+      });
+
+      return [
+        'const emit = defineEmits<{',
+        ...eventNames,
+        '}>();',
+      ].join('\n');
+    }
+
     const eventNames = Object.keys(events).map((name) => {
-      // Convert React-style "onClick" to Vue-style "click"
-      const vueName = name.replace(/^on/, '').toLowerCase();
-      return `  (e: '${vueName}', ...args: unknown[]): void;`;
+      return `'${name.replace(/^on/, '').toLowerCase()}'`;
     });
 
-    return [
-      'const emit = defineEmits<{',
-      ...eventNames,
-      '}>();',
-    ].join('\n');
+    return `const emit = defineEmits([${eventNames.join(', ')}]);`;
   }
 
   /**
    * Generates the styles constant object.
    */
-  private generateStylesObject(stylesMap: IStyleMap): string {
+  private generateStylesObject(stylesMap: IStyleMap, isTs: boolean): string {
     const lines: string[] = [];
     lines.push('const styles = {');
 
@@ -200,7 +254,7 @@ export class VueTranspiler extends BaseTranspiler {
       }
     }
 
-    lines.push('} as const;');
+    lines.push(`}${isTs ? ' as const' : ''};`);
     return lines.join('\n');
   }
 

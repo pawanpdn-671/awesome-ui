@@ -1,0 +1,10 @@
+{
+  "extends": "@awesomeui/typescript-config/base.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  }
+}
