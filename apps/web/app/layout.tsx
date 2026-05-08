@@ -1,32 +1,32 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { layout as t } from "@/texts";
 
 export const metadata: Metadata = {
   title: {
-    default: "AwesomeUI — Universal UI for Every Framework",
-    template: "%s — AwesomeUI",
+    default: t.title.default,
+    template: t.title.template,
   },
-  description:
-    "Build once. Ship everywhere. One design system for React, Next.js, Vue, Angular, Svelte, SolidJS, and React Native.",
-  keywords: [
-    "UI library", "component library", "React", "Vue", "Angular",
-    "Svelte", "SolidJS", "React Native", "Next.js", "design system",
-    "cross-framework",
-  ],
+  description: t.description,
+  keywords: [...t.keywords],
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "AwesomeUI",
-    title: "AwesomeUI — Universal UI for Every Framework",
-    description: "Build once. Ship everywhere. One design system for every framework.",
+    siteName: t.openGraph.siteName,
+    title: t.openGraph.title,
+    description: t.openGraph.description,
     images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AwesomeUI — Universal UI for Every Framework",
-    description: "Build once. Ship everywhere. One design system for every framework.",
+    title: t.twitter.title,
+    description: t.twitter.description,
     images: ["/og.png"],
   },
+  icons: [
+    { rel: "icon", url: "/logo-main.png" },
+    { rel: "apple-touch-icon", url: "/logo-main.png" },
+  ],
   robots: { index: true, follow: true },
   metadataBase: new URL("https://awesomeui.dev"),
 };

@@ -4,15 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/code-block";
 import { Check } from "lucide-react";
-
-const tokens = [
-  { category: "Colors", items: ["Primary", "Surface", "Success", "Warning", "Danger", "Muted"] },
-  { category: "Typography", items: ["Font Family", "Font Sizes", "Font Weights", "Line Heights"] },
-  { category: "Spacing", items: ["4px scale", "8px scale", "16px scale", "32px scale"] },
-  { category: "Radius", items: ["None", "Small", "Medium", "Large", "Full"] },
-  { category: "Shadows", items: ["Small", "Medium", "Large", "XL", "Glow"] },
-  { category: "Animation", items: ["Duration", "Easing", "Keyframes", "Transitions"] },
-];
+import { themingSection as t } from "@/texts";
 
 const themeCode = `/* AwesomeUI Design Tokens */
 :root {
@@ -56,24 +48,23 @@ export function ThemingSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 space-y-4">
-          <Badge variant="primary" className="text-sm px-4 py-1.5">Theming System</Badge>
+          <Badge variant="primary" className="text-sm px-4 py-1.5">{t.badge}</Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-100">
-            Your brand. <span className="text-gradient">Your theme.</span>
+            {t.heading.part1} <span className="text-gradient">{t.heading.part2}</span>
           </h2>
           <p className="text-lg text-surface-400 max-w-2xl mx-auto">
-            Comprehensive design tokens and CSS variables give you complete control
-            over every aspect of the visual design.
+            {t.subheading}
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="space-y-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {tokens.map((t) => (
-                <div key={t.category} className="glass rounded-xl p-4 border border-surface-800/50 card-gradient-hover">
-                  <h4 className="text-xs font-semibold text-awesome-400 uppercase tracking-wider mb-2">{t.category}</h4>
+              {t.tokens.map((tk) => (
+                <div key={tk.category} className="glass rounded-xl p-4 border border-surface-800/50 card-gradient-hover">
+                  <h4 className="text-xs font-semibold text-awesome-400 uppercase tracking-wider mb-2">{tk.category}</h4>
                   <ul className="space-y-1">
-                    {t.items.map((item) => (
+                    {tk.items.map((item) => (
                       <li key={item} className="flex items-center gap-2 text-xs text-surface-400">
                         <Check className="w-3 h-3 text-emerald-400/70" />
                         {item}
@@ -85,9 +76,9 @@ export function ThemingSection() {
             </div>
 
             <div className="glass rounded-xl p-5 border border-surface-700/50">
-              <h4 className="text-sm font-semibold text-surface-100 mb-3">Live Preview</h4>
+              <h4 className="text-sm font-semibold text-surface-100 mb-3">{t.livePreview.heading}</h4>
               <div className="flex flex-wrap gap-3 mb-4">
-                {[{ color: "#6366f1", label: "Indigo" }, { color: "#10b981", label: "Emerald" }, { color: "#f59e0b", label: "Amber" }, { color: "#ef4444", label: "Red" }, { color: "#8b5cf6", label: "Purple" }].map(({ color, label }) => (
+                {t.livePreview.colors.map(({ color, label }) => (
                   <button
                     key={color}
                     aria-label={label}
@@ -97,7 +88,7 @@ export function ThemingSection() {
                 ))}
               </div>
               <div className="flex flex-wrap gap-2">
-                {["sm", "md", "lg", "xl", "2xl"].map((r) => (
+                {t.livePreview.radii.map((r) => (
                   <span key={r} className="px-3 py-1.5 bg-surface-800 rounded text-xs text-surface-300 border border-surface-700" style={{ borderRadius: r === "sm" ? "0.25rem" : r === "md" ? "0.375rem" : r === "lg" ? "0.5rem" : r === "xl" ? "0.75rem" : "1rem" }}>
                     {r}
                   </span>
@@ -109,20 +100,18 @@ export function ThemingSection() {
           <div>
             <div className="relative">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-surface-200">CSS Variables</h3>
+                <h3 className="text-sm font-semibold text-surface-200">{t.cssVariables.heading}</h3>
                 <button onClick={handleCopy} className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-surface-300 transition-colors">
-                  {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" /> Copied</> : "Copy"}
+                  {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" /> {t.cssVariables.copied}</> : t.cssVariables.copy}
                 </button>
               </div>
               <CodeBlock code={themeCode} language="css" />
             </div>
 
             <div className="mt-6 glass rounded-xl p-5 border border-surface-700/50">
-              <h4 className="text-sm font-semibold text-surface-100 mb-2">Dark Mode Ready</h4>
+              <h4 className="text-sm font-semibold text-surface-100 mb-2">{t.darkMode.heading}</h4>
               <p className="text-xs text-surface-400">
-                All components ship with dark mode support built in. Toggle between
-                light and dark themes with a single CSS class on the HTML element.
-                Design tokens automatically adapt.
+                {t.darkMode.description}
               </p>
             </div>
           </div>

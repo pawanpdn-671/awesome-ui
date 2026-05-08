@@ -1,19 +1,14 @@
 import { CodeBlock } from "@/components/code-block";
+import { themingDocs as t } from "@/texts";
 
 export default function ThemingPage() {
   return (
     <div>
-      <h1>Theming</h1>
-      <p>
-        AwesomeUI uses a comprehensive design token system built on CSS custom properties.
-        Customize every aspect of the visual design with minimal effort.
-      </p>
+      <h1>{t.heading}</h1>
+      <p>{t.subheading}</p>
 
-      <h2 id="tokens">Design Tokens</h2>
-      <p>
-        Design tokens are the foundation of AwesomeUI&apos;s theming system. They provide
-        a single source of truth for colors, spacing, typography, and more.
-      </p>
+      <h2 id="tokens">{t.sections.tokens.heading}</h2>
+      <p>{t.sections.tokens.description}</p>
 
       <CodeBlock code={`// @awesomeui/tokens
 const tokens = {
@@ -28,10 +23,8 @@ const tokens = {
   radius: { sm: '0.25rem', md: '0.375rem', lg: '0.5rem' },
 }`} language="tsx" />
 
-      <h2 id="css-variables">CSS Variables</h2>
-      <p>
-        All design tokens are exposed as CSS custom properties for easy overrides:
-      </p>
+      <h2 id="css-variables">{t.sections.cssVariables.heading}</h2>
+      <p>{t.sections.cssVariables.description}</p>
 
       <CodeBlock code={`:root {
   /* Colors */
@@ -63,11 +56,8 @@ const tokens = {
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }`} language="css" />
 
-      <h2 id="dark-mode">Dark Mode</h2>
-      <p>
-        AwesomeUI ships with first-class dark mode support. Components automatically
-        adapt when the <code>.dark</code> class is applied to the root element:
-      </p>
+      <h2 id="dark-mode">{t.sections.darkMode.heading}</h2>
+      <p>{t.sections.darkMode.description}</p>
 
       <CodeBlock code={`/* Dark mode automatically handled */
 .dark {
@@ -79,10 +69,8 @@ const tokens = {
 /* Toggle with JavaScript */
 document.documentElement.classList.toggle('dark')`} language="css" />
 
-      <h2 id="customization">Customization</h2>
-      <p>
-        Override any design token to create your own theme:
-      </p>
+      <h2 id="customization">{t.sections.customization.heading}</h2>
+      <p>{t.sections.customization.description}</p>
 
       <CodeBlock code={`/* Custom brand theme */
 :root {
@@ -99,10 +87,8 @@ document.documentElement.classList.toggle('dark')`} language="css" />
   --surface-800: #1c1917;
 }`} language="css" />
 
-      <h2>Programmatic Theming</h2>
-      <p>
-        Use the <code>@awesomeui/themes</code> package for programmatic theme management:
-      </p>
+      <h2>{t.sections.programmatic.heading}</h2>
+      <p>{t.sections.programmatic.description}</p>
 
       <CodeBlock code={`import { darkTheme, lightTheme, generateCSSVariables } from '@awesomeui/themes'
 
@@ -118,11 +104,13 @@ console.log(css)
 // Access theme values
 console.log(darkTheme.colors.accent) // #6366f1`} language="tsx" />
 
-      <h2>Next Steps</h2>
+      <h2>{t.sections.nextSteps.heading}</h2>
       <ul>
-        <li>Explore the <a href="/docs/components">component library</a></li>
-        <li>Check the <a href="/docs/api-reference">API reference</a></li>
-        <li>Read the <a href="/docs/guides">accessibility guides</a></li>
+        {t.sections.nextSteps.links.map((link) => (
+          <li key={link.href}>
+            {link.prefix}<a href={link.href}>{link.label}</a>
+          </li>
+        ))}
       </ul>
     </div>
   );

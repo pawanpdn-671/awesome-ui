@@ -1,28 +1,21 @@
 import { CodeBlock } from "@/components/code-block";
+import { accessibility as t } from "@/texts";
 
 export default function AccessibilityPage() {
   return (
     <div>
-      <h1>Accessibility</h1>
-      <p>
-        AwesomeUI is built with accessibility as a core principle. Every component
-        follows WAI-ARIA guidelines and is rigorously tested.
-      </p>
+      <h1>{t.heading}</h1>
+      <p>{t.subheading}</p>
 
-      <h2>Our Commitment</h2>
+      <h2>{t.sections.commitment.heading}</h2>
       <ul>
-        <li>All components meet WCAG 2.1 AA standards</li>
-        <li>Full keyboard navigation support</li>
-        <li>Screen reader friendly with proper ARIA attributes</li>
-        <li>Focus management for modals, dialogs, and menus</li>
-        <li>Reduced motion support for animations</li>
-        <li>Color contrast compliance</li>
+        {t.sections.commitment.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
-      <h2>ARIA Attributes</h2>
-      <p>
-        Every component includes appropriate ARIA attributes automatically:
-      </p>
+      <h2>{t.sections.aria.heading}</h2>
+      <p>{t.sections.aria.description}</p>
 
       <CodeBlock code={`// Button
 <button
@@ -51,28 +44,18 @@ export default function AccessibilityPage() {
   </div>
 </div>`} language="tsx" />
 
-      <h2>Keyboard Navigation</h2>
+      <h2>{t.sections.keyboardNav.heading}</h2>
       <div className="overflow-x-auto not-prose">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Component</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Interaction</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Key</th>
+              {t.sections.keyboardNav.tableHeaders.map((h) => (
+                <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {[
-              { comp: "Dialog", action: "Close", key: "Escape" },
-              { comp: "Dropdown Menu", action: "Navigate items", key: "Arrow Up/Down" },
-              { comp: "Dropdown Menu", action: "Open/Close", key: "Enter/Space" },
-              { comp: "Tabs", action: "Switch tabs", key: "Arrow Left/Right" },
-              { comp: "Command Menu", action: "Open menu", key: "Ctrl + K" },
-              { comp: "Command Menu", action: "Close menu", key: "Escape" },
-              { comp: "Accordion", action: "Toggle section", key: "Enter/Space" },
-              { comp: "Select", action: "Open list", key: "Arrow Down" },
-              { comp: "Select", action: "Navigate items", key: "Arrow Up/Down" },
-            ].map((row) => (
+            {t.sections.keyboardNav.rows.map((row) => (
               <tr key={`${row.comp}-${row.action}`} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-surface-200 text-xs">{row.comp}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs">{row.action}</td>
@@ -83,23 +66,17 @@ export default function AccessibilityPage() {
         </table>
       </div>
 
-      <h2>Focus Management</h2>
-      <p>
-        Focus management is built into all interactive components:
-      </p>
+      <h2>{t.sections.focusManagement.heading}</h2>
+      <p>{t.sections.focusManagement.description}</p>
 
       <ul>
-        <li>Dialogs trap focus within the modal</li>
-        <li>Focus returns to trigger element on close</li>
-        <li>Skip links for navigation</li>
-        <li>Visible focus indicators on all interactive elements</li>
-        <li>Programmatic focus management for dynamic content</li>
+        {t.sections.focusManagement.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
-      <h2>Reduced Motion</h2>
-      <p>
-        Respects the user&apos;s <code>prefers-reduced-motion</code> setting:
-      </p>
+      <h2>{t.sections.reducedMotion.heading}</h2>
+      <p>{t.sections.reducedMotion.description}</p>
 
       <CodeBlock code={`/* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
@@ -110,16 +87,13 @@ export default function AccessibilityPage() {
   }
 }`} language="css" />
 
-      <h2>Testing</h2>
-      <p>
-        We recommend testing your implementation with:
-      </p>
+      <h2>{t.sections.testing.heading}</h2>
+      <p>{t.sections.testing.description}</p>
+
       <ul>
-        <li>Keyboard-only navigation (Tab, Enter, Escape, Arrow keys)</li>
-        <li>Screen readers (VoiceOver, NVDA, JAWS)</li>
-        <li>Browser zoom (200%)</li>
-        <li>Reduced motion settings</li>
-        <li>High contrast mode</li>
+        {t.sections.testing.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
     </div>
   );

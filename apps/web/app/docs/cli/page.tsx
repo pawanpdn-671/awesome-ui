@@ -1,19 +1,15 @@
 import { CodeBlock } from "@/components/code-block";
 import { TerminalBlock } from "@/components/code-block";
+import { cliDocs as t } from "@/texts";
 
 export default function CliDocsPage() {
   return (
     <div>
-      <h1>CLI Reference</h1>
-      <p>
-        The AwesomeUI CLI is your command-line interface for initializing projects,
-        adding components, and managing your AwesomeUI configuration.
-      </p>
+      <h1>{t.heading}</h1>
+      <p>{t.subheading}</p>
 
-      <h2 id="init">Init Command</h2>
-      <p>
-        Initialize AwesomeUI in your project. Detects your framework and style system automatically.
-      </p>
+      <h2 id="init">{t.sections.init.heading}</h2>
+      <p>{t.sections.init.description}</p>
 
       <CodeBlock code={`npx awesomeui init [options]
 
@@ -24,26 +20,11 @@ Options:
   --typescript          Enable TypeScript (default: true)
   --yes, -y             Skip prompts and use defaults`} language="bash" />
 
-      <h3>Example</h3>
-      <TerminalBlock commands={[
-        "npx awesomeui init",
-        "✔ Detecting project environment...",
-        "✔ Framework detected: Next.js 15",
-        "✔ Style system detected: Tailwind CSS",
-        "✔ TypeScript: enabled",
-        "",
-        "✔ AwesomeUI initialized successfully!",
-        "  → Config created: awesomeui.config.json",
-        "  → Components will be generated in: src/components/ui",
-        "",
-        "Run `npx awesomeui add <component>` to add components.",
-      ]} />
+      <h3>{t.sections.init.example.heading}</h3>
+      <TerminalBlock commands={[...t.sections.init.example.commands]} />
 
-      <h2 id="add">Add Command</h2>
-      <p>
-        Add individual components to your project. Components are transpiled to your
-        framework of choice.
-      </p>
+      <h2 id="add">{t.sections.add.heading}</h2>
+      <p>{t.sections.add.description}</p>
 
       <CodeBlock code={`npx awesomeui add <component> [options]
 
@@ -68,23 +49,11 @@ Options:
   --framework <name>    Override framework detection
   --dir <path>          Custom output directory`} language="bash" />
 
-      <h3>Example</h3>
-      <TerminalBlock commands={[
-        "npx awesomeui add button dialog card",
-        "✔ Reading component definitions...",
-        "✔ Transpiling to React...",
-        "✔ Writing button.tsx",
-        "✔ Writing dialog.tsx",
-        "✔ Writing card.tsx",
-        "",
-        "✔ 3 components added successfully!",
-        "  → src/components/ui/button.tsx",
-        "  → src/components/ui/dialog.tsx",
-        "  → src/components/ui/card.tsx",
-      ]} />
+      <h3>{t.sections.add.example.heading}</h3>
+      <TerminalBlock commands={[...t.sections.add.example.commands]} />
 
-      <h2 id="list">List Command</h2>
-      <p>List all available components with their categories and status.</p>
+      <h2 id="list">{t.sections.list.heading}</h2>
+      <p>{t.sections.list.description}</p>
 
       <CodeBlock code={`npx awesomeui list [options]
 
@@ -93,56 +62,11 @@ Options:
   --category <name>     Filter by category
   --available           Show only available (not yet added) components`} language="bash" />
 
-      <h3>Example Output</h3>
-      <TerminalBlock commands={[
-        "npx awesomeui list",
-        "",
-        "Available components (26):",
-        "",
-        "Actions:",
-        "  • button         Button with variants",
-        "  • dropdown-menu  Dropdown menu",
-        "  • menubar        Menu bar",
-        "",
-        "Overlay:",
-        "  • dialog         Modal dialog",
-        "  • toast          Toast notification",
-        "  • tooltip        Tooltip",
-        "",
-        "Data Entry:",
-        "  • input          Text input",
-        "  • select         Select dropdown",
-        "  • checkbox       Checkbox",
-        "  • switch         Toggle switch",
-        "  • textarea       Text area",
-        "",
-        "Data Display:",
-        "  • table          Data table",
-        "  • badge          Badge / pill",
-        "  • avatar         Avatar",
-        "  • card           Card",
-        "  • progress       Progress bar",
-        "  • skeleton       Skeleton loader",
-        "",
-        "Navigation:",
-        "  • tabs           Tabs",
-        "  • breadcrumb     Breadcrumb",
-        "  • pagination     Pagination",
-        "  • sidebar        Sidebar",
-        "",
-        "Layout:",
-        "  • accordion      Accordion",
-        "  • accordion-item Accordion item",
-        "",
-        "Feedback:",
-        "  • alert          Alert",
-        "  • loading        Loading spinner",
-      ]} />
+      <h3>{t.sections.list.example.heading}</h3>
+      <TerminalBlock commands={[...t.sections.list.example.commands]} />
 
-      <h2>Configuration</h2>
-      <p>
-        AwesomeUI uses a configuration file (<code>awesomeui.config.json</code>) in your project root:
-      </p>
+      <h2>{t.sections.config.heading}</h2>
+      <p>{t.sections.config.description}</p>
 
       <CodeBlock code={`{
   "framework": "react",
@@ -160,11 +84,13 @@ Options:
   ]
 }`} language="json" />
 
-      <h2>Next Steps</h2>
+      <h2>{t.sections.nextSteps.heading}</h2>
       <ul>
-        <li>Learn about <a href="/docs/theming">theming and customization</a></li>
-        <li>Explore the <a href="/docs/components">component library</a></li>
-        <li>Check the <a href="/docs/api-reference">API reference</a></li>
+        {t.sections.nextSteps.links.map((link) => (
+          <li key={link.href}>
+            {link.prefix}<a href={link.href}>{link.label}</a>
+          </li>
+        ))}
       </ul>
     </div>
   );

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { codeExamples, frameworks } from "@/lib/utils";
 import { Eye, Code2 } from "lucide-react";
+import { componentShowcase as t } from "@/texts";
 
 interface Component {
   id: string;
@@ -17,60 +18,60 @@ interface Component {
 
 const componentsList: Component[] = [
   {
-    id: "button", name: "Button", description: "Versatile button component with multiple variants and sizes.", category: "Actions",
+    id: "button", name: t.components[0]!.name, description: t.components[0]!.description, category: t.components[0]!.category,
     preview: (
       <div className="flex flex-wrap gap-3 items-center justify-center py-8">
-        <button className="px-5 py-2.5 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all shadow-lg shadow-awesome-500/20">Primary</button>
-        <button className="px-5 py-2.5 rounded-lg bg-surface-800 text-surface-100 text-sm font-medium hover:bg-surface-700 border border-surface-700 transition-all">Secondary</button>
-        <button className="px-5 py-2.5 rounded-lg text-surface-300 text-sm font-medium hover:text-surface-100 hover:bg-surface-800 transition-all">Ghost</button>
+        <button className="px-5 py-2.5 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all shadow-lg shadow-awesome-500/20">{t.preview.button.primary}</button>
+        <button className="px-5 py-2.5 rounded-lg bg-surface-800 text-surface-100 text-sm font-medium hover:bg-surface-700 border border-surface-700 transition-all">{t.preview.button.secondary}</button>
+        <button className="px-5 py-2.5 rounded-lg text-surface-300 text-sm font-medium hover:text-surface-100 hover:bg-surface-800 transition-all">{t.preview.button.ghost}</button>
       </div>
     ),
   },
   {
-    id: "dialog", name: "Dialog", description: "Modal dialog with overlay, focus trap, and animations.", category: "Overlay",
+    id: "dialog", name: t.components[1]!.name, description: t.components[1]!.description, category: t.components[1]!.category,
     preview: (
       <div className="flex items-center justify-center py-8">
         <div className="glass rounded-xl p-6 max-w-sm w-full border border-surface-700/50">
-          <h3 className="text-lg font-semibold text-surface-100 mb-2">Confirm Action</h3>
-          <p className="text-sm text-surface-400 mb-5">Are you sure you want to proceed?</p>
+          <h3 className="text-lg font-semibold text-surface-100 mb-2">{t.preview.dialog.title}</h3>
+          <p className="text-sm text-surface-400 mb-5">{t.preview.dialog.description}</p>
           <div className="flex gap-3">
-            <button className="flex-1 px-4 py-2 rounded-lg bg-surface-800 text-surface-300 text-sm font-medium hover:bg-surface-700 border border-surface-700 transition-all">Cancel</button>
-            <button className="flex-1 px-4 py-2 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all">Confirm</button>
+            <button className="flex-1 px-4 py-2 rounded-lg bg-surface-800 text-surface-300 text-sm font-medium hover:bg-surface-700 border border-surface-700 transition-all">{t.preview.dialog.cancel}</button>
+            <button className="flex-1 px-4 py-2 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all">{t.preview.dialog.confirm}</button>
           </div>
         </div>
       </div>
     ),
   },
   {
-    id: "form", name: "Forms", description: "Form components with validation, labels, and error states.", category: "Data Entry",
+    id: "form", name: t.components[2]!.name, description: t.components[2]!.description, category: t.components[2]!.category,
     preview: (
       <div className="py-8 px-4">
         <div className="space-y-4 max-w-sm mx-auto">
           <div>
-            <label className="block text-sm font-medium text-surface-300 mb-1.5">Email</label>
-            <input type="email" placeholder="you@example.com" className="w-full px-3.5 py-2.5 rounded-lg bg-surface-800 border border-surface-700 text-surface-100 text-sm placeholder:text-surface-500 focus:outline-none focus:ring-2 focus:ring-awesome-500/30 focus:border-awesome-500/50 transition-all" />
+            <label className="block text-sm font-medium text-surface-300 mb-1.5">{t.preview.form.email}</label>
+            <input type="email" placeholder={t.preview.form.emailPlaceholder} className="w-full px-3.5 py-2.5 rounded-lg bg-surface-800 border border-surface-700 text-surface-100 text-sm placeholder:text-surface-500 focus:outline-none focus:ring-2 focus:ring-awesome-500/30 focus:border-awesome-500/50 transition-all" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-surface-300 mb-1.5">Password</label>
+            <label className="block text-sm font-medium text-surface-300 mb-1.5">{t.preview.form.password}</label>
             <input type="password" placeholder="••••••••" className="w-full px-3.5 py-2.5 rounded-lg bg-surface-800 border border-surface-700 text-surface-100 text-sm placeholder:text-surface-500 focus:outline-none focus:ring-2 focus:ring-awesome-500/30 focus:border-awesome-500/50 transition-all" />
           </div>
-          <button className="w-full px-4 py-2.5 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all shadow-lg shadow-awesome-500/20">Sign In</button>
+          <button className="w-full px-4 py-2.5 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all shadow-lg shadow-awesome-500/20">{t.preview.form.signIn}</button>
         </div>
       </div>
     ),
   },
   {
-    id: "command", name: "Command Menu", description: "Spotlight-style command palette with search and keyboard shortcuts.", category: "Navigation",
+    id: "command", name: t.components[3]!.name, description: t.components[3]!.description, category: t.components[3]!.category,
     preview: (
       <div className="py-8 px-4 flex items-center justify-center">
         <div className="glass rounded-xl border border-surface-700/50 overflow-hidden max-w-sm w-full">
           <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-800">
             <svg className="w-4 h-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            <input placeholder="Search..." className="bg-transparent text-sm text-surface-100 placeholder:text-surface-500 flex-1 focus:outline-none" />
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-800 text-surface-500 font-mono">⌘K</span>
+            <input placeholder={t.preview.command.searchPlaceholder} className="bg-transparent text-sm text-surface-100 placeholder:text-surface-500 flex-1 focus:outline-none" />
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-800 text-surface-500 font-mono">{t.preview.command.shortcut}</span>
           </div>
           <div className="p-2 space-y-0.5">
-            {["Settings", "Profile", "Notifications", "Logout"].map((item) => (
+            {t.preview.command.items.map((item) => (
               <div key={item} className="px-3 py-2 rounded-lg text-sm text-surface-300 hover:bg-surface-800 hover:text-surface-100 cursor-pointer transition-colors">{item}</div>
             ))}
           </div>
@@ -79,7 +80,7 @@ const componentsList: Component[] = [
     ),
   },
   {
-    id: "card", name: "Card", description: "Content container with header, body, and footer sections.", category: "Layout",
+    id: "card", name: t.components[4]!.name, description: t.components[4]!.description, category: t.components[4]!.category,
     preview: (
       <div className="py-8 px-4 flex items-center justify-center">
         <div className="glass rounded-xl p-6 max-w-sm w-full border border-surface-700/50 card-gradient-hover">
@@ -88,27 +89,27 @@ const componentsList: Component[] = [
               <svg className="w-6 h-6 text-awesome-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-surface-100 mb-2">Beautiful Card</h3>
-          <p className="text-sm text-surface-400 mb-4">Cards are versatile content containers used throughout the UI.</p>
-          <button className="w-full px-4 py-2 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all">Learn More</button>
+          <h3 className="text-lg font-semibold text-surface-100 mb-2">{t.preview.card.title}</h3>
+          <p className="text-sm text-surface-400 mb-4">{t.preview.card.description}</p>
+          <button className="w-full px-4 py-2 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all">{t.preview.card.cta}</button>
         </div>
       </div>
     ),
   },
   {
-    id: "table", name: "Table", description: "Data table with sorting, pagination, and responsive design.", category: "Data Display",
+    id: "table", name: t.components[5]!.name, description: t.components[5]!.description, category: t.components[5]!.category,
     preview: (
       <div className="py-8 px-4 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Name</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Role</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Status</th>
+              {t.preview.table.headers.map((h) => (
+                <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {[{ name: "John Doe", role: "Developer", status: "Active" }, { name: "Jane Smith", role: "Designer", status: "Active" }, { name: "Bob Johnson", role: "PM", status: "Away" }].map((row) => (
+            {t.preview.table.rows.map((row) => (
               <tr key={row.name} className="border-b border-surface-800/50 hover:bg-surface-800/30 transition-colors">
                 <td className="py-3 px-3 text-surface-200">{row.name}</td>
                 <td className="py-3 px-3 text-surface-400">{row.role}</td>
@@ -126,8 +127,6 @@ const componentsList: Component[] = [
   },
 ];
 
-const categories = ["All", "Actions", "Overlay", "Data Entry", "Data Display", "Navigation", "Layout"];
-
 export function ComponentShowcase() {
   const [activeComponent, setActiveComponent] = useState(componentsList[0]!.id);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -144,17 +143,17 @@ export function ComponentShowcase() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 space-y-4">
-          <Badge variant="primary" className="text-sm px-4 py-1.5">Component Gallery</Badge>
+          <Badge variant="primary" className="text-sm px-4 py-1.5">{t.badge}</Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-100">
-            Beautiful components. <span className="text-gradient">Zero effort.</span>
+            {t.heading}
           </h2>
           <p className="text-lg text-surface-400 max-w-2xl mx-auto">
-            Explore our growing library of production-ready components. Every component works in every framework.
+            {t.subheading}
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          {categories.map((cat) => (
+          {t.categories.map((cat) => (
             <button key={cat} onClick={() => { setActiveCategory(cat); setActiveComponent(filtered[0]?.id || ""); }}
               className={cn("px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200", activeCategory === cat ? "bg-awesome-500/20 text-awesome-300 border border-awesome-500/30" : "text-surface-400 hover:text-surface-200 hover:bg-surface-800/50 border border-transparent")}>
               {cat}

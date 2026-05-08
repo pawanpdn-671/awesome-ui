@@ -1,57 +1,51 @@
 import { CodeBlock } from "@/components/code-block";
 import { Badge } from "@/components/ui/badge";
+import { buttonDoc as t } from "@/texts";
 
 export default function ButtonDocPage() {
+  const s = t.sections;
+
   return (
     <div>
       <h1>
-        Button
-        <Badge variant="primary" className="ml-3 align-middle text-xs">Actions</Badge>
+        {t.heading}
+        <Badge variant="primary" className="ml-3 align-middle text-xs">{t.badge}</Badge>
       </h1>
-      <p>
-        Buttons trigger actions. Available in multiple variants, sizes, and states.
-        Consistent API across all frameworks.
-      </p>
+      <p>{t.subheading}</p>
 
-      <h2>Import</h2>
+      <h2>{s.import.heading}</h2>
       <CodeBlock code={`import { Button } from '@awesomeui/react'`} language="tsx" />
 
-      <h2>Variants</h2>
-      <p>Five visual variants to match different levels of emphasis:</p>
-      <CodeBlock code={`<Button variant="primary">   Primary action</Button>
-<Button variant="secondary"> Secondary action</Button>
-<Button variant="outline">   Outlined action</Button>
-<Button variant="ghost">     Subtle action</Button>
-<Button variant="glow">      Emphasized action</Button>`} language="tsx" />
+      <h2>{s.variants.heading}</h2>
+      <p>{s.variants.description}</p>
+      <CodeBlock code={`<Button variant="primary">   ${s.variants.primary}</Button>
+<Button variant="secondary"> ${s.variants.secondary}</Button>
+<Button variant="outline">   ${s.variants.outline}</Button>
+<Button variant="ghost">     ${s.variants.ghost}</Button>
+<Button variant="glow">      ${s.variants.glow}</Button>`} language="tsx" />
 
-      <h2>Sizes</h2>
-      <CodeBlock code={`<Button size="sm"> Small </Button>
-<Button size="md"> Medium </Button>
-<Button size="lg"> Large </Button>`} language="tsx" />
+      <h2>{s.sizes.heading}</h2>
+      <CodeBlock code={`<Button size="sm"> ${s.sizes.small} </Button>
+<Button size="md"> ${s.sizes.medium} </Button>
+<Button size="lg"> ${s.sizes.large} </Button>`} language="tsx" />
 
-      <h2>States</h2>
-      <CodeBlock code={`<Button disabled>        Disabled</Button>
-<Button loading>         Loading state</Button>
-<Button loading={true}>  With spinner</Button>`} language="tsx" />
+      <h2>{s.states.heading}</h2>
+      <CodeBlock code={`<Button disabled>        ${s.states.disabled}</Button>
+<Button loading>         ${s.states.loading}</Button>
+<Button loading={true}>  ${s.states.spinner}</Button>`} language="tsx" />
 
-      <h2>Props</h2>
+      <h2>{s.props.heading}</h2>
       <div className="overflow-x-auto not-prose">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Prop</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Type</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Default</th>
+              {s.props.tableHeaders.map((h) => (
+                <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {[
-              { prop: "variant", type: '"primary" | "secondary" | "outline" | "ghost" | "glow"', default: '"primary"' },
-              { prop: "size", type: '"sm" | "md" | "lg"', default: '"md"' },
-              { prop: "disabled", type: "boolean", default: "false" },
-              { prop: "loading", type: "boolean", default: "false" },
-              { prop: "type", type: '"button" | "submit" | "reset"', default: '"button"' },
-            ].map((row) => (
+            {s.props.rows.map((row) => (
               <tr key={row.prop} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-awesome-300 font-mono text-xs">{row.prop}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs font-mono">{row.type}</td>
@@ -62,17 +56,17 @@ export default function ButtonDocPage() {
         </table>
       </div>
 
-      <h2>Framework Examples</h2>
+      <h2>{s.frameworkExamples.heading}</h2>
       <CodeBlock code={`// Vue
 <template>
-  <Button variant="primary" size="lg">Submit</Button>
+  <Button variant="primary" size="lg">${s.frameworkExamples.submit}</Button>
 </template>
 
 // Angular
-<aw-button variant="primary" size="lg">Submit</aw-button>
+<aw-button variant="primary" size="lg">${s.frameworkExamples.submit}</aw-button>
 
 // Svelte
-<Button variant="primary" size="lg">Submit</Button>`} language="tsx" />
+<Button variant="primary" size="lg">${s.frameworkExamples.submit}</Button>`} language="tsx" />
     </div>
   );
 }

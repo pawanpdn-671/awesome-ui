@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Check, Copy } from "lucide-react";
 
@@ -79,38 +79,55 @@ function Highlight({ code }: { code: string }) {
 interface TerminalProps {
   commands: string[];
   className?: string;
+  autoPlay?: boolean;
+  restartDelay?: number;
+  onComplete?: () => void;
+  resetKey?: number;
 }
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-export function TerminalBlock({ commands, className }: TerminalProps) {
+export function TerminalBlock({ commands, className, autoPlay, restartDelay, onComplete, resetKey }: TerminalProps) {
   const [lineIndex, setLineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
-  const [started, setStarted] = useState(false);
   const [done, setDone] = useState(false);
+  const playingRef = useRef(false);
   const stoppedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  const commandsRef = useRef(commands);
+  const restartDelayRef = useRef(restartDelay);
+  const autoPlayRef = useRef(autoPlay);
+  onCompleteRef.current = onComplete;
+  commandsRef.current = commands;
+  restartDelayRef.current = restartDelay;
+  autoPlayRef.current = autoPlay;
 
-  useEffect(() => {
-    stoppedRef.current = false;
+  const resetHard = useCallback(() => {
+    setLineIndex(0);
+    setCharIndex(0);
+    setDone(false);
+    playingRef.current = false;
+    stoppedRef.current = true;
   }, []);
 
-  const start = async () => {
-    if (started) return;
-    setStarted(true);
-    setDone(false);
+  const start = useCallback(async () => {
+    if (playingRef.current) return;
+    playingRef.current = true;
     stoppedRef.current = false;
+    const cmds = commandsRef.current;
 
-    for (let li = 0; li < commands.length; li++) {
+    for (let li = 0; li < cmds.length; li++) {
       if (stoppedRef.current) break;
       setLineIndex(li);
       setCharIndex(0);
-      const line = commands[li]!;
+      const line = cmds[li]!;
       const isCommand = li === 0 || !line.startsWith("✔");
       const delay = isCommand ? 65 : 30;
 
       await sleep(isCommand ? 400 : 180);
+      if (stoppedRef.current) break;
 
       for (let ci = 0; ci <= line.length; ci++) {
         if (stoppedRef.current) break;
@@ -124,12 +141,40 @@ export function TerminalBlock({ commands, className }: TerminalProps) {
 
     if (!stoppedRef.current) {
       setDone(true);
+      onCompleteRef.current?.();
+      playingRef.current = false;
+      const rd = restartDelayRef.current;
+      if (rd && autoPlayRef.current) {
+        await sleep(rd);
+        if (!stoppedRef.current) {
+          resetHard();
+          setTimeout(start, 300);
+        }
+      }
+    } else {
+      playingRef.current = false;
     }
-  };
+  }, [resetHard]);
+
+  const prevResetKey = useRef(resetKey);
+  useEffect(() => {
+    if (resetKey !== undefined && prevResetKey.current !== resetKey) {
+      prevResetKey.current = resetKey;
+      resetHard();
+    }
+  }, [resetKey, resetHard]);
 
   useEffect(() => {
+    if (autoPlay) {
+      stoppedRef.current = false;
+      const timer = setTimeout(start, 400);
+      return () => {
+        clearTimeout(timer);
+        stoppedRef.current = true;
+      };
+    }
     return () => { stoppedRef.current = true; };
-  }, []);
+  }, [autoPlay, start]);
 
   const typedLines = lineIndex > 0 ? commands.slice(0, lineIndex) : [];
   const currentLine = commands[lineIndex];
@@ -138,7 +183,7 @@ export function TerminalBlock({ commands, className }: TerminalProps) {
   return (
     <div
       className={cn("rounded-xl border border-surface-800 bg-surface-950 overflow-hidden font-mono text-sm", className)}
-      onMouseEnter={start}
+      onMouseEnter={autoPlay ? undefined : start}
     >
       <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-800 bg-surface-900/50">
         <span className="w-3 h-3 rounded-full bg-red-500/50" />
@@ -146,15 +191,15 @@ export function TerminalBlock({ commands, className }: TerminalProps) {
         <span className="w-3 h-3 rounded-full bg-emerald-500/50" />
         <span className="ml-2 text-xs text-surface-500">terminal</span>
       </div>
-      <div className="p-4 space-y-1.5">
+      <div className="p-4 space-y-1.5 min-h-[100px]">
         {typedLines.map((cmd, i) => (
-          <div key={i} className="flex items-center gap-2">
+          <div key={i} className="flex items-center gap-2 animate-fade-in">
             <span className="text-emerald-400 shrink-0">{i === 0 ? "$" : ""}</span>
             <span className="text-surface-200">{cmd}</span>
           </div>
         ))}
         {currentLine && !done && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 animate-fade-in">
             <span className="text-emerald-400 shrink-0">{lineIndex === 0 ? "$" : ""}</span>
             <span className="text-surface-200">
               {currentLine.slice(0, charCount)}
@@ -163,7 +208,7 @@ export function TerminalBlock({ commands, className }: TerminalProps) {
           </div>
         )}
         {done && (
-          <div className="flex items-center gap-2 text-surface-500">
+          <div className="flex items-center gap-2 text-surface-500 animate-fade-in">
             <span className="text-emerald-400 shrink-0">✓</span>
             <span>Ready</span>
           </div>

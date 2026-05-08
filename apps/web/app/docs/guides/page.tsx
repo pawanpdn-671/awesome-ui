@@ -1,21 +1,16 @@
 import { CodeBlock } from "@/components/code-block";
+import { guides as t } from "@/texts";
 
 export default function GuidesPage() {
   return (
     <div>
-      <h1>Guides</h1>
-      <p>
-        Best practices, migration guides, performance tips, and accessibility
-        guidelines for building with AwesomeUI.
-      </p>
+      <h1>{t.heading}</h1>
+      <p>{t.subheading}</p>
 
-      <h2 id="migration">Migration Guide</h2>
-      <p>
-        Migrating from other UI libraries to AwesomeUI is straightforward thanks
-        to our familiar API patterns.
-      </p>
+      <h2 id="migration">{t.sections.migration.heading}</h2>
+      <p>{t.sections.migration.description}</p>
 
-      <h3>From Material UI</h3>
+      <h3>{t.sections.migration.fromMui.heading}</h3>
       <CodeBlock code={`// Before: Material UI
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -30,7 +25,7 @@ import { Button, Card } from '@awesomeui/react'
 <Card sx={{ padding: 2 }}>
   → <Card className="p-2">`} language="tsx" />
 
-      <h3>From shadcn/ui</h3>
+      <h3>{t.sections.migration.fromShadcn.heading}</h3>
       <CodeBlock code={`// Before: shadcn/ui
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -41,17 +36,13 @@ import { Button, Card } from '@awesomeui/react'
 // Same developer experience, zero setup
 // Components are pre-built — no copy-paste needed`} language="tsx" />
 
-      <h2 id="performance">Performance</h2>
-      <p>
-        AwesomeUI is built for performance from the ground up:
-      </p>
+      <h2 id="performance">{t.sections.performance.heading}</h2>
+      <p>{t.sections.performance.description}</p>
 
       <ul>
-        <li><strong>Tree shaking</strong> — Import only what you use</li>
-        <li><strong>Minimal bundle</strong> — ~5kB per component</li>
-        <li><strong>Zero dependencies</strong> — No heavy runtime libraries</li>
-        <li><strong>SSR optimized</strong> — Works seamlessly with server rendering</li>
-        <li><strong>Lazy loading</strong> — Components can be dynamically imported</li>
+        {t.sections.performance.items.map((item) => (
+          <li key={item} dangerouslySetInnerHTML={{ __html: item }} />
+        ))}
       </ul>
 
       <CodeBlock code={`// Dynamic imports for code splitting
@@ -62,27 +53,21 @@ const Dialog = dynamic(
   { ssr: false }
 )`} language="tsx" />
 
-      <h2 id="accessibility">Accessibility</h2>
-      <p>
-        AwesomeUI is committed to accessibility. All components follow WAI-ARIA
-        guidelines and are tested with screen readers and keyboard navigation.
-      </p>
+      <h2 id="accessibility">{t.sections.accessibility.heading}</h2>
+      <p>{t.sections.accessibility.description}</p>
 
-      <h3>Keyboard Navigation</h3>
+      <h3>{t.sections.accessibility.keyboardNav.heading}</h3>
       <ul>
-        <li>All interactive elements are keyboard focusable</li>
-        <li>Dialogs trap focus and close with Escape</li>
-        <li>Dropdowns navigate with arrow keys</li>
-        <li>Tabs navigate with arrow keys</li>
-        <li>Command menu opens with Ctrl+K / Cmd+K</li>
+        {t.sections.accessibility.keyboardNav.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
-      <h3>Screen Reader Support</h3>
+      <h3>{t.sections.accessibility.screenReader.heading}</h3>
       <ul>
-        <li>All components have proper ARIA labels</li>
-        <li>Live regions for dynamic content</li>
-        <li>Announcements for loading states</li>
-        <li>Descriptive error messages for forms</li>
+        {t.sections.accessibility.screenReader.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
       <CodeBlock code={`// All components include ARIA attributes
@@ -99,20 +84,14 @@ const Dialog = dynamic(
   ...
 </Dialog>`} language="tsx" />
 
-      <h3>Color Contrast</h3>
-      <p>
-        All color combinations meet WCAG 2.1 AA standards for contrast ratio.
-        Custom themes should maintain a minimum contrast ratio of 4.5:1 for
-        normal text and 3:1 for large text.
-      </p>
+      <h3>{t.sections.accessibility.colorContrast.heading}</h3>
+      <p>{t.sections.accessibility.colorContrast.description}</p>
 
-      <h2>Best Practices</h2>
+      <h2>{t.sections.bestPractices.heading}</h2>
       <ul>
-        <li>Import from the framework-specific package (e.g., @awesomeui/react)</li>
-        <li>Use the CLI for component generation and project setup</li>
-        <li>Override CSS variables for custom theming instead of using !important</li>
-        <li>Leverage TypeScript for full type safety and autocomplete</li>
-        <li>Test components across multiple frameworks when building shared UIs</li>
+        {t.sections.bestPractices.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
     </div>
   );

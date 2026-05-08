@@ -1,43 +1,29 @@
 import { CodeBlock } from "@/components/code-block";
+import { gettingStarted as t } from "@/texts";
 
 export default function GettingStartedPage() {
+  const s = t.sections;
+
   return (
     <div>
-      <h1>Getting Started</h1>
-      <p>
-        Get up and running with AwesomeUI in minutes. Choose your framework and follow the setup guide.
-      </p>
+      <h1>{t.heading}</h1>
+      <p>{t.subheading}</p>
 
-      <h2>Installation</h2>
-      <p>
-        Install AwesomeUI for your framework of choice using npm, yarn, pnpm, or bun.
-      </p>
+      <h2>{s.installation.heading}</h2>
+      <p>{s.installation.description}</p>
 
-      <h3>React / Next.js</h3>
-      <CodeBlock code={`npm install @awesomeui/react`} language="bash" />
-      
-      <p>Or with other package managers:</p>
+      {s.installation.frameworks.map((fw) => (
+        <div key={fw.name}>
+          <h3>{fw.name}</h3>
+          <CodeBlock code={fw.command} language="bash" />
+        </div>
+      ))}
+
+      <p>{s.installation.orWithOther}</p>
       <CodeBlock code={`yarn add @awesomeui/react\npnpm add @awesomeui/react\nbun add @awesomeui/react`} language="bash" />
 
-      <h3>Vue</h3>
-      <CodeBlock code={`npm install @awesomeui/vue`} language="bash" />
-
-      <h3>Angular</h3>
-      <CodeBlock code={`npm install @awesomeui/angular`} language="bash" />
-
-      <h3>Svelte</h3>
-      <CodeBlock code={`npm install @awesomeui/svelte`} language="bash" />
-
-      <h3>SolidJS</h3>
-      <CodeBlock code={`npm install @awesomeui/solid`} language="bash" />
-
-      <h3>React Native</h3>
-      <CodeBlock code={`npm install @awesomeui/react-native`} language="bash" />
-
-      <h2 id="quick-start">Quick Start</h2>
-      <p>
-        Once installed, import and use any component in your application:
-      </p>
+      <h2 id="quick-start">{s.quickStart.heading}</h2>
+      <p>{s.quickStart.description}</p>
 
       <CodeBlock code={`import { Button, Card } from '@awesomeui/react'
 
@@ -45,26 +31,23 @@ function App() {
   return (
     <Card className="p-6 max-w-sm">
       <h2 className="text-lg font-semibold mb-2">
-        Welcome to AwesomeUI
+        ${s.quickStart.welcome}
       </h2>
       <p className="text-surface-400 mb-4">
-        Your cross-framework UI platform is ready.
+        ${s.quickStart.ready}
       </p>
       <Button variant="primary">
-        Get Started
+        ${s.quickStart.cta}
       </Button>
     </Card>
   )
 }`} language="tsx" />
 
-      <h2 id="frameworks">Framework Setup</h2>
-      <p>
-        AwesomeUI works with every major framework out of the box. Each framework
-        gets the same components with the same API, adapted to framework conventions.
-      </p>
+      <h2 id="frameworks">{s.frameworkSetup.heading}</h2>
+      <p>{s.frameworkSetup.description}</p>
 
-      <h3>Next.js App Router</h3>
-      <p>For Next.js, AwesomeUI supports both Server and Client Components:</p>
+      <h3>{s.frameworkSetup.nextjs.heading}</h3>
+      <p>{s.frameworkSetup.nextjs.description}</p>
       <CodeBlock code={`// app/page.tsx
 import { Button, Card } from '@awesomeui/react'
 
@@ -72,17 +55,17 @@ export default function Home() {
   return (
     <Card>
       <Button variant="primary">
-        Hello Next.js
+        ${s.frameworkSetup.nextjs.hello}
       </Button>
     </Card>
   )
 }`} language="tsx" />
 
-      <h3>Vue 3 Composition API</h3>
+      <h3>{s.frameworkSetup.vue.heading}</h3>
       <CodeBlock code={`<template>
   <Card>
     <Button variant="primary">
-      Hello Vue
+      ${s.frameworkSetup.vue.hello}
     </Button>
   </Card>
 </template>
@@ -91,10 +74,8 @@ export default function Home() {
 import { Button, Card } from '@awesomeui/vue'
 </script>`} language="vue" />
 
-      <h2>Using the CLI</h2>
-      <p>
-        The AwesomeUI CLI helps you initialize projects and add components quickly:
-      </p>
+      <h2>{s.cli.heading}</h2>
+      <p>{s.cli.description}</p>
       <CodeBlock code={`# Initialize AwesomeUI in your project
 npx awesomeui init
 
@@ -106,12 +87,13 @@ npx awesomeui add card
 # List all available components
 npx awesomeui list`} language="bash" />
 
-      <h2>Next Steps</h2>
+      <h2>{s.nextSteps.heading}</h2>
       <ul>
-        <li>Explore the <a href="/docs/components">component library</a></li>
-        <li>Learn about <a href="/docs/theming">theming and customization</a></li>
-        <li>Check the <a href="/docs/api-reference">API reference</a></li>
-        <li>Read the <a href="/docs/guides">guides</a> for best practices</li>
+        {s.nextSteps.links.map((link) => (
+          <li key={link.href}>
+            {link.prefix}<a href={link.href}>{link.label}</a>
+          </li>
+        ))}
       </ul>
     </div>
   );

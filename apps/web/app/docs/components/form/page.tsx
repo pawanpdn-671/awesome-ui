@@ -1,65 +1,57 @@
 import { CodeBlock } from "@/components/code-block";
 import { Badge } from "@/components/ui/badge";
+import { formDoc as t } from "@/texts";
 
 export default function FormDocPage() {
+  const s = t.sections;
+
   return (
     <div>
       <h1>
-        Form
-        <Badge variant="primary" className="ml-3 align-middle text-xs">Data Entry</Badge>
+        {t.heading}
+        <Badge variant="primary" className="ml-3 align-middle text-xs">{t.badge}</Badge>
       </h1>
-      <p>
-        Form components with built-in validation, error states, and accessibility.
-        Includes Input, Select, Checkbox, Switch, and Textarea.
-      </p>
+      <p>{t.subheading}</p>
 
-      <h2>Import</h2>
+      <h2>{s.import.heading}</h2>
       <CodeBlock code={`import { Form, Input, Select, Checkbox, Textarea, Button } from '@awesomeui/react'`} language="tsx" />
 
-      <h2>Basic Form</h2>
+      <h2>{s.basicForm.heading}</h2>
       <CodeBlock code={`function LoginForm() {
   return (
     <Form onSubmit={handleSubmit}>
       <Input
         name="email"
-        label="Email"
+        label="${s.basicForm.email}"
         type="email"
-        placeholder="you@example.com"
+        placeholder="${s.basicForm.placeholder}"
         required
       />
       <Input
         name="password"
-        label="Password"
+        label="${s.basicForm.password}"
         type="password"
         required
       />
       <Button type="submit" variant="primary">
-        Sign In
+        ${s.basicForm.signIn}
       </Button>
     </Form>
   )
 }`} language="tsx" />
 
-      <h2>Input Props</h2>
+      <h2>{s.inputProps.heading}</h2>
       <div className="overflow-x-auto not-prose">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Prop</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Type</th>
-              <th className="text-left py-3 px-3 text-surface-400 font-medium">Default</th>
+              {s.inputProps.tableHeaders.map((h) => (
+                <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {[
-              { prop: "name", type: "string", default: "-" },
-              { prop: "label", type: "string", default: "-" },
-              { prop: "type", type: '"text" | "email" | "password" | "number"', default: '"text"' },
-              { prop: "placeholder", type: "string", default: "-" },
-              { prop: "required", type: "boolean", default: "false" },
-              { prop: "disabled", type: "boolean", default: "false" },
-              { prop: "error", type: "string", default: "-" },
-            ].map((row) => (
+            {s.inputProps.rows.map((row) => (
               <tr key={row.prop} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-awesome-300 font-mono text-xs">{row.prop}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs font-mono">{row.type}</td>
@@ -70,7 +62,7 @@ export default function FormDocPage() {
         </table>
       </div>
 
-      <h2>Validation</h2>
+      <h2>{s.validation.heading}</h2>
       <CodeBlock code={`function ValidatedForm() {
   return (
     <Form onSubmit={handleSubmit}>
@@ -87,7 +79,7 @@ export default function FormDocPage() {
         </span>
       )}
       <Button type="submit">
-        Submit
+        ${s.validation.submit}
       </Button>
     </Form>
   )

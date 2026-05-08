@@ -209,7 +209,7 @@ html.light .text-gradient-hero {
 }
 
 html.light .glass {
-  @apply bg-white/80 backdrop-blur-xl border-surface-200/50;
+  @apply bg-white/80 backdrop-blur-xl border-surface-800/30;
 }
 
 html.light .grid-bg {
@@ -227,12 +227,14 @@ html.light .card-gradient-hover:hover {
   @apply border-awesome-500/20 shadow-lg shadow-awesome-500/10;
 }
 
+
+
 html.light .docs-content code {
-  @apply bg-surface-200 text-surface-800;
+  @apply bg-surface-800 text-surface-300;
 }
 
 html.light .docs-content pre {
-  @apply border-surface-300 bg-surface-100;
+  @apply border-surface-300/40 bg-surface-100/80;
 }
 
 .logo-dark { display: inline-block; }
@@ -240,3 +242,5 @@ html.light .logo-dark { display: none; }
 
 .logo-light { display: none; }
 html.light .logo-light { display: inline-block; }
+
+
