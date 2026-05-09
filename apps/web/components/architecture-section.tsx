@@ -43,8 +43,8 @@ export function ArchitectureSection() {
                 <div key={layer.title} className="relative flex gap-6 items-start group">
                   <div className="relative z-10">
                     <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${layerColors[i]} p-0.5 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                      <div className="w-full h-full rounded-2xl bg-surface-950 flex items-center justify-center">
-                        <LayerIcon className="w-7 h-7 text-white" />
+                      <div className="w-full h-full rounded-[14px] bg-surface-950 flex items-center justify-center">
+                        <LayerIcon className="w-7 h-7 text-surface-100" />
                       </div>
                     </div>
                   </div>

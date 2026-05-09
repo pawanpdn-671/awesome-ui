@@ -157,6 +157,7 @@ export const componentShowcase = {
   },
   toggle: { preview: "Preview", code: "Code" },
   comingSoon: "// Coming soon",
+  cta: "Browse all 26+ components",
 } as const;
 
 export const crossPlatform = {

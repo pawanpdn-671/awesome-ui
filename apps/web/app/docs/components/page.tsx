@@ -7,7 +7,7 @@ export default function ComponentsDocsPage() {
       <h1>{t.heading}</h1>
       <p>{t.subheading}</p>
 
-      <h2>{t.categories.heading}</h2>
+      <h2 id="categories">{t.categories.heading}</h2>
       <p>{t.categories.description}</p>
 
       <div className="grid sm:grid-cols-2 gap-4 mt-6 mb-8 not-prose">

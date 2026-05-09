@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { CodeBlock } from "@/components/code-block";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { codeExamples, frameworks } from "@/lib/utils";
-import { Eye, Code2 } from "lucide-react";
+import { Eye, Code2, ArrowRight } from "lucide-react";
 import { componentShowcase as t } from "@/texts";
+import Link from "next/link";
 
 interface Component {
   id: string;
@@ -169,6 +171,13 @@ export function ComponentShowcase() {
                 {comp.name}
               </button>
             ))}
+            <div className="pt-3 border-t border-surface-800/50 mt-3">
+              <Link href="/docs/components">
+                <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-surface-500 hover:text-surface-200 text-xs">
+                  {t.cta} <ArrowRight className="w-3 h-3" />
+                </Button>
+              </Link>
+            </div>
           </div>
 
           <div className="lg:col-span-4">
