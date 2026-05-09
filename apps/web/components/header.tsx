@@ -48,7 +48,7 @@ export function Header() {
 							{t.cta}
 						</Link>
 						<a
-							href="https://github.com"
+							href="https://github.com/pawanpdn-671/awesome-ui"
 							target="_blank"
 							rel="noopener noreferrer"
 							aria-label={t.ariaLabel.github}

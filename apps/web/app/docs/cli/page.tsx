@@ -1,5 +1,5 @@
 import { CodeBlock } from "@/components/code-block";
-import { TerminalBlock } from "@/components/code-block";
+import { TerminalBlock } from "@/components/terminal-block";
 import { cliDocs as t } from "@/texts";
 
 export default function CliDocsPage() {

@@ -2,14 +2,15 @@
 
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Smartphone, Monitor, Tablet, Check } from "lucide-react";
+import { TerminalWindow } from "@/components/terminal-window";
+import { Smartphone, Monitor, Check } from "lucide-react";
 import { crossPlatform as t } from "@/texts";
 
 const platforms = t.platforms.map((p) => {
 	const icons: Record<string, React.ComponentType<{ className?: string }>> = {
 		Web: Monitor,
 		Mobile: Smartphone,
-		Desktop: Tablet,
+		Desktop: Monitor,
 	};
 	return { ...p, icon: icons[p.name] || Monitor };
 });
@@ -67,13 +68,7 @@ export function CrossPlatform() {
 							</div>
 						</div>
 						<div className="relative">
-							<div className="glass rounded-xl p-4 border border-surface-700/50 max-w-sm mx-auto">
-								<div className="flex items-center gap-3 mb-3 pb-3 border-b border-surface-800">
-									<div className="w-3 h-3 rounded-full bg-red-500/50" />
-									<div className="w-3 h-3 rounded-full bg-amber-500/50" />
-									<div className="w-3 h-3 rounded-full bg-emerald-500/50" />
-									<span className="text-xs text-surface-500 ml-2">{t.bottom.preview.label}</span>
-								</div>
+							<TerminalWindow label={t.bottom.preview.label} className="max-w-sm mx-auto">
 								<div className="flex items-center justify-center p-4">
 									<div className="text-center">
 										<div className="mx-auto mb-3">
@@ -106,7 +101,7 @@ export function CrossPlatform() {
 										</div>
 									</div>
 								</div>
-							</div>
+							</TerminalWindow>
 						</div>
 					</div>
 				</div>

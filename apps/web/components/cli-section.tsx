@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { TerminalBlock } from "@/components/code-block";
+import { TerminalBlock } from "@/components/terminal-block";
 import { Button } from "@/components/ui/button";
 import { Terminal } from "lucide-react";
 import Link from "next/link";
@@ -16,18 +16,18 @@ export function CliSection() {
   const [cycle, setCycle] = useState(0);
 
   const advance = useCallback(() => {
-    setStep((s) => {
-      const next = s + 1;
-      if (next >= WORKFLOW_COUNT) {
-        setTimeout(() => {
-          setStep(0);
-          setCycle((c) => c + 1);
-        }, RESTART_DELAY);
-        return s;
-      }
-      return next;
-    });
+    setStep((s) => (s + 1 >= WORKFLOW_COUNT ? -1 : s + 1));
   }, []);
+
+  useEffect(() => {
+    if (step === -1) {
+      const timer = setTimeout(() => {
+        setStep(0);
+        setCycle((c) => c + 1);
+      }, RESTART_DELAY);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
 
   return (
     <section className="relative py-24 overflow-hidden">
@@ -50,7 +50,8 @@ export function CliSection() {
 
         <div className="grid lg:grid-cols-3 gap-6 mb-16">
           {t.workflows.map((w, i) => {
-            const active = step === i;
+            const effectiveStep = step === -1 ? WORKFLOW_COUNT - 1 : step;
+            const active = effectiveStep === i;
             return (
             <div key={i} className="transition-all duration-500">
               <div className="flex items-center gap-2 mb-3">
@@ -59,7 +60,7 @@ export function CliSection() {
               </div>
               <TerminalBlock
                 commands={[...w.commands]}
-                autoPlay={active}
+                autoPlay={active && step !== -1}
                 onComplete={advance}
                 resetKey={cycle}
               />
