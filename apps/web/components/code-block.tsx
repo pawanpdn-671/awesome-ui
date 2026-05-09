@@ -54,7 +54,7 @@ export function CodeBlock({ code, language = "tsx", showLineNumbers, className }
 
 function Highlight({ code }: { code: string }) {
   const parts = code.split(
-    /(\b(?:import|from|export|default|function|return|const|let|var|class|extends|interface|type|async|await|new|throw|if|else|for|while|template|script|setup|lang|Component|@Component|@awesomeui)\b|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\/\/.*)|(\{|\}|\(|\)|\<|\>|\/))/g
+    /(\b(?:import|from|export|default|function|return|const|let|var|class|extends|interface|type|async|await|new|throw|if|else|for|while|template|script|setup|lang|Component|@Component|@awesomeui)\b|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\/\/.*)|(\{|\}|\(|\)))/g
   );
 
   return (
@@ -68,7 +68,7 @@ function Highlight({ code }: { code: string }) {
           return <span key={i} className="text-emerald-400">{part}</span>;
         if (/^@awesomeui/.test(part))
           return <span key={i} className="text-awesome-400">{part}</span>;
-        if (/^[{}()<>/]$/.test(part))
+        if (/^[{}()]$/.test(part))
           return <span key={i} className="text-surface-400">{part}</span>;
         return <span key={i} className="text-surface-200">{part}</span>;
       })}

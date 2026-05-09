@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { layout as t } from "@/texts";
+import { Chatbot } from "@/components/chatbot";
 
 export const metadata: Metadata = {
   title: {
@@ -66,6 +67,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-surface-950 text-surface-100 antialiased">
         {children}
+        <Chatbot />
       </body>
     </html>
   );

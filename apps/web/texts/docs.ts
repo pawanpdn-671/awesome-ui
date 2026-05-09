@@ -12,7 +12,6 @@ export const sidebar = {
       title: "Components",
       links: [
         { href: "/docs/components", label: "Overview (26+)" },
-        { href: "/docs/components#categories", label: "All Categories" },
         { href: "/docs/components/form", label: "Form" },
         { href: "/docs/components/button", label: "Button" },
         { href: "/docs/components/badge", label: "Badge" },

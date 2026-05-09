@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import { CodeBlock } from "@/components/code-block";
 import { Badge } from "@/components/ui/badge";
 import { type ComponentDoc } from "@/texts/component-data";
+import { Eye, Code2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const categoryLabels: Record<string, string> = {
   primitive: "Primitives",
@@ -19,6 +24,7 @@ interface ComponentDocPageProps {
 export function ComponentDocPage({ data }: ComponentDocPageProps) {
   const categoryLabel = categoryLabels[data.category] ?? data.category;
   const exampleEntries = Object.entries(data.examples);
+  const [previewMode, setPreviewMode] = useState<"preview" | "code">("preview");
 
   return (
     <div>
@@ -32,19 +38,45 @@ export function ComponentDocPage({ data }: ComponentDocPageProps) {
 
       <h2>Preview</h2>
       <div className="not-prose glass rounded-xl border border-surface-700/50 overflow-hidden">
-        <div className="bg-surface-950/50 px-4 py-2 border-b border-surface-700/50 flex items-center gap-4">
-          <span className="text-xs text-surface-500 font-mono">Live Preview</span>
-        </div>
-        <div className="p-4">{data.preview}</div>
-        {data.previewCode && (
-          <div className="border-t border-surface-700/50">
-            <details>
-              <summary className="px-4 py-2 text-xs text-surface-500 font-mono cursor-pointer hover:text-surface-300 transition-colors bg-surface-950/30 select-none list-none">
-                <span>View code</span>
-              </summary>
-              <CodeBlock code={data.previewCode} language="tsx" />
-            </details>
+        <div className="bg-surface-950/50 px-4 py-2 border-b border-surface-700/50 flex items-center justify-between">
+          <span className="text-xs text-surface-500 font-mono">
+            {previewMode === "preview" ? "Live Preview" : "View Code"}
+          </span>
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-lg border border-surface-700 overflow-hidden">
+              <button
+                onClick={() => setPreviewMode("preview")}
+                className={cn(
+                  "p-1.5 transition-colors",
+                  previewMode === "preview"
+                    ? "bg-surface-700 text-surface-100"
+                    : "text-surface-500 hover:text-surface-300"
+                )}
+              >
+                <Eye className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setPreviewMode("code")}
+                className={cn(
+                  "p-1.5 transition-colors",
+                  previewMode === "code"
+                    ? "bg-surface-700 text-surface-100"
+                    : "text-surface-500 hover:text-surface-300"
+                )}
+              >
+                <Code2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
+        </div>
+        {previewMode === "preview" ? (
+          <div className="p-4">{data.preview}</div>
+        ) : (
+          data.previewCode && (
+            <div className="border-t border-surface-700/50">
+              <CodeBlock code={data.previewCode} language="tsx" />
+            </div>
+          )
         )}
       </div>
 

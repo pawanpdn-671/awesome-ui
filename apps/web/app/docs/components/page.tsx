@@ -7,22 +7,6 @@ export default function ComponentsDocsPage() {
       <h1>{t.heading}</h1>
       <p>{t.subheading}</p>
 
-      <h2 id="categories">{t.categories.heading}</h2>
-      <p>{t.categories.description}</p>
-
-      <div className="grid sm:grid-cols-2 gap-4 mt-6 mb-8 not-prose">
-        {t.categories.groups.map((group) => (
-          <div key={group.cat} className="glass rounded-xl p-5 border border-surface-800/50">
-            <h3 className="text-sm font-semibold text-awesome-400 mb-2">{group.cat}</h3>
-            <ul className="space-y-1">
-              {group.items.map((item) => (
-                <li key={item} className="text-sm text-surface-400">{item}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
       <h2>{t.importPattern.heading}</h2>
       <p>{t.importPattern.description}</p>
 

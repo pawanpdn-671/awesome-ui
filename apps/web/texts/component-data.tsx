@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { DropdownMenuPreview, ToastPreview, SidebarPreview, AccordionPreview, DialogPreview, TabsPreview } from "@/components/component-previews";
 
 export interface ComponentProp {
   name: string;
@@ -267,18 +268,18 @@ function Example() {
       { name: "action", description: "Action after the content" },
     ],
     preview: (
-      <div className="py-8 px-4 max-w-lg mx-auto space-y-3">
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-          <svg className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <div><p className="text-sm text-blue-200">This is an info alert.</p></div>
+      <div className="max-w-lg mx-auto space-y-3">
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-800 border border-awesome-500">
+          <svg className="w-5 h-5 text-awesome-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <div><div className="text-sm text-awesome-500">This is an info alert.</div></div>
         </div>
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-          <svg className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <div><p className="text-sm text-emerald-200">Operation completed successfully.</p></div>
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-800 border border-emerald-500">
+          <svg className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <div><div className="text-sm text-emerald-500">Operation completed successfully.</div></div>
         </div>
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-          <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <div><p className="text-sm text-red-200">Something went wrong.</p></div>
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-800 border border-red-500">
+          <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <div><div className="text-sm text-red-500">Something went wrong.</div></div>
         </div>
       </div>
     ),
@@ -387,20 +388,28 @@ function Example() {
     ],
     preview: (
       <div className="py-8 px-4 max-w-xs mx-auto space-y-3">
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-surface-600 bg-transparent text-awesome-500 focus:ring-awesome-500/30" />
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className="w-4 h-4 rounded border-2 border-awesome-500 bg-awesome-500 flex items-center justify-center transition-colors">
+            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
           <span className="text-sm text-surface-200">Option A</span>
         </label>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" className="w-4 h-4 rounded border-surface-600 bg-transparent text-awesome-500 focus:ring-awesome-500/30" />
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className="w-4 h-4 rounded border-2 border-surface-600 bg-transparent group-hover:border-surface-500 transition-colors" />
           <span className="text-sm text-surface-200">Option B</span>
         </label>
         <label className="flex items-center gap-3 cursor-not-allowed opacity-50">
-          <input type="checkbox" disabled className="w-4 h-4 rounded border-surface-600 bg-transparent" />
+          <div className="w-4 h-4 rounded border-2 border-surface-700 bg-surface-800/50" />
           <span className="text-sm text-surface-400">Disabled</span>
         </label>
         <label className="flex items-center gap-3">
-          <input type="checkbox" className="w-4 h-4 rounded border-red-500/50 bg-transparent text-awesome-500" />
+          <div className="w-4 h-4 rounded border-2 border-red-500/50 bg-red-500/10 flex items-center justify-center">
+            <svg className="w-3 h-3 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
           <span className="text-sm text-red-400">Error state</span>
         </label>
       </div>
@@ -675,22 +684,7 @@ function Example() {
       { name: "icon", description: "Icon before content" },
       { name: "action", description: "Action after message" },
     ],
-    preview: (
-      <div className="py-8 px-4 flex items-center justify-center">
-        <div className="w-full max-w-sm space-y-3">
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-800 border border-surface-700 shadow-xl">
-            <svg className="w-5 h-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <div className="flex-1 min-w-0"><p className="text-sm text-surface-200">Changes saved successfully.</p></div>
-            <button className="text-surface-500 hover:text-surface-300 shrink-0"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-          </div>
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-800 border border-surface-700 shadow-xl">
-            <svg className="w-5 h-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <div className="flex-1 min-w-0"><p className="text-sm text-surface-200">Failed to save changes.</p></div>
-            <button className="text-surface-500 hover:text-surface-300 shrink-0"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-          </div>
-        </div>
-      </div>
-    ),
+    preview: <ToastPreview />,
     previewCode: `{/* Trigger a toast notification */}
 <button onClick={() => toast.success('Saved!')}>
   Show Success
@@ -822,25 +816,7 @@ function Example() {
     slots: [
       { name: "default", description: "Accordion item components" },
     ],
-    preview: (
-      <div className="py-8 px-4 max-w-lg mx-auto">
-        <div className="space-y-1">
-          <div className="border border-surface-800 rounded-lg overflow-hidden">
-            <button className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-surface-200 hover:bg-surface-800/50 transition-colors">
-              What is AwesomeUI?
-              <svg className="w-4 h-4 text-surface-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </button>
-            <div className="px-4 pb-3"><p className="text-sm text-surface-400">AwesomeUI is a universal component library that works across every major framework.</p></div>
-          </div>
-          <div className="border border-surface-800 rounded-lg overflow-hidden">
-            <button className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-surface-200 hover:bg-surface-800/50 transition-colors">
-              How do I install it?
-              <svg className="w-4 h-4 text-surface-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    ),
+    preview: <AccordionPreview />,
     previewCode: `<Accordion type="single" collapsible>
   <AccordionItem value="item-1" title="Section 1">
     Content for section 1.
@@ -886,23 +862,7 @@ function Example() {
       { name: "footer", description: "Bottom of sidebar" },
       { name: "toggle", description: "Custom toggle button" },
     ],
-    preview: (
-      <div className="py-8 px-4 flex justify-center">
-        <div className="w-64 rounded-xl border border-surface-800 bg-surface-950 overflow-hidden">
-          <div className="px-4 py-3 border-b border-surface-800">
-            <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-awesome-500/20 flex items-center justify-center"><span className="text-xs font-bold text-awesome-400">A</span></div><span className="text-sm font-medium text-surface-100">AwesomeUI</span></div>
-          </div>
-          <div className="p-2 space-y-0.5">
-            {["Dashboard", "Projects", "Settings", "Team"].map((item) => (
-              <div key={item} className="px-3 py-2 rounded-lg text-sm text-surface-300 hover:bg-surface-800 hover:text-surface-100 cursor-pointer transition-colors">{item}</div>
-            ))}
-          </div>
-          <div className="px-4 py-3 border-t border-surface-800">
-            <div className="flex items-center gap-3"><div className="w-7 h-7 rounded-full bg-surface-700" /><span className="text-sm text-surface-400">Profile</span></div>
-          </div>
-        </div>
-      </div>
-    ),
+    preview: <SidebarPreview />,
     previewCode: `<Sidebar collapsed={false} variant="default">
   <Sidebar.Header>
     <Logo />
@@ -1068,18 +1028,7 @@ function Example() {
       { name: "footer", description: "Action buttons" },
       { name: "trigger", description: "Opens the dialog" },
     ],
-    preview: (
-      <div className="flex items-center justify-center py-8">
-        <div className="glass rounded-xl p-6 max-w-sm w-full border border-surface-700/50">
-          <h3 className="text-lg font-semibold text-surface-100 mb-2">Confirm Action</h3>
-          <p className="text-sm text-surface-400 mb-5">Are you sure you want to proceed?</p>
-          <div className="flex gap-3">
-            <button className="flex-1 px-4 py-2 rounded-lg bg-surface-800 text-surface-300 text-sm font-medium hover:bg-surface-700 border border-surface-700 transition-all">Cancel</button>
-            <button className="flex-1 px-4 py-2 rounded-lg bg-awesome-500 text-white text-sm font-medium hover:bg-awesome-600 transition-all">Confirm</button>
-          </div>
-        </div>
-      </div>
-    ),
+    preview: <DialogPreview />,
     previewCode: `<Dialog>
   <DialogTrigger>
     <Button>Open Dialog</Button>
@@ -1130,21 +1079,7 @@ function Example() {
       { name: "default", description: "Tab list and tab panel components" },
       { name: "extra", description: "Extra content alongside tab list" },
     ],
-    preview: (
-      <div className="py-8 px-4 max-w-md mx-auto">
-        <div className="border-b border-surface-800">
-          <div className="flex gap-0">
-            {["Overview", "Features", "Pricing"].map((tab) => (
-              <button key={tab} className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${tab === "Overview" ? "text-surface-100" : "text-surface-400 hover:text-surface-200"}`}>
-                {tab}
-                {tab === "Overview" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-awesome-400" />}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="pt-4"><p className="text-sm text-surface-400">Overview content goes here. Switch between tabs to see different content.</p></div>
-      </div>
-    ),
+    preview: <TabsPreview />,
     previewCode: `<Tabs defaultValue="overview" variant="underline">
   <TabList>
     <Tab value="overview">Overview</Tab>
@@ -1410,25 +1345,7 @@ function Example() {
       { name: "trigger", description: "Opens the dropdown" },
       { name: "default", description: "Custom menu content" },
     ],
-    preview: (
-      <div className="py-8 px-4 flex justify-center">
-        <div className="relative inline-block">
-          <button className="px-4 py-2 rounded-lg bg-surface-800 text-sm text-surface-200 border border-surface-700 flex items-center gap-2">
-            Menu <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-          </button>
-          <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-surface-800 bg-surface-950 shadow-xl p-1 space-y-0.5">
-            <div className="px-3 py-2 rounded-md text-sm text-surface-200 hover:bg-surface-800 cursor-pointer transition-colors flex items-center justify-between">
-              Profile <span className="text-[10px] text-surface-500 font-mono">⌘P</span>
-            </div>
-            <div className="px-3 py-2 rounded-md text-sm text-surface-200 hover:bg-surface-800 cursor-pointer transition-colors flex items-center justify-between">
-              Settings <span className="text-[10px] text-surface-500 font-mono">⌘S</span>
-            </div>
-            <div className="h-px bg-surface-800 my-1" />
-            <div className="px-3 py-2 rounded-md text-sm text-red-400 hover:bg-surface-800 cursor-pointer transition-colors">Logout</div>
-          </div>
-        </div>
-      </div>
-    ),
+    preview: <DropdownMenuPreview />,
     previewCode: `<DropdownMenu>
   <DropdownMenuTrigger>
     <Button>Open Menu</Button>
