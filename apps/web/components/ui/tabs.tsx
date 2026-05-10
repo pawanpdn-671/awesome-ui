@@ -29,7 +29,7 @@ function Tabs({ defaultValue, children, className }: TabsProps) {
 interface TabsListProps { children: ReactNode; className?: string; }
 function TabsList({ children, className }: TabsListProps) {
   return (
-    <div className={cn("inline-flex items-center gap-1 rounded-lg bg-surface-800/50 p-1 border border-surface-700/50", className)}>
+    <div className={cn("inline-flex items-center gap-1 rounded-lg bg-surface-800/50 p-1 border border-border/50", className)}>
       {children}
     </div>
   );

@@ -29,7 +29,7 @@ export function EcosystemSection() {
           {t.items.map((item, i) => {
             const Icon = ecosystemIcons[i]!;
             return (
-            <div key={item.title} className="glass rounded-xl p-6 border border-surface-800/50 card-gradient-hover">
+            <div key={item.title} className="glass rounded-xl p-6 border border-border/50 card-gradient-hover">
               <Icon className={`w-8 h-8 ${ecosystemColors[i]} mb-4`} />
               <h3 className="text-base font-semibold text-surface-100 mb-2">{item.title}</h3>
               <p className="text-sm text-surface-400">{item.desc}</p>

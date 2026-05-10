@@ -48,7 +48,7 @@ export function ComparisonSection() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-surface-800">
+              <tr className="border-b border-border">
                 <th className="text-left py-4 px-4 text-surface-400 font-medium w-44">{t.featureHeader}</th>
                 {t.headers.map((h) => (
                   <th key={h.key} className={cn("py-4 px-4 text-center font-semibold", h.highlight ? "text-awesome-300" : "text-surface-400")}>
@@ -59,7 +59,7 @@ export function ComparisonSection() {
             </thead>
             <tbody>
               {t.features.map((feat: Feature, i: number) => (
-                <tr key={feat.name} className={cn("border-b border-surface-800/50 transition-colors hover:bg-surface-900/30", i % 2 === 0 ? "bg-surface-900/10" : "")}>
+                <tr key={feat.name} className={cn("border-b border-border/50 transition-colors hover:bg-surface-900/30", i % 2 === 0 ? "bg-surface-900/10" : "")}>
                   <td className="py-3.5 px-4 text-surface-200 font-medium text-left">{feat.name}</td>
                   {t.headers.map((h) => (
                     <td key={h.key} className={cn("py-3.5 px-4", h.highlight ? "bg-awesome-500/5" : "")}>

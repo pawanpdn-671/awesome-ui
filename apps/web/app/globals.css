@@ -1,34 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  --color-awesome-50: #eef2ff;
-  --color-awesome-100: #e0e7ff;
-  --color-awesome-200: #c7d2fe;
-  --color-awesome-300: #a5b4fc;
-  --color-awesome-400: #818cf8;
-  --color-awesome-500: #6366f1;
-  --color-awesome-600: #4f46e5;
-  --color-awesome-700: #4338ca;
-  --color-awesome-800: #3730a3;
-  --color-awesome-900: #312e81;
-  --color-awesome-950: #1e1b4b;
+  --color-awesome-50: #ffffff;
+  --color-awesome-100: #ebebeb;
+  --color-awesome-200: #cccccc;
+  --color-awesome-300: #9e9e9e;
+  --color-awesome-400: #6b6b6b;
+  --color-awesome-500: #000000;
+  --color-awesome-600: #222222;
+  --color-awesome-700: #3e3e3e;
+  --color-awesome-800: #545454;
+  --color-awesome-900: #6b6b6b;
+  --color-awesome-950: #9e9e9e;
 
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-300: #cbd5e1;
-  --color-surface-400: #94a3b8;
-  --color-surface-500: #64748b;
-  --color-surface-600: #475569;
-  --color-surface-700: #334155;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  --color-surface-50: #ffffff;
+  --color-surface-100: #ebebeb;
+  --color-surface-200: #cccccc;
+  --color-surface-300: #9e9e9e;
+  --color-surface-400: #6b6b6b;
+  --color-surface-500: #3e3e3e;
+  --color-surface-600: #222222;
+  --color-surface-700: #171717;
+  --color-surface-800: #0f0f0f;
+  --color-surface-900: #0a0a0a;
+  --color-surface-950: #050505;
 
-  --color-brand: #6366f1;
-  --color-brand-emphasis: #4f46e5;
-  --color-brand-muted: #a5b4fc;
-  --color-glow: rgba(99, 102, 241, 0.4);
+  --color-brand: #000000;
+  --color-brand-emphasis: #222222;
+  --color-brand-muted: #cccccc;
+  --color-glow: rgba(107, 107, 107, 0.4);
+  --color-border: #222222;
+  --color-chat: #0a0a0a;
+  --color-chat-header: rgba(15, 15, 15, 0.5);
+  --color-chat-assistant: #171717;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -44,6 +48,7 @@
   --animate-scale-in: scale-in 0.3s ease-out;
   --animate-shimmer: shimmer 2s linear infinite;
   --animate-spin-slow: spin 12s linear infinite;
+  --animate-typing: typing 1.4s ease-in-out infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -86,11 +91,15 @@
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
+  @keyframes typing {
+    0%, 60%, 100% { transform: scale(0.4); opacity: 0.3; }
+    30% { transform: scale(1); opacity: 1; }
+  }
 }
 
 @layer base {
   * {
-    @apply border-surface-800;
+    @apply border-border;
   }
   body {
     @apply bg-surface-950 text-surface-100 font-sans antialiased;
@@ -98,18 +107,16 @@
   ::selection {
     @apply bg-awesome-500/30 text-white;
   }
-  ::-webkit-scrollbar {
-    @apply w-2;
-  }
-  ::-webkit-scrollbar-track {
-    @apply bg-surface-950;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-surface-700 rounded-full;
-  }
 }
 
 @layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-awesome-300 via-awesome-400 to-awesome-600;
   }
@@ -123,13 +130,13 @@
     box-shadow: 0 0 15px var(--color-glow);
   }
   .grid-bg {
-    background-image: linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(107, 107, 107, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(107, 107, 107, 0.03) 1px, transparent 1px);
     background-size: 40px 40px;
   }
   .grid-bg-heavy {
-    background-image: linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(107, 107, 107, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(107, 107, 107, 0.08) 1px, transparent 1px);
     background-size: 40px 40px;
   }
   .noise-bg::before {
@@ -141,19 +148,19 @@
     pointer-events: none;
   }
   .glass {
-    @apply bg-surface-900/60 backdrop-blur-xl border border-surface-700/50;
+    @apply bg-surface-900/60 backdrop-blur-xl border border-border/40;
   }
   .glass-hover {
     @apply hover:bg-surface-800/80 hover:border-awesome-500/30 transition-all duration-300;
   }
   .card-gradient {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05), rgba(99, 102, 241, 0.02));
+    background: linear-gradient(135deg, rgba(107, 107, 107, 0.05), rgba(107, 107, 107, 0.02), rgba(107, 107, 107, 0.02));
   }
   .card-gradient-hover {
     @apply transition-all duration-500;
   }
   .card-gradient-hover:hover {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.08), rgba(99, 102, 241, 0.05));
+    background: linear-gradient(135deg, rgba(107, 107, 107, 0.12), rgba(107, 107, 107, 0.08), rgba(107, 107, 107, 0.05));
     @apply border-awesome-500/30 shadow-lg shadow-awesome-500/5;
   }
   .section-padding {
@@ -182,10 +189,10 @@
     @apply text-awesome-400 font-bold mr-2;
   }
   .docs-content code {
-    @apply px-1.5 py-0.5 rounded bg-surface-800 text-surface-200 text-sm font-mono;
+    @apply px-1.5 py-0.5 rounded bg-surface-700 text-surface-200 text-sm font-mono;
   }
   .docs-content pre {
-    @apply rounded-xl border border-surface-800 bg-surface-950 p-4 overflow-x-auto mb-6;
+    @apply rounded-xl border border-border bg-surface-600 p-4 overflow-x-auto mb-6;
   }
   .docs-content pre code {
     @apply bg-transparent p-0;
@@ -196,17 +203,21 @@
 }
 
 html.light {
-  --color-surface-50: #020617;
-  --color-surface-100: #0f172a;
-  --color-surface-200: #1e293b;
-  --color-surface-300: #334155;
-  --color-surface-400: #475569;
-  --color-surface-500: #64748b;
-  --color-surface-600: #94a3b8;
-  --color-surface-700: #cbd5e1;
-  --color-surface-800: #e2e8f0;
-  --color-surface-900: #f1f5f9;
-  --color-surface-950: #f8fafc;
+  --color-surface-50: #050505;
+  --color-surface-100: #0a0a0a;
+  --color-surface-200: #0f0f0f;
+  --color-surface-300: #171717;
+  --color-surface-400: #222222;
+  --color-surface-500: #3e3e3e;
+  --color-surface-600: #6b6b6b;
+  --color-surface-700: #9e9e9e;
+  --color-surface-800: #cccccc;
+  --color-surface-900: #ebebeb;
+  --color-surface-950: #ffffff;
+  --color-border: #cccccc;
+  --color-chat: #ffffff;
+  --color-chat-header: #f0f0f0;
+  --color-chat-assistant: #ebebeb;
 }
 
 html.light .text-gradient-hero {
@@ -214,32 +225,32 @@ html.light .text-gradient-hero {
 }
 
 html.light .glass {
-  @apply bg-white/80 backdrop-blur-xl border-surface-800/30;
+  @apply bg-white/80 backdrop-blur-xl border-border/30;
 }
 
 html.light .grid-bg {
-  background-image: linear-gradient(rgba(99, 102, 241, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(107, 107, 107, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(107, 107, 107, 0.06) 1px, transparent 1px);
 }
 
 html.light .grid-bg-heavy {
-  background-image: linear-gradient(rgba(99, 102, 241, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.12) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(107, 107, 107, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(107, 107, 107, 0.12) 1px, transparent 1px);
 }
 
 html.light .card-gradient-hover:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.05), rgba(99, 102, 241, 0.03));
+  background: linear-gradient(135deg, rgba(107, 107, 107, 0.08), rgba(107, 107, 107, 0.05), rgba(107, 107, 107, 0.03));
   @apply border-awesome-500/20 shadow-lg shadow-awesome-500/10;
 }
 
-
-
 html.light .docs-content code {
-  @apply bg-surface-800 text-surface-300;
+  background: #ebebeb;
+  color: #050505;
 }
 
 html.light .docs-content pre {
-  @apply border-surface-300/40 bg-surface-100/80;
+  background: rgba(245, 245, 245, 0.85);
+  border-color: rgba(204, 204, 204, 0.4);
 }
 
 .logo-dark { display: inline-block; }
@@ -247,5 +258,3 @@ html.light .logo-dark { display: none; }
 
 .logo-light { display: none; }
 html.light .logo-light { display: inline-block; }
-
-

@@ -48,7 +48,7 @@ export function ArchitectureSection() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex-1 glass rounded-xl p-5 border border-surface-800/50 card-gradient-hover -mt-1">
+                  <div className="flex-1 glass rounded-xl p-5 border border-border/50 card-gradient-hover -mt-1">
                     <h3 className="text-lg font-semibold text-surface-100 mb-1">{layer.title}</h3>
                     <p className="text-sm text-surface-400">{layer.desc}</p>
                   </div>
@@ -64,11 +64,11 @@ export function ArchitectureSection() {
           </div>
         </div>
 
-        <div className="mt-16 glass rounded-2xl p-8 border border-surface-700/50 text-center">
+        <div className="mt-16 glass rounded-2xl p-8 border border-border/50 text-center">
           <h3 className="text-xl font-semibold text-surface-100 mb-4">{t.howItWorks.heading}</h3>
           <div className="grid sm:grid-cols-3 gap-6 text-left">
             {t.howItWorks.steps.map((step) => (
-            <div key={step.number} className="bg-surface-950 rounded-xl p-5 border border-surface-800">
+            <div key={step.number} className="bg-surface-950 rounded-xl p-5 border border-border">
               <div className="text-2xl font-bold text-awesome-400 mb-2">{step.number}</div>
               <h4 className="text-sm font-semibold text-surface-100 mb-1">{step.title}</h4>
               <p className="text-xs text-surface-400">{step.desc}</p>

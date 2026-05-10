@@ -11,7 +11,7 @@ export function Header() {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<header className="fixed top-0 left-0 right-0 z-50 border-b border-surface-800/50 bg-surface-950/80 backdrop-blur-xl">
+		<header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-surface-950/80 backdrop-blur-xl">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16">
 					<Link href="/" className="flex items-center gap-2.5 group">
@@ -68,7 +68,7 @@ export function Header() {
 			</div>
 
 			{open && (
-				<div className="md:hidden border-t border-surface-800 bg-surface-950">
+				<div className="md:hidden border-t border-border bg-surface-950">
 					<div className="px-4 py-4 space-y-1">
 						{t.links.map((l) => (
 							<Link

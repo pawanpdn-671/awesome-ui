@@ -11,7 +11,7 @@ export function DropdownMenuPreview() {
       <div className="relative inline-block">
         <button
           onClick={() => setOpen(!open)}
-          className="px-4 py-2 rounded-lg bg-surface-800 text-sm text-surface-200 border border-surface-700 flex items-center gap-2 hover:bg-surface-700 transition-colors"
+          className="px-4 py-2 rounded-lg bg-surface-800 text-sm text-surface-200 border border-border flex items-center gap-2 hover:bg-surface-700 transition-colors"
         >
           Menu
           <svg className="w-4 h-4 transition-transform duration-200" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -19,7 +19,7 @@ export function DropdownMenuPreview() {
         {open && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-            <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-surface-800 bg-surface-950 shadow-xl p-1 space-y-0.5 z-20">
+            <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-border bg-surface-950 shadow-xl p-1 space-y-0.5 z-20">
               <button className="w-full px-3 py-2 rounded-md text-sm text-surface-200 hover:bg-surface-800 cursor-pointer transition-colors flex items-center justify-between">
                 Profile <span className="text-[10px] text-surface-500 font-mono">⌘P</span>
               </button>
@@ -129,8 +129,8 @@ export function SidebarPreview() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto rounded-xl border border-surface-200 dark:border-surface-800 overflow-hidden shadow-sm">
-      <div className="h-12 bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800 flex items-center px-4 gap-3">
+    <div className="relative w-full max-w-2xl mx-auto rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="h-12 bg-white dark:bg-surface-900 border-b border-border flex items-center px-4 gap-3">
         <button
           onClick={() => setOpen(true)}
           className="p-1.5 rounded-md text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
@@ -155,8 +155,8 @@ export function SidebarPreview() {
       {open && (
         <>
           <div className="fixed inset-0 z-30 bg-black/50 animate-fade-in" onClick={() => setOpen(false)} />
-          <div className="fixed left-0 top-0 bottom-0 z-40 w-64 border-r border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950 shadow-2xl animate-slide-in-left flex flex-col">
-            <div className="h-12 px-4 flex items-center justify-between border-b border-surface-100 dark:border-surface-800">
+          <div className="fixed left-0 top-0 bottom-0 z-40 w-64 border-r border-border bg-white dark:bg-surface-950 shadow-2xl animate-slide-in-left flex flex-col">
+            <div className="h-12 px-4 flex items-center justify-between border-b border-border">
               <div className="flex items-center gap-2.5">
                 <img src="/logo-white.png" alt="AwesomeUI" className="logo-dark h-5 w-auto" />
                 <img src="/logo-black.png" alt="AwesomeUI" className="logo-light h-5 w-auto" />
@@ -183,7 +183,7 @@ export function SidebarPreview() {
                 </button>
               ))}
             </div>
-            <div className="h-12 px-4 flex items-center gap-2.5 border-t border-surface-100 dark:border-surface-800">
+            <div className="h-12 px-4 flex items-center gap-2.5 border-t border-border">
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-awesome-400 to-awesome-600 flex items-center justify-center text-white text-[10px] font-medium shrink-0">JD</div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-medium text-surface-800 dark:text-surface-200 truncate">John Doe</div>
@@ -206,7 +206,7 @@ export function AccordionPreview() {
           { value: "item-1", title: "What is AwesomeUI?", content: "AwesomeUI is a universal component library that works across every major framework." },
           { value: "item-2", title: "How do I install it?", content: "Run npx awesomeui init in your project directory to get started." },
         ].map((item) => (
-          <div key={item.value} className="border border-surface-800 rounded-lg overflow-hidden">
+          <div key={item.value} className="border border-border rounded-lg overflow-hidden">
             <button
               onClick={() => setOpenItem(openItem === item.value ? null : item.value)}
               className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-surface-200 hover:bg-surface-800/50 transition-colors"
@@ -247,13 +247,13 @@ export function DialogPreview() {
         <>
           <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setOpen(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="glass rounded-xl p-6 max-w-sm w-full border border-surface-700/50 animate-scale-in" onClick={e => e.stopPropagation()}>
+            <div className="glass rounded-xl p-6 max-w-sm w-full border border-border/50 animate-scale-in" onClick={e => e.stopPropagation()}>
               <h3 className="text-lg font-semibold text-surface-100 mb-2">Confirm Action</h3>
               <p className="text-sm text-surface-400 mb-5">Are you sure you want to proceed?</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-4 py-2 rounded-lg bg-surface-800 text-surface-300 text-sm font-medium hover:bg-surface-700 border border-surface-700 transition-all"
+                  className="flex-1 px-4 py-2 rounded-lg bg-surface-800 text-surface-300 text-sm font-medium hover:bg-surface-700 border border-border transition-all"
                 >
                   Cancel
                 </button>
@@ -276,7 +276,7 @@ export function TabsPreview() {
   const [activeTab, setActiveTab] = useState("Overview");
   return (
     <div className="py-8 px-4 max-w-md mx-auto">
-      <div className="border-b border-surface-800">
+      <div className="border-b border-border">
         <div className="flex gap-0">
           {["Overview", "Features", "Pricing"].map((tab) => (
             <button

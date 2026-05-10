@@ -23,10 +23,10 @@ export function CodeBlock({ code, language = "tsx", showLineNumbers, className }
   const lines = code.trim().split("\n");
 
   return (
-    <div className={cn("group relative rounded-xl border border-surface-800 bg-surface-950 overflow-hidden", className)}>
-      <div className="flex items-center justify-between px-4 py-2 bg-surface-900/80">
-        <span className="text-xs text-surface-500 font-mono">{language}</span>
-        <button onClick={handleCopy} className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-surface-300 transition-colors">
+    <div className={cn("group relative rounded-xl border border-border bg-surface-950 overflow-hidden", className)}>
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+        <span className="text-xs text-surface-300 font-mono">{language}</span>
+        <button onClick={handleCopy} className="flex items-center gap-1.5 text-xs text-surface-300 hover:text-surface-100 transition-colors">
           {copied ? (
             <><Check className="w-3.5 h-3.5 text-emerald-400" /><span className="text-emerald-400">Copied</span></>
           ) : (
@@ -34,13 +34,13 @@ export function CodeBlock({ code, language = "tsx", showLineNumbers, className }
           )}
         </button>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hide-scrollbar">
         <pre className="p-4 text-sm leading-6" style={{ background: 'transparent', border: 'none', borderRadius: 0, margin: 0, padding: '1rem' }}>
           <code className="font-mono">
             {lines.map((line, i) => (
               <span key={i} className="block">
                 {showLineNumbers && (
-                  <span className="inline-block w-8 mr-4 text-right text-surface-600 select-none">{i + 1}</span>
+                  <span className="inline-block w-8 mr-4 text-right text-surface-400 select-none">{i + 1}</span>
                 )}
                 <Highlight code={line} />
               </span>
@@ -61,7 +61,7 @@ function Highlight({ code }: { code: string }) {
     <>
       {parts.map((part, i) => {
         if (!part) return null;
-        if (part.startsWith("//")) return <span key={i} className="text-surface-500 italic">{part}</span>;
+        if (part.startsWith("//")) return <span key={i} className="text-surface-400 italic">{part}</span>;
         if (/^(import|from|export|default|function|return|const|let|var|class|extends|interface|type|async|await|new|throw|if|else|for|while|template|script|setup|lang|Component|@Component)$/.test(part))
           return <span key={i} className="text-awesome-400">{part}</span>;
         if (part.startsWith('"') || part.startsWith("'") || part.startsWith("`"))

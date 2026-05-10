@@ -38,7 +38,7 @@ export const docsDatabase = {
       },
       {
         source: 'components.md',
-        content: `Tabs component: Tabs organize content into switchable panels. Implemented as a compound component with Tab, TabList, TabPanel sub-components. Tabs support keyboard navigation with arrow keys, controlled and uncontrolled state management, and responsive design. Active tab is indicated with the awesome-500 color.`
+        content: `Tabs component: Tabs organize content into switchable panels. Implemented as a compound component with Tab, TabList, TabPanel sub-components. Tabs support keyboard navigation with arrow keys, controlled and uncontrolled state management, and responsive design. Active tab is indicated with the brand color.`
       },
       {
         source: 'components.md',
@@ -52,11 +52,11 @@ export const docsDatabase = {
       // ── Theming ──
       {
         source: 'theming.md',
-        content: `AwesomeUI uses a comprehensive design token system built on CSS custom properties. Customize every aspect of the visual design with minimal effort. Design tokens are the foundation covering colors, spacing, typography, shadows, and more. All design tokens are exposed as CSS custom properties for easy overrides. The primary color palette is indigo-based with awesome-50 through awesome-950. Surface colors use slate tones with surface-50 through surface-950.`
+        content: `AwesomeUI uses a comprehensive design token system built on CSS custom properties. Customize every aspect of the visual design with minimal effort. Design tokens are the foundation covering colors, spacing, typography, shadows, and more. All design tokens are exposed as CSS custom properties for easy overrides. The unified color palette uses a blue-based scale from awesome-50 through awesome-950.`
       },
       {
         source: 'theming.md',
-        content: `Dark mode is built into every AwesomeUI component. Components automatically adapt when the .dark class is applied to the HTML root element. Design tokens are inverted in light mode — surface-50 becomes the darkest shade and surface-950 becomes the lightest. The theme system respects prefers-color-scheme and stores user preference in localStorage. Toggle between light and dark with a single CSS class.`
+        content: `Dark mode is built into every AwesomeUI component. Components automatically adapt when the .dark class is applied to the HTML root element. The surface scale is inverted in light mode — surface-50 becomes the darkest shade and surface-950 becomes the lightest. The theme system respects prefers-color-scheme and stores user preference in localStorage. Toggle between light and dark with a single CSS class.`
       },
       {
         source: 'theming.md',
@@ -134,7 +134,7 @@ export const docsDatabase = {
       // ─── Design Tokens Specifics ──
       {
         source: 'design-tokens.md',
-        content: `AwesomeUI design tokens: Colors use an indigo primary palette (awesome-50 to awesome-950). Surface colors use a slate palette inverted in light mode. Typography uses Inter as the default sans-serif font and JetBrains Mono for monospace. Spacing follows a 4px scale. Border radius includes none, sm (4px), md (8px), lg (12px), xl (16px), 2xl (24px), and full (9999px). Shadows include sm, md, lg, xl, and glow variants. Animations include fade-in, fade-up, slide-down, scale-in, glow-pulse, float, and shimmer.`
+        content: `AwesomeUI design tokens: Colors use a unified blue-based palette (awesome-50 to awesome-950). Typography uses Inter as the default sans-serif font and JetBrains Mono for monospace. Spacing follows a 4px scale. Border radius includes none, sm (4px), md (8px), lg (12px), xl (16px), 2xl (24px), and full (9999px). Shadows include sm, md, lg, xl, and glow variants. Animations include fade-in, fade-up, slide-down, scale-in, glow-pulse, float, and shimmer.`
       },
     ];
   },

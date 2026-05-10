@@ -4,7 +4,7 @@ import { footer as t } from "@/texts";
 
 export function Footer() {
 	return (
-		<footer className="relative border-t border-surface-800 bg-surface-950">
+		<footer className="relative border-t border-border bg-surface-950">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-8">
 					{Object.entries(t.columns).map(([category, links]) => (
@@ -37,7 +37,7 @@ export function Footer() {
 					))}
 				</div>
 
-				<div className="mt-16 pt-8 border-t border-surface-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+				<div className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
 					<div className="flex items-center gap-2.5">
 						<Image
 							src="/logo-white.png"

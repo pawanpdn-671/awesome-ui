@@ -61,7 +61,7 @@ export function ThemingSection() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {t.tokens.map((tk) => (
-                <div key={tk.category} className="glass rounded-xl p-4 border border-surface-800/50 card-gradient-hover">
+                <div key={tk.category} className="glass rounded-xl p-4 border border-border/50 card-gradient-hover">
                   <h4 className="text-xs font-semibold text-awesome-400 uppercase tracking-wider mb-2">{tk.category}</h4>
                   <ul className="space-y-1">
                     {tk.items.map((item) => (
@@ -75,21 +75,21 @@ export function ThemingSection() {
               ))}
             </div>
 
-            <div className="glass rounded-xl p-5 border border-surface-700/50">
+            <div className="glass rounded-xl p-5 border border-border/50">
               <h4 className="text-sm font-semibold text-surface-100 mb-3">{t.livePreview.heading}</h4>
               <div className="flex flex-wrap gap-3 mb-4">
                 {t.livePreview.colors.map(({ color, label }) => (
                   <button
                     key={color}
                     aria-label={label}
-                    className="w-8 h-8 rounded-full border-2 border-surface-700 hover:scale-110 transition-transform"
+                    className="w-8 h-8 rounded-full border-2 border-border hover:scale-110 transition-transform"
                     style={{ backgroundColor: color }}
                   />
                 ))}
               </div>
               <div className="flex flex-wrap gap-2">
                 {t.livePreview.radii.map((r) => (
-                  <span key={r} className="px-3 py-1.5 bg-surface-800 rounded text-xs text-surface-300 border border-surface-700" style={{ borderRadius: r === "sm" ? "0.25rem" : r === "md" ? "0.375rem" : r === "lg" ? "0.5rem" : r === "xl" ? "0.75rem" : "1rem" }}>
+                  <span key={r} className="px-3 py-1.5 bg-surface-800 rounded text-xs text-surface-300 border border-border" style={{ borderRadius: r === "sm" ? "0.25rem" : r === "md" ? "0.375rem" : r === "lg" ? "0.5rem" : r === "xl" ? "0.75rem" : "1rem" }}>
                     {r}
                   </span>
                 ))}
@@ -108,7 +108,7 @@ export function ThemingSection() {
               <CodeBlock code={themeCode} language="css" />
             </div>
 
-            <div className="mt-6 glass rounded-xl p-5 border border-surface-700/50">
+            <div className="mt-6 glass rounded-xl p-5 border border-border/50">
               <h4 className="text-sm font-semibold text-surface-100 mb-2">{t.darkMode.heading}</h4>
               <p className="text-xs text-surface-400">
                 {t.darkMode.description}

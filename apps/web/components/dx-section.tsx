@@ -30,7 +30,7 @@ export function DxSection() {
           {t.features.map((f, i) => {
             const Icon = featureIcons[i]!;
             return (
-            <div key={f.title} className="glass rounded-xl p-5 border border-surface-800/50 card-gradient-hover">
+            <div key={f.title} className="glass rounded-xl p-5 border border-border/50 card-gradient-hover">
               <Icon className="w-5 h-5 text-awesome-400 mb-3" />
               <h3 className="text-sm font-semibold text-surface-100 mb-1.5">{f.title}</h3>
               <p className="text-xs text-surface-400 leading-relaxed">{f.desc}</p>
@@ -40,7 +40,7 @@ export function DxSection() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
-          <div className="glass rounded-xl p-6 border border-surface-700/50">
+          <div className="glass rounded-xl p-6 border border-border/50">
             <h3 className="text-lg font-semibold text-surface-100 mb-4">{t.codeBlocks.tsAutocomplete.heading}</h3>
             <CodeBlock
               code={`import { Button } from '@awesomeui/react'
@@ -57,7 +57,7 @@ export function DxSection() {
               language="tsx"
             />
           </div>
-          <div className="glass rounded-xl p-6 border border-surface-700/50">
+          <div className="glass rounded-xl p-6 border border-border/50">
             <h3 className="text-lg font-semibold text-surface-100 mb-4">{t.codeBlocks.modularImports.heading}</h3>
             <CodeBlock
               code={`// Import only what you need

@@ -9,6 +9,15 @@ export const sidebar = {
       ],
     },
     {
+      title: "Colors",
+      links: [
+        { href: "/docs/colors", label: "Overview" },
+        { href: "/docs/colors#neutral", label: "Neutral Palettes" },
+        { href: "/docs/colors#accent", label: "Accent Palettes" },
+        { href: "/docs/colors#css-variables", label: "CSS Variables" },
+      ],
+    },
+    {
       title: "Components",
       links: [
         { href: "/docs/components", label: "Overview (26+)" },
@@ -42,7 +51,7 @@ export const sidebar = {
     {
       title: "Theming",
       links: [
-        { href: "/docs/theming", label: "Overview" },
+        { href: "/docs/theming", label: "Documentation" },
         { href: "/docs/theming#tokens", label: "Design Tokens" },
         { href: "/docs/theming#dark-mode", label: "Dark Mode" },
         { href: "/docs/theming#customization", label: "Customization" },

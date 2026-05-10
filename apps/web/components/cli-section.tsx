@@ -69,13 +69,13 @@ export function CliSection() {
           })}
         </div>
 
-        <div className="glass rounded-2xl p-8 border border-surface-700/50">
+        <div className="glass rounded-2xl p-8 border border-border/50">
           <h3 className="text-lg font-semibold text-surface-100 mb-6 text-center">
             {t.frameworkSetup.heading}
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {t.frameworkSetup.frameworks.map((fs) => (
-              <div key={fs.name} className="bg-surface-950 rounded-xl p-4 border border-surface-800 hover:border-awesome-500/30 transition-all duration-300">
+              <div key={fs.name} className="bg-surface-950 rounded-xl p-4 border border-border hover:border-awesome-500/30 transition-all duration-300">
                 <div className="text-xs font-semibold mb-2 text-surface-200">{fs.name}</div>
                 <code className="text-sm text-surface-300 font-mono">{fs.code}</code>
               </div>

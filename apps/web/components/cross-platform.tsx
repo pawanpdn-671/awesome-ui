@@ -34,7 +34,7 @@ export function CrossPlatform() {
 
 				<div className="grid md:grid-cols-3 gap-8">
 					{platforms.map((p) => (
-						<div key={p.name} className="glass rounded-2xl p-8 border border-surface-700/50 card-gradient-hover">
+						<div key={p.name} className="glass rounded-2xl p-8 border border-border/50 card-gradient-hover">
 							<div className="w-12 h-12 rounded-xl bg-awesome-500/20 flex items-center justify-center mb-5">
 								<p.icon className="w-6 h-6 text-awesome-400" />
 							</div>
@@ -52,7 +52,7 @@ export function CrossPlatform() {
 					))}
 				</div>
 
-				<div className="mt-16 glass rounded-2xl p-8 lg:p-12 border border-surface-700/50 overflow-hidden">
+				<div className="mt-16 glass rounded-2xl p-8 lg:p-12 border border-border/50 overflow-hidden">
 					<div className="grid lg:grid-cols-2 gap-8 items-center">
 						<div>
 							<h3 className="text-2xl font-bold text-surface-100 mb-4">{t.bottom.heading}</h3>

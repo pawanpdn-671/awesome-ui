@@ -34,7 +34,7 @@ export function ApiPhilosophy() {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="space-y-4">
             {t.tenets.map((tenet) => (
-              <div key={tenet.title} className="glass rounded-xl p-5 card-gradient-hover border border-surface-800/50">
+              <div key={tenet.title} className="glass rounded-xl p-5 card-gradient-hover border border-border/50">
                 <div className="flex items-start gap-4">
                   <div className="w-6 h-6 rounded-full bg-awesome-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Check className="w-3.5 h-3.5 text-awesome-400" />
@@ -55,7 +55,7 @@ export function ApiPhilosophy() {
 
           <div className="space-y-6">
             {codeExamples.map((ex) => (
-              <div key={ex.label} className="glass rounded-xl p-4 border border-surface-700/50">
+              <div key={ex.label} className="glass rounded-xl p-4 border border-border/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className={`w-2 h-2 rounded-full ${ex.color}`} />
                   <span className="text-xs font-medium text-surface-400">{ex.label}</span>

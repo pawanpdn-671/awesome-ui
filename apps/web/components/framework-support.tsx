@@ -55,7 +55,7 @@ export function FrameworkSupport() {
                   "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 border",
                   active === f.id
                     ? "bg-surface-800/80 border-awesome-500/30 shadow-lg shadow-awesome-500/5"
-                    : "bg-surface-900/30 border-surface-800/50 hover:bg-surface-800/50 hover:border-surface-700"
+                    : "bg-surface-900/30 border-border/50 hover:bg-surface-800/50 hover:border-border"
                 )}
               >
                   <Icon className="w-5 h-5 shrink-0" />
@@ -73,7 +73,7 @@ export function FrameworkSupport() {
           </div>
 
           <div className="lg:col-span-2 space-y-6">
-            <div className="glass rounded-xl p-6 border border-surface-700/50">
+            <div className="glass rounded-xl p-6 border border-border/50">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <FwIcon className="w-6 h-6 shrink-0" />
