@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { DocHeader } from "@/components/doc-header";
 import { docsLanding as t } from "@/texts";
 
 export default function DocsPage() {
 	return (
 		<div>
-			<h1>{t.heading}</h1>
-			<p>{t.subheading}</p>
+			<DocHeader heading={t.heading} subheading={t.subheading} />
 
 			<div className="grid sm:grid-cols-2 gap-4 mt-8 not-prose">
 				{t.cards.map((card) => (

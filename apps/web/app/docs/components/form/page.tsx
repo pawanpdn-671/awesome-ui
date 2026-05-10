@@ -1,5 +1,5 @@
 import { CodeBlock } from "@/components/code-block";
-import { Badge } from "@/components/ui/badge";
+import { DocHeader } from "@/components/doc-header";
 import { formDoc as t } from "@/texts";
 
 export default function FormDocPage() {
@@ -7,11 +7,7 @@ export default function FormDocPage() {
 
   return (
     <div>
-      <h1>
-        {t.heading}
-        <Badge variant="primary" className="ml-3 align-middle text-xs">{t.badge}</Badge>
-      </h1>
-      <p>{t.subheading}</p>
+      <DocHeader heading={t.heading} subheading={t.subheading} badge={t.badge} />
 
       <h2>{s.import.heading}</h2>
       <CodeBlock code={`import { Form, Input, Select, Checkbox, Textarea, Button } from '@awesomeui/react'`} language="tsx" />

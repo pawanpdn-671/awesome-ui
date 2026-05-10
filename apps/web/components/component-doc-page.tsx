@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CodeBlock } from "@/components/code-block";
-import { Badge } from "@/components/ui/badge";
+import { DocHeader } from "@/components/doc-header";
 import { type ComponentDoc } from "@/texts/component-data";
 import { Eye, Code2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -28,13 +28,7 @@ export function ComponentDocPage({ data }: ComponentDocPageProps) {
 
   return (
     <div>
-      <h1>
-        {data.name}
-        <Badge variant="primary" className="ml-3 align-middle text-xs">
-          {categoryLabel}
-        </Badge>
-      </h1>
-      <p>{data.description}</p>
+      <DocHeader heading={data.name} subheading={data.description} badge={categoryLabel} />
 
       <h2>Preview</h2>
       <div className="not-prose glass rounded-xl border border-border/50 overflow-hidden">

@@ -1,11 +1,11 @@
 import { CodeBlock } from "@/components/code-block";
+import { DocHeader } from "@/components/doc-header";
 import { apiReference as t } from "@/texts";
 
 export default function ApiReferencePage() {
   return (
     <div>
-      <h1>{t.heading}</h1>
-      <p>{t.subheading}</p>
+      <DocHeader heading={t.heading} subheading={t.subheading} />
 
       <h2 id="common-props">{t.sections.commonProps.heading}</h2>
       <p>{t.sections.commonProps.description}</p>

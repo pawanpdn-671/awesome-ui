@@ -1,10 +1,11 @@
+import { DocHeader } from "@/components/doc-header";
 import { allPalettes, type Palette } from "@/lib/color-palettes";
 
 function PaletteScale({ palette }: { palette: Palette }) {
   const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
   return (
-    <div className="rounded-xl border border-surface-800 overflow-hidden">
-      <div className="px-4 py-2.5 bg-surface-900/50 border-b border-surface-800 flex items-center justify-between">
+    <div className="rounded-xl border border-border overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
         <span className="text-sm font-semibold text-surface-200">{palette.label}</span>
         <span className="text-xs text-surface-500 font-mono">{palette.name}</span>
       </div>
@@ -43,15 +44,14 @@ export default function ColorsPage() {
 
   return (
     <div>
-      <h1>Colors</h1>
-      <p>
-        Complete color reference from <code>@awesomeui/tokens</code>. All colors
-        are available as design tokens and CSS custom properties.
-      </p>
+      <DocHeader
+        heading="Colors"
+        subheading={<>Complete color reference from <code>@awesomeui/tokens</code>. All colors are available as design tokens and CSS custom properties.</>}
+      />
 
       <h2 id="import">Import</h2>
       <div className="not-prose">
-        <div className="rounded-lg bg-surface-950 border border-surface-800 p-4 font-mono text-sm text-surface-300 overflow-x-auto">
+        <div className="rounded-lg border border-border p-4 font-mono text-sm text-surface-200 overflow-x-auto">
           <pre>{`import { colors } from '@awesomeui/tokens'
 
 // Access any color by name and shade

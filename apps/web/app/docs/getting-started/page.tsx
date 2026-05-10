@@ -1,4 +1,5 @@
 import { CodeBlock } from "@/components/code-block";
+import { DocHeader } from "@/components/doc-header";
 import { gettingStarted as t } from "@/texts";
 
 export default function GettingStartedPage() {
@@ -6,8 +7,7 @@ export default function GettingStartedPage() {
 
   return (
     <div>
-      <h1>{t.heading}</h1>
-      <p>{t.subheading}</p>
+      <DocHeader heading={t.heading} subheading={t.subheading} />
 
       <h2>{s.installation.heading}</h2>
       <p>{s.installation.description}</p>
