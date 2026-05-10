@@ -65,8 +65,6 @@ export const hero = {
 	],
 	floatingFrameworks: [
 		{ name: "React", color: "#61DAFB", x: "-20%", y: "15%", delay: "0s" },
-		{ name: "Vue", color: "#4FC08D", x: "85%", y: "10%", delay: "0.5s" },
-		{ name: "Angular", color: "#DD0031", x: "90%", y: "60%", delay: "1s" },
 		{ name: "Svelte", color: "#FF3E00", x: "-15%", y: "70%", delay: "1.5s" },
 		{ name: "SolidJS", color: "#2C4F7C", x: "50%", y: "-5%", delay: "2s" },
 		{ name: "React Native", color: "#61DAFB", x: "5%", y: "85%", delay: "2.5s" },

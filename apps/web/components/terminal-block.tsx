@@ -112,9 +112,22 @@ function TerminalBlockInner({ commands, className, autoPlay, restartDelay, onCom
 	const currentLine = commands[lineIndex];
 	const charCount = charIndex;
 
+	const contentRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const el = contentRef.current;
+		if (el) el.scrollTop = el.scrollHeight;
+	}, [lineIndex, charIndex, done]);
+
+	const contentMinHeight = useMemo(() => {
+		const lineH = 28;
+		const pad = 32;
+		return Math.min(Math.max(120, (commands.length + 1) * lineH + pad), 320);
+	}, [commands.length]);
+
 	return (
 		<TerminalWindow className={cn("font-mono text-sm", className)}>
-			<div className="p-4 space-y-1.5 min-h-25">
+			<div ref={contentRef} className="p-4 space-y-1.5 overflow-y-auto" style={{ minHeight: contentMinHeight, maxHeight: 320 }}>
 				{typedLines.map((cmd, i) => (
 					<div key={i} className="flex items-center gap-2 animate-fade-in">
 						<span className="text-emerald-400 shrink-0">{i === 0 ? "$" : ""}</span>

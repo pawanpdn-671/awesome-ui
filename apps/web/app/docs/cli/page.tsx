@@ -21,7 +21,7 @@ Options:
   --yes, -y             Skip prompts and use defaults`} language="bash" />
 
       <h3>{t.sections.init.example.heading}</h3>
-      <TerminalBlock commands={[...t.sections.init.example.commands]} />
+      <TerminalBlock commands={[...t.sections.init.example.commands]} autoPlay restartDelay={6000} />
 
       <h2 id="add">{t.sections.add.heading}</h2>
       <p>{t.sections.add.description}</p>
@@ -50,7 +50,7 @@ Options:
   --dir <path>          Custom output directory`} language="bash" />
 
       <h3>{t.sections.add.example.heading}</h3>
-      <TerminalBlock commands={[...t.sections.add.example.commands]} />
+      <TerminalBlock commands={[...t.sections.add.example.commands]} autoPlay restartDelay={6000} />
 
       <h2 id="list">{t.sections.list.heading}</h2>
       <p>{t.sections.list.description}</p>
@@ -63,7 +63,7 @@ Options:
   --available           Show only available (not yet added) components`} language="bash" />
 
       <h3>{t.sections.list.example.heading}</h3>
-      <TerminalBlock commands={[...t.sections.list.example.commands]} />
+      <TerminalBlock commands={[...t.sections.list.example.commands]} autoPlay restartDelay={6000} />
 
       <h2>{t.sections.config.heading}</h2>
       <p>{t.sections.config.description}</p>
