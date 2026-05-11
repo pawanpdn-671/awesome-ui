@@ -32,7 +32,7 @@ export const layout = {
 export const header = {
 	links: [
 		{ href: "/docs", label: "Docs" },
-		{ href: "/components", label: "Components" },
+		{ href: "/section-builder", label: "Section Builder" },
 		{ href: "/theming", label: "Theming" },
 		{ href: "/docs/api-reference", label: "API" },
 	],
