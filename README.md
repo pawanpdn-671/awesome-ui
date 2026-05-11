@@ -38,7 +38,6 @@ npx awesomeui add badge --framework svelte
 | ------------------------------------ | ----------------------------------------------------------- |
 | `@awesomeui/core`                    | IR schema, Zod validators, TypeScript types, error handling |
 | `@awesomeui/cli`                     | CLI for `init`, `add`, `list` commands                      |
-| `@awesomeui/ai`                      | AI-powered component generation from natural language       |
 | `@awesomeui/transpiler-shared`       | Base transpiler class, expression parser, utilities         |
 | `@awesomeui/transpiler-react`        | React / Next.js TSX transpiler                              |
 | `@awesomeui/transpiler-vue`          | Vue 3 SFC transpiler                                        |
