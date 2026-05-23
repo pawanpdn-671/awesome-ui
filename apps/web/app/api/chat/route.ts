@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 import { docProcessor } from '@/lib/document-processor';
 import { docsDatabase } from '@/lib/docs-database';
+import { getDocsFromDb } from '@/lib/db-texts';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 
@@ -35,7 +36,15 @@ async function initializeDocs() {
 
   try {
     await docProcessor.initialize();
-    const docsContent = docsDatabase.getAllDocs();
+    
+    // Fetch docs from Supabase
+    let docsContent = await getDocsFromDb();
+    
+    // Fallback to local config if Supabase is offline/empty
+    if (!docsContent || docsContent.length === 0) {
+      console.log('Supabase docs empty or offline. Falling back to local docsDatabase.');
+      docsContent = docsDatabase.getAllDocs();
+    }
 
     for (const doc of docsContent) {
       const chunks = await docProcessor.chunkDocument(doc.content);

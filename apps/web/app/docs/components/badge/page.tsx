@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function BadgeDocPage() {
-  return <ComponentDocPage data={getComponent("badge")!} />;
+export default async function BadgeDocPage() {
+  const data = await getComponentFromDb("badge");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

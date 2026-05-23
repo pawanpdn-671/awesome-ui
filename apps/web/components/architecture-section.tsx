@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ArrowDown, Box, Layers, Palette, Accessibility, Zap, Cpu } from "lucide-react";
-import { architectureSection as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const layerIcons = [Cpu, Layers, Palette, Accessibility, Zap, Box];
 const layerColors = [
@@ -15,6 +15,7 @@ const layerColors = [
 ];
 
 export function ArchitectureSection() {
+	const { architectureSection: t } = useTexts();
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 grid-bg" />
@@ -37,7 +38,7 @@ export function ArchitectureSection() {
             <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-awesome-500 via-violet-500 to-awesome-500 opacity-30" />
 
             <div className="space-y-8">
-              {t.layers.map((layer, i) => {
+              {t.layers.map((layer: any, i: any) => {
                 const LayerIcon = layerIcons[i]!;
                 return (
                 <div key={layer.title} className="relative flex gap-6 items-start group">
@@ -67,7 +68,7 @@ export function ArchitectureSection() {
         <div className="mt-16 glass rounded-2xl p-8 border border-border/50 text-center">
           <h3 className="text-xl font-semibold text-surface-100 mb-4">{t.howItWorks.heading}</h3>
           <div className="grid sm:grid-cols-3 gap-6 text-left">
-            {t.howItWorks.steps.map((step) => (
+            {t.howItWorks.steps.map((step: any) => (
             <div key={step.number} className="bg-surface-950 rounded-xl p-5 border border-border">
               <div className="text-2xl font-bold text-awesome-400 mb-2">{step.number}</div>
               <h4 className="text-sm font-semibold text-surface-100 mb-1">{step.title}</h4>

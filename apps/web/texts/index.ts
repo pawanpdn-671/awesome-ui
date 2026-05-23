@@ -1,3 +1,2 @@
-export * from "./landing";
-export * from "./docs";
-export * from "./section-builder";
+export * from "./defaults";
+export { components, type ComponentDoc, type ComponentProp, type ComponentSlot } from "./component-data";

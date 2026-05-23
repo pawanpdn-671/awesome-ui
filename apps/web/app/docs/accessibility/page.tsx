@@ -1,15 +1,16 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { accessibility as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function AccessibilityPage() {
+export default async function AccessibilityPage() {
+	const { accessibility: t } = await getStaticTextsServer();
   return (
     <div>
       <DocHeader heading={t.heading} subheading={t.subheading} />
 
       <h2>{t.sections.commitment.heading}</h2>
       <ul>
-        {t.sections.commitment.items.map((item) => (
+        {t.sections.commitment.items.map((item: string) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
@@ -49,13 +50,13 @@ export default function AccessibilityPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              {t.sections.keyboardNav.tableHeaders.map((h) => (
+              {t.sections.keyboardNav.tableHeaders.map((h: string) => (
                 <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {t.sections.keyboardNav.rows.map((row) => (
+            {t.sections.keyboardNav.rows.map((row: any) => (
               <tr key={`${row.comp}-${row.action}`} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-surface-200 text-xs">{row.comp}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs">{row.action}</td>
@@ -70,7 +71,7 @@ export default function AccessibilityPage() {
       <p>{t.sections.focusManagement.description}</p>
 
       <ul>
-        {t.sections.focusManagement.items.map((item) => (
+        {t.sections.focusManagement.items.map((item: string) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
@@ -91,7 +92,7 @@ export default function AccessibilityPage() {
       <p>{t.sections.testing.description}</p>
 
       <ul>
-        {t.sections.testing.items.map((item) => (
+        {t.sections.testing.items.map((item: string) => (
           <li key={item}>{item}</li>
         ))}
       </ul>

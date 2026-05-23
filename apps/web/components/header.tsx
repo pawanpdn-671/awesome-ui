@@ -5,9 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Github } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { header as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 export function Header() {
+	const { header: t } = useTexts();
 	const [open, setOpen] = useState(false);
 
 	return (
@@ -34,7 +35,7 @@ export function Header() {
 					</Link>
 
 					<nav className="hidden md:flex items-center gap-1">
-						{t.links.map((l) => (
+						{t.links.map((l: any) => (
 							<Link
 								key={l.href}
 								href={l.href}
@@ -70,7 +71,7 @@ export function Header() {
 			{open && (
 				<div className="md:hidden border-t border-border bg-surface-950">
 					<div className="px-4 py-4 space-y-1">
-						{t.links.map((l) => (
+						{t.links.map((l: any) => (
 							<Link
 								key={l.href}
 								href={l.href}

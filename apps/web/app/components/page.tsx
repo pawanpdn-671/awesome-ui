@@ -1,9 +1,10 @@
 import { Header } from "@/components/header";
 import { ComponentShowcase } from "@/components/component-showcase";
 import { Footer } from "@/components/footer";
-import { componentsPage as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function ComponentsPage() {
+export default async function ComponentsPage() {
+	const { componentsPage: t } = await getStaticTextsServer();
   return (
     <>
       <Header />

@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { DocHeader } from "@/components/doc-header";
-import { docsLanding as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function DocsPage() {
+export default async function DocsPage() {
+	const { docsLanding: t } = await getStaticTextsServer();
 	return (
 		<div>
 			<DocHeader heading={t.heading} subheading={t.subheading} />
 
 			<div className="grid sm:grid-cols-2 gap-4 mt-8 not-prose">
-				{t.cards.map((card) => (
+				{t.cards.map((card: any) => (
 					<Link
 						key={card.title}
 						href={card.href}

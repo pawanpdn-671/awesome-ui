@@ -1,42 +1,51 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { layout as t } from "@/texts";
 import { Chatbot } from "@/components/chatbot";
+import { TextProvider } from "@/components/text-provider";
+import { getStaticTexts } from "@/lib/db-texts";
+import { layout as fallbackLayout } from "@/texts/defaults";
 
-export const metadata: Metadata = {
-  title: {
-    default: t.title.default,
-    template: t.title.template,
-  },
-  description: t.description,
-  keywords: [...t.keywords],
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: t.openGraph.siteName,
-    title: t.openGraph.title,
-    description: t.openGraph.description,
-    images: [{ url: "/og.png", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: t.twitter.title,
-    description: t.twitter.description,
-    images: ["/og.png"],
-  },
-  icons: [
-    { rel: "icon", url: "/logo-main.png" },
-    { rel: "apple-touch-icon", url: "/logo-main.png" },
-  ],
-  robots: { index: true, follow: true },
-  metadataBase: new URL("https://awesomeui.dev"),
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { landing } = await getStaticTexts();
+  const t = landing?.layout || fallbackLayout;
 
-export default function RootLayout({
+  return {
+    title: {
+      default: t.title.default,
+      template: t.title.template,
+    },
+    description: t.description,
+    keywords: [...t.keywords],
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      siteName: t.openGraph.siteName,
+      title: t.openGraph.title,
+      description: t.openGraph.description,
+      images: [{ url: "/og.png", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t.twitter.title,
+      description: t.twitter.description,
+      images: ["/og.png"],
+    },
+    icons: [
+      { rel: "icon", url: "/logo-main.png" },
+      { rel: "apple-touch-icon", url: "/logo-main.png" },
+    ],
+    robots: { index: true, follow: true },
+    metadataBase: new URL("https://awesomeui.dev"),
+  };
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const texts = await getStaticTexts();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -66,7 +75,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-surface-950 text-surface-100 antialiased">
-        {children}
+        <TextProvider initialTexts={texts}>
+          {children}
+        </TextProvider>
         <Chatbot />
       </body>
     </html>

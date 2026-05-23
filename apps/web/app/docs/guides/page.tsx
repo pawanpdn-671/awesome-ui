@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { guides as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function GuidesPage() {
+export default async function GuidesPage() {
+	const { guides: t } = await getStaticTextsServer();
   return (
     <div>
       <DocHeader heading={t.heading} subheading={t.subheading} />
@@ -40,7 +41,7 @@ import { Button, Card } from '@awesomeui/react'
       <p>{t.sections.performance.description}</p>
 
       <ul>
-        {t.sections.performance.items.map((item) => (
+        {t.sections.performance.items.map((item: any) => (
           <li key={item} dangerouslySetInnerHTML={{ __html: item }} />
         ))}
       </ul>
@@ -58,14 +59,14 @@ const Dialog = dynamic(
 
       <h3>{t.sections.accessibility.keyboardNav.heading}</h3>
       <ul>
-        {t.sections.accessibility.keyboardNav.items.map((item) => (
+        {t.sections.accessibility.keyboardNav.items.map((item: any) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
 
       <h3>{t.sections.accessibility.screenReader.heading}</h3>
       <ul>
-        {t.sections.accessibility.screenReader.items.map((item) => (
+        {t.sections.accessibility.screenReader.items.map((item: any) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
@@ -89,7 +90,7 @@ const Dialog = dynamic(
 
       <h2>{t.sections.bestPractices.heading}</h2>
       <ul>
-        {t.sections.bestPractices.items.map((item) => (
+        {t.sections.bestPractices.items.map((item: any) => (
           <li key={item}>{item}</li>
         ))}
       </ul>

@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { componentsDocs as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function ComponentsDocsPage() {
+export default async function ComponentsDocsPage() {
+	const { componentsDocs: t } = await getStaticTextsServer();
   return (
     <div>
       <DocHeader heading={t.heading} subheading={t.subheading} />
@@ -47,13 +48,13 @@ function Example() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              {t.props.tableHeaders.map((h) => (
+              {t.props.tableHeaders.map((h: any) => (
                 <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {t.props.rows.map((row) => (
+            {t.props.rows.map((row: any) => (
               <tr key={row.prop} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-awesome-300 font-mono text-xs">{row.prop}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs font-mono">{row.type}</td>
@@ -87,7 +88,7 @@ function Example() {
 
       <h2>{t.nextSteps.heading}</h2>
       <ul>
-        {t.nextSteps.links.map((link) => (
+        {t.nextSteps.links.map((link: any) => (
           <li key={link.href}>
             {link.prefix}<a href={link.href}>{link.label}</a>
           </li>

@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { comparisonSection as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 type FeatureValue = boolean | "partial" | string;
 
@@ -19,6 +19,7 @@ interface Feature {
 }
 
 export function ComparisonSection() {
+	const { comparisonSection: t } = useTexts();
   const renderCell = (value: boolean | "partial" | string) => {
     if (typeof value === "boolean") {
       return value ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <X className="w-4 h-4 text-surface-600 mx-auto" />;
@@ -50,7 +51,7 @@ export function ComparisonSection() {
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-4 px-4 text-surface-400 font-medium w-44">{t.featureHeader}</th>
-                {t.headers.map((h) => (
+                {t.headers.map((h: any) => (
                   <th key={h.key} className={cn("py-4 px-4 text-center font-semibold", h.highlight ? "text-awesome-300" : "text-surface-400")}>
                     {h.label}
                   </th>
@@ -61,9 +62,9 @@ export function ComparisonSection() {
               {t.features.map((feat: Feature, i: number) => (
                 <tr key={feat.name} className={cn("border-b border-border/50 transition-colors hover:bg-surface-900/30", i % 2 === 0 ? "bg-surface-900/10" : "")}>
                   <td className="py-3.5 px-4 text-surface-200 font-medium text-left">{feat.name}</td>
-                  {t.headers.map((h) => (
+                  {t.headers.map((h: any) => (
                     <td key={h.key} className={cn("py-3.5 px-4", h.highlight ? "bg-awesome-500/5" : "")}>
-                      {renderCell(feat[h.key])}
+                      {renderCell(feat[h.key] ?? false)}
                     </td>
                   ))}
                 </tr>

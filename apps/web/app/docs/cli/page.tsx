@@ -1,9 +1,10 @@
 import { CodeBlock } from "@/components/code-block";
 import { TerminalBlock } from "@/components/terminal-block";
 import { DocHeader } from "@/components/doc-header";
-import { cliDocs as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function CliDocsPage() {
+export default async function CliDocsPage() {
+	const { cliDocs: t } = await getStaticTextsServer();
   return (
     <div>
       <DocHeader heading={t.heading} subheading={t.subheading} />
@@ -86,7 +87,7 @@ Options:
 
       <h2>{t.sections.nextSteps.heading}</h2>
       <ul>
-        {t.sections.nextSteps.links.map((link) => (
+        {t.sections.nextSteps.links.map((link: any) => (
           <li key={link.href}>
             {link.prefix}<a href={link.href}>{link.label}</a>
           </li>

@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function SelectDocPage() {
-  return <ComponentDocPage data={getComponent("select")!} />;
+export default async function SelectDocPage() {
+  const data = await getComponentFromDb("select");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

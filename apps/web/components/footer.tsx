@@ -1,19 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { footer as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export function Footer() {
+export async function Footer() {
+	const { footer: t } = await getStaticTextsServer() as any;
 	return (
 		<footer className="relative border-t border-border bg-surface-950">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-					{Object.entries(t.columns).map(([category, links]) => (
+					{Object.entries(t.columns as Record<string, any[]>).map(([category, links]) => (
 						<div key={category}>
 							<h3 className="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-4">
 								{category}
 							</h3>
 							<ul className="space-y-2.5">
-								{links.map((link) => (
+								{links.map((link: any) => (
 									<li key={link.label}>
 										{link.href.startsWith("http") ? (
 											<a

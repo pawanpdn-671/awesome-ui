@@ -44,6 +44,7 @@ coverage
 .cache
 
 # project specific
+scripts
 local-dev.md
 .agents
 .opencode

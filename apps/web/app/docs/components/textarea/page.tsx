@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function TextareaDocPage() {
-  return <ComponentDocPage data={getComponent("textarea")!} />;
+export default async function TextareaDocPage() {
+  const data = await getComponentFromDb("textarea");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

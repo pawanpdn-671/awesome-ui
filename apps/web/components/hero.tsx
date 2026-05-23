@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/code-block";
 import { TerminalBlock } from "@/components/terminal-block";
-import { hero as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 export function Hero() {
+	const { hero: t } = useTexts();
 	return (
 		<section className="relative min-h-screen flex items-center overflow-hidden">
 			<div className="absolute inset-0 grid-bg" />
@@ -16,7 +17,7 @@ export function Hero() {
 			<div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-awesome-500/10 rounded-full blur-[120px] animate-glow-pulse" />
 			<div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[100px]" />
 
-			{t.floatingFrameworks.map((fw) => (
+			{t.floatingFrameworks.map((fw: any) => (
 				<div
 					key={fw.name}
 					className="absolute hidden lg:block text-xs font-bold tracking-widest uppercase animate-float"
@@ -68,7 +69,7 @@ export function Hero() {
 						</div>
 
 						<div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
-							{t.metrics.map((m, i) => {
+							{t.metrics.map((m: any, i: any) => {
 								const icons = [Layers, Code2, Zap, Sparkles];
 								const Icon = icons[i]!;
 								return (
@@ -104,7 +105,7 @@ function App() {
 						/>
 
 						<div className="grid grid-cols-4 gap-2">
-							{t.frameworkGrid.map((fw) => (
+							{t.frameworkGrid.map((fw: any) => (
 								<div
 									key={fw}
 									className="glass rounded-lg px-3 py-2 text-center text-xs font-medium text-surface-400 card-gradient-hover">

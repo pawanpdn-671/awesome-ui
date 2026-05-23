@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { buttonDoc as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function ButtonDocPage() {
+export default async function ButtonDocPage() {
+	const { buttonDoc: t } = await getStaticTextsServer();
   const s = t.sections;
 
   return (
@@ -35,13 +36,13 @@ export default function ButtonDocPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              {s.props.tableHeaders.map((h) => (
+              {s.props.tableHeaders.map((h: any) => (
                 <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {s.props.rows.map((row) => (
+            {s.props.rows.map((row: any) => (
               <tr key={row.prop} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-awesome-300 font-mono text-xs">{row.prop}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs font-mono">{row.type}</td>

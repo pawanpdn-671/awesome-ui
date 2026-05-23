@@ -1,8 +1,14 @@
 import { SectionBuilder } from "@/components/section-builder";
-import { sectionBuilderMeta } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export const metadata = { ...sectionBuilderMeta };
+export async function generateMetadata() {
+  const { sectionBuilderMeta } = await getStaticTextsServer();
+  return {
+    title: sectionBuilderMeta.title,
+    description: sectionBuilderMeta.description,
+  };
+}
 
-export default function SectionBuilderPage() {
+export default async function SectionBuilderPage() {
   return <SectionBuilder />;
 }

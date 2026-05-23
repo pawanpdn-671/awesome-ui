@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function SkeletonDocPage() {
-  return <ComponentDocPage data={getComponent("skeleton")!} />;
+export default async function SkeletonDocPage() {
+  const data = await getComponentFromDb("skeleton");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

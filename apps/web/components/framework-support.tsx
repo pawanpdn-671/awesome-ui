@@ -5,11 +5,12 @@ import { CodeBlock } from "@/components/code-block";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ReactIcon, NextjsIcon, VueIcon, AngularIcon, SvelteIcon, SolidIcon, ReactNativeIcon } from "@/components/framework-icons";
-import { frameworkSupport as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const frameworkCode: Record<string, string> = {
   react: `import { Button, Card } from '@awesomeui/react'\n\nfunction Demo() {\n  return (\n    <Card>\n      <Button variant="primary">\n        Hello React\n      </Button>\n    </Card>\n  )\n}`,
-  nextjs: `import { Button, Card } from '@awesomeui/react'\n\nexport default function Page() {\n  return (\n    <Card>\n      <Button variant="primary">\n        Hello Next.js\n      </Button>\n    </Card>\n  )\n}`,
+  nextjs: `import { Button, Card } from '@awesomeui/react'\n\nexport default function Page() {
+	const { frameworkSupport: t } = useTexts();\n  return (\n    <Card>\n      <Button variant="primary">\n        Hello Next.js\n      </Button>\n    </Card>\n  )\n}`,
   vue: `<template>\n  <Card>\n    <Button variant="primary">\n      Hello Vue\n    </Button>\n  </Card>\n</template>\n\n<script setup lang="ts">\nimport { Button, Card } from '@awesomeui/vue'\n</script>`,
   angular: `import { Component } from '@angular/core'\nimport { ButtonModule, CardModule } from '@awesomeui/angular'\n\n@Component({\n  template: \`\n    <aw-card>\n      <aw-button variant="primary">\n        Hello Angular\n      </aw-button>\n    </aw-card>\n  \`\n})\nexport class DemoComponent {}`,
   svelte: `<script lang="ts">\n  import { Button, Card } from '@awesomeui/svelte'\n</script>\n\n<Card>\n  <Button variant="primary">\n    Hello Svelte\n  </Button>\n</Card>`,
@@ -23,8 +24,9 @@ const frameworkIcons: Record<string, React.ComponentType<{ className?: string }>
 
 
 export function FrameworkSupport() {
+  const { frameworkSupport: t } = useTexts();
   const [active, setActive] = useState("react");
-  const fw = t.frameworks.find((f) => f.id === active)!;
+  const fw = t.frameworks.find((f: any) => f.id === active)!;
   const FwIcon = frameworkIcons[fw.id]!;
 
   return (
@@ -45,7 +47,7 @@ export function FrameworkSupport() {
 
         <div className="grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-1 space-y-2">
-            {t.frameworks.map((f) => {
+            {t.frameworks.map((f: any) => {
               const Icon = frameworkIcons[f.id]!;
               return (
               <button
@@ -94,7 +96,7 @@ export function FrameworkSupport() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {t.stats.map((s, i) => {
+              {t.stats.map((s: any, i: any) => {
                 const colors = ["text-awesome-400", "text-emerald-400", "text-amber-400", "text-awesome-400"];
                 return (
                 <div key={s.label} className="glass rounded-lg p-4 text-center card-gradient-hover">

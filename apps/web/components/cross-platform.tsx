@@ -1,21 +1,22 @@
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { TerminalWindow } from "@/components/terminal-window";
 import { Smartphone, Monitor, Check } from "lucide-react";
-import { crossPlatform as t } from "@/texts";
-
-const platforms = t.platforms.map((p) => {
-	const icons: Record<string, React.ComponentType<{ className?: string }>> = {
-		Web: Monitor,
-		Mobile: Smartphone,
-		Desktop: Monitor,
-	};
-	return { ...p, icon: icons[p.name] || Monitor };
-});
+import { useTexts } from "@/components/text-provider";
 
 export function CrossPlatform() {
+	const { crossPlatform: t } = useTexts();
+	const platforms = useMemo(() => t.platforms.map((p: any) => {
+		const icons: Record<string, React.ComponentType<{ className?: string }>> = {
+			Web: Monitor,
+			Mobile: Smartphone,
+			Desktop: Monitor,
+		};
+		return { ...p, icon: icons[p.name] || Monitor };
+	}), [t]);
 	return (
 		<section className="relative py-24 overflow-hidden">
 			<div className="absolute inset-0 bg-surface-950" />
@@ -33,7 +34,7 @@ export function CrossPlatform() {
 				</div>
 
 				<div className="grid md:grid-cols-3 gap-8">
-					{platforms.map((p) => (
+					{platforms.map((p: any) => (
 						<div key={p.name} className="glass rounded-2xl p-8 border border-border/50 card-gradient-hover">
 							<div className="w-12 h-12 rounded-xl bg-awesome-500/20 flex items-center justify-center mb-5">
 								<p.icon className="w-6 h-6 text-awesome-400" />
@@ -41,7 +42,7 @@ export function CrossPlatform() {
 							<h3 className="text-xl font-semibold text-surface-100 mb-2">{p.name}</h3>
 							<p className="text-sm text-surface-400 mb-6">{p.desc}</p>
 							<ul className="space-y-3">
-								{p.features.map((f) => (
+								{p.features.map((f: any) => (
 									<li key={f} className="flex items-center gap-3 text-sm text-surface-300">
 										<Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
 										{f}
@@ -58,7 +59,7 @@ export function CrossPlatform() {
 							<h3 className="text-2xl font-bold text-surface-100 mb-4">{t.bottom.heading}</h3>
 							<p className="text-surface-400 mb-6">{t.bottom.description}</p>
 							<div className="flex flex-wrap gap-2">
-								{t.bottom.tags.map((fw) => (
+								{t.bottom.tags.map((fw: any) => (
 									<span
 										key={fw}
 										className="px-3 py-1 rounded-full bg-surface-800 text-surface-400 text-xs font-medium">

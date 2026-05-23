@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { sidebar as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 export function DocsSidebar() {
+	const { sidebar: t } = useTexts();
 	const pathname = usePathname();
 	const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
@@ -18,7 +19,7 @@ export function DocsSidebar() {
 	return (
 		<aside className="w-64 shrink-0 hidden lg:block border-r border-border/50">
 			<nav className="sticky top-20 space-y-1 pl-2 pr-4 py-5">
-				{t.sections.map((section) => {
+				{t.sections.map((section: any) => {
 					const isCollapsed = collapsed[section.title];
 
 					return (
@@ -31,7 +32,7 @@ export function DocsSidebar() {
 							</button>
 							{!isCollapsed && (
 								<div className="ml-1 space-y-0.5">
-									{section.links.map((link) => (
+									{section.links.map((link: any) => (
 										<Link
 											key={link.href}
 											href={link.href}

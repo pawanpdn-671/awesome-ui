@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { formDoc as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function FormDocPage() {
+export default async function FormDocPage() {
+	const { formDoc: t } = await getStaticTextsServer();
   const s = t.sections;
 
   return (
@@ -41,13 +42,13 @@ export default function FormDocPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              {s.inputProps.tableHeaders.map((h) => (
+              {s.inputProps.tableHeaders.map((h: any) => (
                 <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {s.inputProps.rows.map((row) => (
+            {s.inputProps.rows.map((row: any) => (
               <tr key={row.prop} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-awesome-300 font-mono text-xs">{row.prop}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs font-mono">{row.type}</td>

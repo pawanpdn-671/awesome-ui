@@ -4,12 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Figma, Puzzle, Box, BookOpen, Palette } from "lucide-react";
 import Link from "next/link";
-import { ecosystemSection as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const ecosystemIcons = [Figma, Puzzle, Box, BookOpen, Palette, Figma];
 const ecosystemColors = ["text-amber-400", "text-sky-400", "text-emerald-400", "text-rose-400", "text-violet-400", "text-awesome-400"];
 
 export function EcosystemSection() {
+	const { ecosystemSection: t } = useTexts();
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 grid-bg" />
@@ -26,7 +27,7 @@ export function EcosystemSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {t.items.map((item, i) => {
+          {t.items.map((item: any, i: any) => {
             const Icon = ecosystemIcons[i]!;
             return (
             <div key={item.title} className="glass rounded-xl p-6 border border-border/50 card-gradient-hover">

@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function ProgressDocPage() {
-  return <ComponentDocPage data={getComponent("progress")!} />;
+export default async function ProgressDocPage() {
+  const data = await getComponentFromDb("progress");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

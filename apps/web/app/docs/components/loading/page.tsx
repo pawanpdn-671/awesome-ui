@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function LoadingDocPage() {
-  return <ComponentDocPage data={getComponent("loading")!} />;
+export default async function LoadingDocPage() {
+  const data = await getComponentFromDb("loading");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

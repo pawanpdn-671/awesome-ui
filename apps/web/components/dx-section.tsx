@@ -6,11 +6,12 @@ import {
   Type, TreePine, Accessibility, Server, Palette, Zap, 
   Package, Puzzle 
 } from "lucide-react";
-import { dxSection as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const featureIcons = [Type, TreePine, Accessibility, Server, Palette, Zap, Package, Puzzle];
 
 export function DxSection() {
+	const { dxSection: t } = useTexts();
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 grid-bg" />
@@ -27,7 +28,7 @@ export function DxSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-          {t.features.map((f, i) => {
+          {t.features.map((f: any, i: any) => {
             const Icon = featureIcons[i]!;
             return (
             <div key={f.title} className="glass rounded-xl p-5 border border-border/50 card-gradient-hover">

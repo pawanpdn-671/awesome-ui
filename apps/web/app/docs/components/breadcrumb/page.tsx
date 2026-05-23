@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function BreadcrumbDocPage() {
-  return <ComponentDocPage data={getComponent("breadcrumb")!} />;
+export default async function BreadcrumbDocPage() {
+  const data = await getComponentFromDb("breadcrumb");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

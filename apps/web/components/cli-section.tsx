@@ -6,12 +6,13 @@ import { TerminalBlock } from "@/components/terminal-block";
 import { Button } from "@/components/ui/button";
 import { Terminal } from "lucide-react";
 import Link from "next/link";
-import { cliSection as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const WORKFLOW_COUNT = 3;
 const RESTART_DELAY = 5000;
 
 export function CliSection() {
+	const { cliSection: t } = useTexts();
   const [step, setStep] = useState(0);
   const [cycle, setCycle] = useState(0);
 
@@ -49,7 +50,7 @@ export function CliSection() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6 mb-16">
-          {t.workflows.map((w, i) => {
+          {t.workflows.map((w: any, i: any) => {
             const effectiveStep = step === -1 ? WORKFLOW_COUNT - 1 : step;
             const active = effectiveStep === i;
             return (
@@ -74,7 +75,7 @@ export function CliSection() {
             {t.frameworkSetup.heading}
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {t.frameworkSetup.frameworks.map((fs) => (
+            {t.frameworkSetup.frameworks.map((fs: any) => (
               <div key={fs.name} className="bg-surface-950 rounded-xl p-4 border border-border hover:border-awesome-500/30 transition-all duration-300">
                 <div className="text-xs font-semibold mb-2 text-surface-200">{fs.name}</div>
                 <code className="text-sm text-surface-300 font-mono">{fs.code}</code>

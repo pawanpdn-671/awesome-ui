@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { apiReference as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function ApiReferencePage() {
+export default async function ApiReferencePage() {
+	const { apiReference: t } = await getStaticTextsServer();
   return (
     <div>
       <DocHeader heading={t.heading} subheading={t.subheading} />
@@ -34,7 +35,7 @@ interface AwesomeUIProps {
       <p>{t.sections.componentApi.description}</p>
 
       <ul>
-        {t.sections.componentApi.items.map((item) => (
+        {t.sections.componentApi.items.map((item: any) => (
           <li key={item} dangerouslySetInnerHTML={{ __html: item }} />
         ))}
       </ul>
@@ -91,13 +92,13 @@ const props: ButtonProps = {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-800">
-              {t.sections.packageRef.tableHeaders.map((h) => (
+              {t.sections.packageRef.tableHeaders.map((h: any) => (
                 <th key={h} className="text-left py-3 px-3 text-surface-400 font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {t.sections.packageRef.packages.map((row) => (
+            {t.sections.packageRef.packages.map((row: any) => (
               <tr key={row.pkg} className="border-b border-surface-800/50">
                 <td className="py-3 px-3 text-awesome-300 font-mono text-xs">{row.pkg}</td>
                 <td className="py-3 px-3 text-surface-400 text-xs">{row.desc}</td>

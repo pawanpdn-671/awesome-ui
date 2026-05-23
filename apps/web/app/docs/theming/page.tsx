@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { themingDocs as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function ThemingPage() {
+export default async function ThemingPage() {
+	const { themingDocs: t } = await getStaticTextsServer();
   return (
     <div>
       <DocHeader heading={t.heading} subheading={t.subheading} />
@@ -106,7 +107,7 @@ console.log(darkTheme.colors.accent) // #6366f1`} language="tsx" />
 
       <h2>{t.sections.nextSteps.heading}</h2>
       <ul>
-        {t.sections.nextSteps.links.map((link) => (
+        {t.sections.nextSteps.links.map((link: any) => (
           <li key={link.href}>
             {link.prefix}<a href={link.href}>{link.label}</a>
           </li>

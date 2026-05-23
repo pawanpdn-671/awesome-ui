@@ -1,6 +1,9 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponent } from "@/texts/component-data";
+import { getComponentFromDb } from "@/lib/db-texts";
+import { notFound } from "next/navigation";
 
-export default function MenubarDocPage() {
-  return <ComponentDocPage data={getComponent("menubar")!} />;
+export default async function MenubarDocPage() {
+  const data = await getComponentFromDb("menubar");
+  if (!data) return notFound();
+  return <ComponentDocPage data={data} />;
 }

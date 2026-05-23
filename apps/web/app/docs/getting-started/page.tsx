@@ -1,8 +1,9 @@
 import { CodeBlock } from "@/components/code-block";
 import { DocHeader } from "@/components/doc-header";
-import { gettingStarted as t } from "@/texts";
+import { getStaticTextsServer } from "@/lib/db-texts";
 
-export default function GettingStartedPage() {
+export default async function GettingStartedPage() {
+	const { gettingStarted: t } = await getStaticTextsServer();
   const s = t.sections;
 
   return (
@@ -12,7 +13,7 @@ export default function GettingStartedPage() {
       <h2>{s.installation.heading}</h2>
       <p>{s.installation.description}</p>
 
-      {s.installation.frameworks.map((fw) => (
+      {s.installation.frameworks.map((fw: any) => (
         <div key={fw.name}>
           <h3>{fw.name}</h3>
           <CodeBlock code={fw.command} language="bash" />
@@ -89,7 +90,7 @@ npx awesomeui list`} language="bash" />
 
       <h2>{s.nextSteps.heading}</h2>
       <ul>
-        {s.nextSteps.links.map((link) => (
+        {s.nextSteps.links.map((link: any) => (
           <li key={link.href}>
             {link.prefix}<a href={link.href}>{link.label}</a>
           </li>

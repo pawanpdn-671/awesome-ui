@@ -3,7 +3,7 @@
 import { CodeBlock } from "@/components/code-block";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
-import { apiPhilosophy as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const frameworkTags = ["React", "Vue", "Angular", "Svelte", "Solid", "RN"];
 
@@ -15,6 +15,7 @@ const codeExamples = [
 ];
 
 export function ApiPhilosophy() {
+	const { apiPhilosophy: t } = useTexts();
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-surface-950" />
@@ -33,7 +34,7 @@ export function ApiPhilosophy() {
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="space-y-4">
-            {t.tenets.map((tenet) => (
+            {t.tenets.map((tenet: any) => (
               <div key={tenet.title} className="glass rounded-xl p-5 card-gradient-hover border border-border/50">
                 <div className="flex items-start gap-4">
                   <div className="w-6 h-6 rounded-full bg-awesome-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">

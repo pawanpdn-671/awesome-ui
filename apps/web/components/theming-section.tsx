@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/code-block";
 import { Check } from "lucide-react";
-import { themingSection as t } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 
 const themeCode = `/* AwesomeUI Design Tokens */
 :root {
@@ -33,6 +33,7 @@ const themeCode = `/* AwesomeUI Design Tokens */
 }`;
 
 export function ThemingSection() {
+	const { themingSection: t } = useTexts();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -60,11 +61,11 @@ export function ThemingSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="space-y-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {t.tokens.map((tk) => (
+              {t.tokens.map((tk: any) => (
                 <div key={tk.category} className="glass rounded-xl p-4 border border-border/50 card-gradient-hover">
                   <h4 className="text-xs font-semibold text-awesome-400 uppercase tracking-wider mb-2">{tk.category}</h4>
                   <ul className="space-y-1">
-                    {tk.items.map((item) => (
+                    {tk.items.map((item: any) => (
                       <li key={item} className="flex items-center gap-2 text-xs text-surface-400">
                         <Check className="w-3 h-3 text-emerald-400/70" />
                         {item}
@@ -78,7 +79,7 @@ export function ThemingSection() {
             <div className="glass rounded-xl p-5 border border-border/50">
               <h4 className="text-sm font-semibold text-surface-100 mb-3">{t.livePreview.heading}</h4>
               <div className="flex flex-wrap gap-3 mb-4">
-                {t.livePreview.colors.map(({ color, label }) => (
+                {t.livePreview.colors.map(({ color, label }: any) => (
                   <button
                     key={color}
                     aria-label={label}
@@ -88,7 +89,7 @@ export function ThemingSection() {
                 ))}
               </div>
               <div className="flex flex-wrap gap-2">
-                {t.livePreview.radii.map((r) => (
+                {t.livePreview.radii.map((r: any) => (
                   <span key={r} className="px-3 py-1.5 bg-surface-800 rounded text-xs text-surface-300 border border-border" style={{ borderRadius: r === "sm" ? "0.25rem" : r === "md" ? "0.375rem" : r === "lg" ? "0.5rem" : r === "xl" ? "0.75rem" : "1rem" }}>
                     {r}
                   </span>

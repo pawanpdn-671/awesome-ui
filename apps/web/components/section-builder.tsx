@@ -5,7 +5,7 @@ import { Sparkles, Wand2, Code2, Eye, Loader2, Copy, Check, AlertCircle, FileCod
 import { cn } from "@/lib/utils";
 import { CodeBlock } from "@/components/code-block";
 import { previewComponents } from "@/components/section-preview";
-import { sectionBuilderUI as t, suggestionPrompts } from "@/texts";
+import { useTexts } from "@/components/text-provider";
 import { builderPalettes, defaultPaletteId, getBuilderPalette } from "@/lib/builder-palettes";
 
 type Mode = "generate" | "improve";
@@ -330,6 +330,7 @@ function JsxPreview({ code, previewPaletteId }: { code: string; previewPaletteId
 }
 
 export function SectionBuilder() {
+	const { sectionBuilderUI: t, suggestionPrompts } = useTexts();
   const [mode, setMode] = useState<Mode>("generate");
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
@@ -521,7 +522,7 @@ export function SectionBuilder() {
              <div className="space-y-3">
                <p className="text-xs text-surface-500 uppercase tracking-wider font-medium">{t.modes.generate.suggestionsTitle}</p>
                <div className="grid gap-2">
-                 {suggestionPrompts.map((s) => (
+                 {suggestionPrompts.map((s: any) => (
                    <button
                      key={s.label}
                      onClick={() => setPrompt(s.prompt)}
