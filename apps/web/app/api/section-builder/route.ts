@@ -64,20 +64,22 @@ const SYSTEM_PROMPT = `You are an expert UI/UX designer who generates PERFECT Re
    - ✅ Be specific, not generic
 
 4. **COLOR RULES** - ONLY THESE CLASSES:
-   - Section bg: bg-surface-950 or bg-surface-900
-   - Card bg: bg-surface-800 or bg-surface-700 (different from section bg)
+   - Section bg: bg-surface-950
+   - Card bg: bg-surface-900 (use rounded-xl plus border border-surface-200 shadow-sm for definition)
    - Headings: text-surface-100
-   - Body text: text-surface-200 or text-surface-300
+   - Body text: text-surface-300
    - Muted text: text-surface-400
-   - Buttons: bg-awesome-500 hover:bg-awesome-600
+   - Buttons: always set variant="primary" and bg-awesome-500 hover:bg-awesome-600
    - Highlights: text-awesome-400
-   - Borders: border-border or border-surface-800
+   - Borders: border-surface-200 on cards, border-border on other elements
 
 5. **SPACING & LAYOUT RULES**:
-   - Generous padding: py-16, py-20, py-24 for sections
-   - Gaps: gap-4, gap-6, gap-8, gap-12
-   - Card padding: p-4, p-6, p-8
-   - Always specify: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 (never just "md:grid-cols-3")
+   - section: py-20 or py-24
+   - Container div inside section: max-w-6xl mx-auto px-4
+   - Grid: className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 gap-8"
+   - Card padding: p-6 or p-8
+   - Space between heading and grid: mb-12 or mb-16 on heading
+   - Always use grid-cols-1 (never just "md:grid-cols-3")
 
 6. **OUTPUT FORMAT** - Return ONLY valid JSON:
 {
@@ -104,8 +106,8 @@ export function TestimonialSection() {
         <Text className="text-surface-400 text-center mb-12 max-w-2xl mx-auto">
           Join 10,000+ developers who've transformed their workflow
         </Text>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card variant="elevated" className="bg-surface-800">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="bg-surface-900 rounded-xl border border-surface-200 shadow-sm">
             <Card.Header className="flex items-center gap-4">
               <Avatar size="md" fallback="SC" />
               <div>
@@ -114,7 +116,7 @@ export function TestimonialSection() {
               </div>
             </Card.Header>
             <Card.Body>
-              <Text className="text-surface-200">
+              <Text className="text-surface-300">
                 "This platform cut our deployment time from 2 hours to 15 minutes. 
                 The developer experience is unmatched."
               </Text>
@@ -136,7 +138,7 @@ Notice:
 - Layout uses Tailwind on section/div
 - Copy is realistic, not lorem ipsum
 - Uses exact component names
-- bg-surface-950 for section, bg-surface-800 for cards (different shades for contrast)
+- bg-surface-950 for section, bg-surface-900 with border border-surface-200 shadow-sm for cards
 `;
 
 function repairJson(raw: string): string {
@@ -148,9 +150,47 @@ function repairJson(raw: string): string {
 }
 
 function extractJson(text: string): Record<string, any> {
-  let cleaned = text.replace(/^```[\w]*\n?/gm, '').replace(/\n?```$/gm, '').trim();
-  let jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  const trimmed = text.trim();
 
+  // Strategy 1: find ```json ... ``` block explicitly (non-greedy, prevents
+  // the regex from spilling into a subsequent ```tsx block).
+  const jsonBlock = trimmed.match(/```json\s*\n?([\s\S]*?)```/);
+  if (jsonBlock && jsonBlock[1]) {
+    try {
+      const parsed = JSON.parse(jsonBlock[1].trim());
+      if (parsed.code || parsed.title) {
+        // Prefer the fuller code from a ```tsx block if one exists
+        const tsxBlock = trimmed.match(/```(?:tsx|jsx)\s*\n?([\s\S]*?)```/);
+        if (tsxBlock && tsxBlock[1] && tsxBlock[1].trim().length > (parsed.code || '').length) {
+          parsed.code = tsxBlock[1].trim();
+        }
+        return parsed;
+      }
+    } catch { /* fall through */ }
+  }
+
+  // Strategy 2: find ```tsx|jsx … ``` block, then look for JSON metadata before it.
+  const codeBlock = trimmed.match(/```(?:tsx|jsx|typescript)?\s*\n?([\s\S]*?)```/);
+  if (codeBlock && codeBlock[1]) {
+    const beforeCode = trimmed.slice(0, codeBlock.index).trim();
+    if (beforeCode) {
+      const jsonLike = beforeCode.match(/\{[\s\S]*\}/);
+      if (jsonLike) {
+        try {
+          const parsed = JSON.parse(jsonLike[0]);
+          if (parsed.code || parsed.title) {
+            parsed.code = codeBlock[1].trim();
+            return parsed;
+          }
+        } catch { /* fall through */ }
+      }
+    }
+    return { code: codeBlock[1].trim(), title: '', description: '', componentsUsed: [] };
+  }
+
+  // Strategy 3: greedy {…} match (original approach, works for raw JSON).
+  let cleaned = trimmed.replace(/^```[\w]*\n?/gm, '').replace(/\n?```$/gm, '').trim();
+  let jsonMatch = cleaned.match(/\{[\s\S]*\}/);
   if (jsonMatch) {
     const candidates = [jsonMatch[0], repairJson(jsonMatch[0])];
     for (const candidate of candidates) {
@@ -158,10 +198,11 @@ function extractJson(text: string): Record<string, any> {
     }
   }
 
-  const codeBlockMatch = cleaned.match(/```(?:tsx|jsx|typescript)?\s*\n?([\s\S]*?)```/);
-  if (codeBlockMatch) {
-    return { code: (codeBlockMatch[1] || '').trim(), title: '', description: '', componentsUsed: [] };
-  }
+  // Strategy 4: try parsing the whole cleaned text as JSON (for unmarked responses).
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (typeof parsed === 'object') return parsed;
+  } catch { /* not JSON */ }
 
   return {};
 }
@@ -202,55 +243,54 @@ export async function POST(req: NextRequest) {
 
     let userMsg: string;
 
+    // Rough token estimate (~4 chars per token) to avoid overflowing the model's 8K context.
+    // System prompt is ~600 tokens, response budget is 2048, leaving ~5300 for user message.
+    const MAX_INPUT_CHARS = 18000;
+
     if (action === 'recolor') {
       if (!existingCode) return NextResponse.json({ error: 'Code to recolor is required' }, { status: 400 });
-      userMsg = `Change ONLY the accent colors in this section to "${paletteLabel}".
+      const truncated = existingCode.length > MAX_INPUT_CHARS ? existingCode.slice(0, MAX_INPUT_CHARS) + '\n// ... truncated' : existingCode;
+      userMsg = `Change ONLY the accent colors to "${paletteLabel}". Keep structure and text identical.
 
-RULES:
-- Keep EXACT same structure, components, text
-- Find any hardcoded accent color classes and map them:
-  - bg-[color]-500 → bg-awesome-500
-  - bg-[color]-600 (hover) → hover:bg-awesome-600
-  - text-[color]-400 → text-awesome-400
-  - border-[color]-500 → border-awesome-500
-- Surface classes (bg-surface-*, text-surface-*) stay the same
+Map hardcoded accent colors:
+- bg-[color]-500 → bg-awesome-500
+- hover:bg-[color]-600 → hover:bg-awesome-600
+- text-[color]-400 → text-awesome-400
+- border-[color]-500 → border-awesome-500
 
 CODE:
 \`\`\`tsx
-${existingCode}
+${truncated}
 \`\`\`
 
 Return JSON: { "code": "...", "title": "...", "description": "...", "componentsUsed": [...] }`;
-    } else if (action === 'improve' && existingCode) {
+    } else if (action === 'improve') {
+      if (!existingCode) return NextResponse.json({ error: 'Code to improve is required' }, { status: 400 });
       if (!prompt?.trim()) return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
-      userMsg = `Improve this existing section using ONLY the allowed AwesomeUI components.
+      const truncated = existingCode.length > MAX_INPUT_CHARS ? existingCode.slice(0, MAX_INPUT_CHARS) + '\n// ... truncated' : existingCode;
+      userMsg = `Improve this section using ONLY the allowed AwesomeUI components.
 
-CRITICAL: 
-- NO React hooks (useState, etc.)
-- NO invented components (Grid, Carousel, etc.)
-- Use div/section with Tailwind classes for layout
-- NO lorem ipsum - write realistic product copy
+NO React hooks, NO invented components, NO lorem ipsum.
 
 EXISTING CODE:
 \`\`\`tsx
-${existingCode}
+${truncated}
 \`\`\`
 
-USER REQUEST: ${prompt}
+USER REQUEST: ${prompt.slice(0, 1000)}
 
 Return JSON: { "code": "...", "title": "...", "description": "...", "componentsUsed": [...] }`;
     } else {
       if (!prompt?.trim()) return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
-      userMsg = `Generate a production-ready React section for: "${prompt}"
+      userMsg = `Generate a production-ready React section for: "${prompt.slice(0, 2000)}"
 
-CRITICAL REMINDERS BEFORE YOU BEGIN:
-1. ❌ NO React hooks (useState, useEffect, useRef, etc.) - sections are STATIC
-2. ❌ NO invented components - ONLY use: ${COMPONENTS_ALLOWED}
-3. ❌ NO "lorem ipsum" - write realistic product names, quotes, features
-4. ❌ NO raw HTML buttons/divs for UI - use AwesomeUI components
-5. ✅ Use <section> and <div> with Tailwind className for layout
-6. ✅ Layout: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 (NEVER omit grid-cols-1)
-7. ✅ Colors: section=bg-surface-950/900, cards=bg-surface-800/700 (DIFFERENT), buttons=bg-awesome-500
+CRITICAL:
+- NO React hooks - sections are STATIC
+- ONLY use: ${COMPONENTS_ALLOWED}
+- NO lorem ipsum - write realistic product copy
+- Use section/div with Tailwind for layout
+- grid-cols-1 md:grid-cols-2 lg:grid-cols-3 (NEVER omit grid-cols-1)
+- section=bg-surface-950, cards=bg-surface-900 with border border-surface-200 shadow-sm rounded-xl, buttons=variant="primary" with className="bg-awesome-500 hover:bg-awesome-600"
 
 Return JSON: { "code": "...", "title": "...", "description": "...", "componentsUsed": [...] }`;
     }
@@ -262,18 +302,22 @@ Return JSON: { "code": "...", "title": "...", "description": "...", "componentsU
         { role: 'user', content: userMsg },
       ],
       temperature: 0.6,
-      max_tokens: 4096,
+      max_tokens: 2048,
       top_p: 0.9,
     });
 
-    const raw = completion.choices[0]?.message?.content || '{}';
-    const result = extractJson(raw);
-    let code = result.code ? cleanCode(result.code) : raw;
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      return NextResponse.json({ error: 'AI returned an empty response. Please try again.' }, { status: 502 });
+    }
 
+    const result = extractJson(content);
+    let code = result.code ? cleanCode(result.code) : content;
     let title = result.title || 'Generated Section';
     let description = result.description || '';
     let componentsUsed: string[] = result.componentsUsed || [];
 
+    // Fallback: try parsing the raw content as JSON if extraction didn't yield a real section
     if ((!title || title === 'Generated Section') && !description && componentsUsed.length === 0) {
       try {
         const nested = JSON.parse(code);
@@ -286,12 +330,28 @@ Return JSON: { "code": "...", "title": "...", "description": "...", "componentsU
       } catch { /* no nested json */ }
     }
 
+    // Validate we have actual code before returning
+    if (!code || code === '{}' || code.length < 20) {
+      return NextResponse.json({ error: 'AI returned incomplete data. Please try again.' }, { status: 422 });
+    }
+
     return NextResponse.json({ code, title, description, componentsUsed });
-  } catch (error) {
-    console.error('Section builder error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate section. Please try again.' },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    // Provide specific error messages for common Groq API failures
+    const errMsg = error?.message || '';
+    let userMsg: string;
+    if (errMsg.includes('rate_limit') || errMsg.includes('Rate limit')) {
+      userMsg = 'Rate limit reached. Please wait a moment and try again.';
+    } else if (errMsg.includes('context_length') || errMsg.includes('too large') || errMsg.includes('too many tokens')) {
+      userMsg = 'The section is too large to process. Try a smaller section or generate a new one.';
+    } else if (errMsg.includes('API key') || errMsg.includes('authentication') || errMsg.includes('unauthorized')) {
+      userMsg = 'API configuration error. Please contact support.';
+    } else if (errMsg.includes('timeout') || errMsg.includes('timed out')) {
+      userMsg = 'Request timed out. Please try again.';
+    } else {
+      userMsg = 'Failed to generate section. Please try again.';
+    }
+    console.error('Section builder error:', errMsg);
+    return NextResponse.json({ error: userMsg }, { status: 500 });
   }
 }
