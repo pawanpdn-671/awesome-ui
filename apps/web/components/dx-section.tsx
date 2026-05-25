@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { CodeBlock } from "@/components/code-block";
 import { 
   Type, TreePine, Accessibility, Server, Palette, Zap, 

@@ -3,9 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { Check, Copy, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/button";
+import { Badge } from "@/components/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/tabs";
 import {
   neutralPalettes,
   accentPalettes,

@@ -9,7 +9,6 @@ interface TextProviderProps {
   initialTexts: {
     landing?: Record<string, unknown> | null;
     docs?: Record<string, unknown> | null;
-    section_builder?: Record<string, unknown> | null;
   } | null;
   children: React.ReactNode;
 }
@@ -20,7 +19,6 @@ export function TextProvider({ initialTexts, children }: TextProviderProps) {
       ...textFallbacks,
       ...(initialTexts?.landing ?? {}),
       ...(initialTexts?.docs ?? {}),
-      ...(initialTexts?.section_builder ?? {}),
     };
   }, [initialTexts]);
 

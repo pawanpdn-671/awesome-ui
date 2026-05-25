@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { TerminalWindow } from "@/components/terminal-window";
 import { Smartphone, Monitor, Check } from "lucide-react";
 import { useTexts } from "@/components/text-provider";

@@ -207,27 +207,6 @@ export const accessibility = {
   },
 };
 
-export const sectionBuilderUI = {
-  badge: "", heading: { line1: "", line2: "" }, description: "",
-  modes: {
-    generate: { label: "", icon: "", textareaLabel: "", textareaPlaceholder: "", suggestionsTitle: "" },
-    improve: { label: "", icon: "", textareaLabel: "", textareaPlaceholder: "", codeLabel: "", codePlaceholder: "" },
-  },
-  generateButton: { idle: "", improve: "", loading: "" },
-  results: {
-    copyCode: "", copied: "", recolorLabel: "", componentsLabel: "", previewTab: "", codeTab: "", blueprintNotice: "",
-    howToUse: { title: "", body: "" },
-    improve: { title: "", placeholder: "", btn: "" },
-    newSection: "",
-  },
-  errorFallback: "", resultFallback: { title: "", description: "" },
-  bottomCards: [] as { title: string; description: string }[],
-};
-
-export const sectionBuilderMeta = { title: "", description: "" };
-
-export const suggestionPrompts = [] as { label: string; description: string; icon: string; prompt: string }[];
-
 export const textFallbacks = {
   ...header, ...hero, ...frameworkSupport, ...apiPhilosophy,
   ...componentShowcase, ...crossPlatform, ...dxSection, ...cliSection,
@@ -236,7 +215,6 @@ export const textFallbacks = {
   ...sidebar, ...docsLanding, ...gettingStarted, ...componentsDocs,
   ...buttonDoc, ...formDoc, ...themingDocs, ...cliDocs, ...apiReference,
   ...guides, ...accessibility,
-  ...sectionBuilderUI, ...suggestionPrompts, ...sectionBuilderMeta,
 } as const;
 
 export type TextsContextType = { [key: string]: unknown };

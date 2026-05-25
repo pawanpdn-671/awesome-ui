@@ -1,8 +1,16 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function cn(...inputs: (string | false | null | undefined | Record<string, boolean>)[]) {
+  const classes: string[] = [];
+  for (const input of inputs) {
+    if (!input) continue;
+    if (typeof input === "string") {
+      classes.push(input);
+    } else if (typeof input === "object") {
+      for (const [key, value] of Object.entries(input)) {
+        if (value) classes.push(key);
+      }
+    }
+  }
+  return classes.join(" ");
 }
 
 export const frameworks = [
@@ -112,21 +120,6 @@ function DataTable() {
         </TableRow>
       </TableHead>
     </Table>
-  )
-}`,
-  },
-  command: {
-    react: `import { Command, CommandInput, CommandList, CommandItem } from '@awesomeui/react'
-
-function CommandMenu() {
-  return (
-    <Command>
-      <CommandInput placeholder="Search..." />
-      <CommandList>
-        <CommandItem>Settings</CommandItem>
-        <CommandItem>Profile</CommandItem>
-      </CommandList>
-    </Command>
   )
 }`,
   },

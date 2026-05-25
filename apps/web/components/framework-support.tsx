@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CodeBlock } from "@/components/code-block";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { cn } from "@/lib/utils";
 import { ReactIcon, NextjsIcon, VueIcon, AngularIcon, SvelteIcon, SolidIcon, ReactNativeIcon } from "@/components/framework-icons";
 import { useTexts } from "@/components/text-provider";

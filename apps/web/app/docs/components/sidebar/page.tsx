@@ -1,9 +1,7 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponentFromDb } from "@/lib/db-texts";
-import { notFound } from "next/navigation";
+import { components } from "@/texts/component-data";
 
-export default async function SidebarDocPage() {
-  const data = await getComponentFromDb("sidebar");
-  if (!data) return notFound();
+export default function sidebarDocPage() {
+  const data = components.find(c => c.id === "sidebar")!;
   return <ComponentDocPage data={data} />;
 }

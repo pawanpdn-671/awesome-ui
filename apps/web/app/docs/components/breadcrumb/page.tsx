@@ -1,9 +1,7 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponentFromDb } from "@/lib/db-texts";
-import { notFound } from "next/navigation";
+import { components } from "@/texts/component-data";
 
-export default async function BreadcrumbDocPage() {
-  const data = await getComponentFromDb("breadcrumb");
-  if (!data) return notFound();
+export default function breadcrumbDocPage() {
+  const data = components.find(c => c.id === "breadcrumb")!;
   return <ComponentDocPage data={data} />;
 }

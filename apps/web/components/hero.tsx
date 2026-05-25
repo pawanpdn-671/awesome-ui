@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ArrowRight, Github, Sparkles, Layers, Code2, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/button";
+import { Badge } from "@/components/badge";
 import { CodeBlock } from "@/components/code-block";
 import { TerminalBlock } from "@/components/terminal-block";
 import { useTexts } from "@/components/text-provider";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { CodeBlock } from "@/components/code-block";
 import { Check } from "lucide-react";
 import { useTexts } from "@/components/text-provider";

@@ -44,7 +44,7 @@ function TabsTrigger({ value, className, children, ...props }: TabsTriggerProps)
       className={cn(
         "rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200",
         activeTab === value
-          ? "bg-awesome-500/20 text-awesome-300 shadow-sm"
+          ? "bg-surface-700 text-white shadow-sm"
           : "text-surface-400 hover:text-surface-200 hover:bg-surface-800/50",
         className
       )}

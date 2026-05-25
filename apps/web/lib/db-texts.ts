@@ -39,9 +39,11 @@ const singleKeyTextCache = ttlCache<Record<string, unknown>>(60_000);
 export const getStaticTextsFromDb = cache(async (): Promise<Record<string, Record<string, unknown>>> => {
   const cached = staticTextsCache.get("all");
   if (cached) return cached;
+  if (!supabase) return {};
+  const db = supabase;
 
   const { data, error } = await queryWithRetry<StaticContentRow[]>(() =>
-    supabase.from("static_content").select("key, value")
+    db.from("static_content").select("key, value")
   );
 
   if (error || !data) {
@@ -65,16 +67,17 @@ export const getStaticTexts = cache(async () => {
   return {
     landing: dbTexts.landing ?? null,
     docs: dbTexts.docs ?? null,
-    section_builder: dbTexts.section_builder ?? null,
-  } as { landing: any; docs: any; section_builder: any };
+  } as { landing: any; docs: any };
 });
 
 export const getStaticTextsByKey = cache(async (key: StaticContentKey): Promise<Record<string, unknown> | null> => {
   const cached = singleKeyTextCache.get(key);
   if (cached) return cached;
+  if (!supabase) return null;
+  const db = supabase;
 
   const { data, error } = await queryWithRetry<StaticContentRow[]>(() =>
-    supabase.from("static_content").select("value").eq("key", key)
+    db.from("static_content").select("value").eq("key", key)
   );
 
   if (error || !data || data.length === 0) {
@@ -109,12 +112,6 @@ export const getStaticTextsServer = cache(async (): Promise<any> => {
     }
   }
 
-  if (dbTexts.section_builder) {
-    for (const key of Object.keys(dbTexts.section_builder)) {
-      merged[key] = dbTexts.section_builder[key];
-    }
-  }
-
   serverTextsCache.set("merged", merged);
   return merged;
 });
@@ -124,13 +121,28 @@ const componentCache = ttlCache<ComponentDoc | null>(120_000);
 export const getComponentFromDb = cache(async (id: string): Promise<ComponentDoc | null> => {
   const cached = componentCache.get(id);
   if (cached !== undefined) return cached;
+  if (!supabase) {
+    const local = localComponents.find((c) => c.id === id);
+    if (local) {
+      componentCache.set(id, local);
+      return local;
+    }
+    componentCache.set(id, null);
+    return null;
+  }
+  const db = supabase;
 
   const { data, error } = await queryWithRetry<ComponentRow[]>(() =>
-    supabase.from("components").select("*").eq("id", id)
+    db.from("components").select("*").eq("id", id)
   );
 
   if (error || !data || data.length === 0) {
     if (error) console.error(`getComponentFromDb(${id}) error:`, error);
+    const local = localComponents.find((c) => c.id === id);
+    if (local) {
+      componentCache.set(id, local);
+      return local;
+    }
     componentCache.set(id, null);
     return null;
   }
@@ -159,14 +171,17 @@ const allComponentsCache = ttlCache<ComponentDoc[]>(120_000);
 export const getAllComponentsFromDb = cache(async (): Promise<ComponentDoc[]> => {
   const cached = allComponentsCache.get("all");
   if (cached) return cached;
+  if (!supabase) return localComponents;
+  const db = supabase;
 
   const { data, error } = await queryWithRetry<ComponentRow[]>(() =>
-    supabase.from("components").select("*")
+    db.from("components").select("*")
   );
 
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     if (error) console.error("getAllComponentsFromDb error:", error);
-    return [];
+    allComponentsCache.set("all", localComponents);
+    return localComponents;
   }
 
   const docs: ComponentDoc[] = data.map((item) => ({
@@ -192,9 +207,11 @@ const docsCache = ttlCache<{ source: string; content: string }[]>(120_000);
 export const getDocsFromDb = cache(async () => {
   const cached = docsCache.get("all");
   if (cached) return cached;
+  if (!supabase) return [];
+  const db = supabase;
 
   const { data, error } = await queryWithRetry<DocsContentRow[]>(() =>
-    supabase.from("docs_content").select("source, content")
+    db.from("docs_content").select("source, content")
   );
 
   if (error || !data) {

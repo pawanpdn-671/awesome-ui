@@ -38,7 +38,7 @@ function Example() {
       <Button variant="secondary">${t.button.variants.secondary}</Button>
       <Button variant="outline">${t.button.variants.outline}</Button>
       <Button variant="ghost">${t.button.variants.ghost}</Button>
-      <Button variant="glow">${t.button.variants.glow}</Button>
+      <Button variant="destructive">${t.button.variants.destructive || 'Delete'}</Button>
     </div>
   )
 }`} language="tsx" />

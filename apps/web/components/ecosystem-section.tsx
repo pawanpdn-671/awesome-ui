@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/badge";
+import { Button } from "@/components/button";
 import { Figma, Puzzle, Box, BookOpen, Palette } from "lucide-react";
 import Link from "next/link";
 import { useTexts } from "@/components/text-provider";

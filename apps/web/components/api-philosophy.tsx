@@ -1,7 +1,7 @@
 "use client";
 
 import { CodeBlock } from "@/components/code-block";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { Check } from "lucide-react";
 import { useTexts } from "@/components/text-provider";
 

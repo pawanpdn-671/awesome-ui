@@ -1,9 +1,7 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponentFromDb } from "@/lib/db-texts";
-import { notFound } from "next/navigation";
+import { components } from "@/texts/component-data";
 
-export default async function DialogDocPage() {
-  const data = await getComponentFromDb("dialog");
-  if (!data) return notFound();
+export default function dialogDocPage() {
+  const data = components.find(c => c.id === "dialog")!;
   return <ComponentDocPage data={data} />;
 }

@@ -1,9 +1,7 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponentFromDb } from "@/lib/db-texts";
-import { notFound } from "next/navigation";
+import { components } from "@/texts/component-data";
 
-export default async function CheckboxDocPage() {
-  const data = await getComponentFromDb("checkbox");
-  if (!data) return notFound();
+export default function checkboxDocPage() {
+  const data = components.find(c => c.id === "checkbox")!;
   return <ComponentDocPage data={data} />;
 }

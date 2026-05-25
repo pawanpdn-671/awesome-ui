@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { ArrowDown, Box, Layers, Palette, Accessibility, Zap, Cpu } from "lucide-react";
 import { useTexts } from "@/components/text-provider";
 

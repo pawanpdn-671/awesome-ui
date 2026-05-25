@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { type ReactNode } from "react";
 
 interface DocHeaderProps {

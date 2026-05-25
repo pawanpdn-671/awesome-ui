@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { CodeBlock } from "@/components/code-block";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/badge";
+import { Button } from "@/components/button";
 import { cn } from "@/lib/utils";
 import { codeExamples, frameworks } from "@/lib/utils";
 import { Eye, Code2, ArrowRight } from "lucide-react";

@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/badge";
 import { TerminalBlock } from "@/components/terminal-block";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/button";
 import { Terminal } from "lucide-react";
 import Link from "next/link";
 import { useTexts } from "@/components/text-provider";

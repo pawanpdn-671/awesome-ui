@@ -1,9 +1,7 @@
 import { ComponentDocPage } from "@/components/component-doc-page";
-import { getComponentFromDb } from "@/lib/db-texts";
-import { notFound } from "next/navigation";
+import { components } from "@/texts/component-data";
 
-export default async function PaginationDocPage() {
-  const data = await getComponentFromDb("pagination");
-  if (!data) return notFound();
+export default function paginationDocPage() {
+  const data = components.find(c => c.id === "pagination")!;
   return <ComponentDocPage data={data} />;
 }

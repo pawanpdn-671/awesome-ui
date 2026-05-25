@@ -49,4 +49,4 @@ export interface Database {
   };
 }
 
-export type StaticContentKey = "landing" | "docs" | "section_builder";
+export type StaticContentKey = "landing" | "docs";
